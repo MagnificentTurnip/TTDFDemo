@@ -62,7 +62,6 @@ public class StatusManager : MonoBehaviour {
         sneaking = false;
         rolling = false;
         sheathed = true;
-        unsheathed = false;
         HPRegenEnabled = true;
         SPRegenEnabled = true;
         MPRegenEnabled = true;
@@ -192,6 +191,7 @@ public class StatusManager : MonoBehaviour {
             attackLock = false;
             castLock = false;
             channelLock = false;
+            if getcomponent in children attack? componentattack.delete();
             and maybe play the flinch animation I guess not sure
         }
         

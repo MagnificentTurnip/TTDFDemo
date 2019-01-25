@@ -20,6 +20,7 @@ public class PlayerInput : MonoBehaviour {
     public string guardControl;
     public string sprintControl;
     public string evadeControl;
+    public string sheatheControl;
     public string button1Control;
     public string button2Control;
     public string button3Control;
@@ -35,6 +36,7 @@ public class PlayerInput : MonoBehaviour {
     public bool guard;
     public bool sprint;
     public bool evade;
+    public bool sheathe;
     public bool button1;
     public bool button2;
     public bool button3;
@@ -149,9 +151,9 @@ public class PlayerInput : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        print(fwdA.Check());
-        print(fwdS.Check());
-        print(fwdAS.Check());
+        //print(fwdA.Check());
+        //print(fwdS.Check());
+        //print(fwdAS.Check());
 
         cursorDistance = Vector2.Distance(new Vector2(Screen.width / 2, Screen.height / 2), Input.mousePosition); //get distance from player to cursor
 
@@ -242,6 +244,13 @@ public class PlayerInput : MonoBehaviour {
         }
         else {
             evade = false;
+        }
+
+        if (Input.GetAxis(sheatheControl) > 0f) { //evasion controls
+            sheathe = true;
+        }
+        else {
+            sheathe = false;
         }
 
         if (Input.GetAxis(button1Control) > 0f) { //button 1 controls

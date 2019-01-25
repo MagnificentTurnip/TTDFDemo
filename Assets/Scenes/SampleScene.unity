@@ -523,6 +523,7 @@ MonoBehaviour:
   guardControl: Mouse4
   sprintControl: LShift
   evadeControl: Space
+  sheatheControl: LCtrl
   button1Control: A
   button2Control: S
   button3Control: D
@@ -535,6 +536,7 @@ MonoBehaviour:
   guard: 0
   sprint: 0
   evade: 0
+  sheathe: 0
   button1: 0
   button2: 0
   button3: 0
@@ -630,7 +632,6 @@ MonoBehaviour:
   playIn: {fileID: 823668812}
   wish: {fileID: 823668818}
   status: {fileID: 823668814}
-  returnToIdle: 90
 --- !u!114 &823668817
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -681,12 +682,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   status: {fileID: 823668814}
   stat: {fileID: 823668817}
+  instantiatedAttacks: []
   attack: {fileID: 1950977128210768, guid: 0f65944d7535a124b8f19bcba2a99514, type: 2}
   playerAnimator: {fileID: 1838862959}
   hitboxAnimatorController: {fileID: 9100000, guid: ab0c6283b633f264f9f7e1996735cefc,
     type: 2}
+  movement: {fileID: 823668813}
   state: 0
   wraithMode: 0
+  evadespeed: 0
+  evadetime: 0
+  returnToIdle: 0
 --- !u!114 &823668819
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -700,6 +706,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentAttack: {fileID: 0}
   motor: {fileID: 823668811}
+  status: {fileID: 823668814}
 --- !u!1 &1727803926
 GameObject:
   m_ObjectHideFlags: 0
@@ -879,6 +886,10 @@ Prefab:
     - target: {fileID: 13700012, guid: 5a561e40871b79f44a47db47d17ba8ef, type: 3}
       propertyPath: m_AABB.m_Extent.z
       value: 0.27315643
+      objectReference: {fileID: 0}
+    - target: {fileID: 9500000, guid: 5a561e40871b79f44a47db47d17ba8ef, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5a561e40871b79f44a47db47d17ba8ef, type: 3}

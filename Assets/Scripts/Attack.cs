@@ -38,6 +38,13 @@ public class Attack : MonoBehaviour {
         public bool hitsAirborne; //true if can hit targets with the airborne condition
 
         public bool contact; //does the attack actually make contact between attacker and target?
+        public int unblockable; //certain attacks are some kind of unblockable. 0 is blockable, 1 cannot be guarded, 2 cannot be parried, and 3 cannot be guarded or parried.
+
+        /*
+        idk what the heck this is, if you have nothing else to do try to do something ask Liam it's an optimisation doesn't big matter
+        int exampleAnimHash;
+        string exampleAnimString { set { exampleAnimHash = Animator.StringToHash(value); } }
+        */
 
         public atkData( //constructor
             Animator _HitboxAnimator = null,
@@ -54,7 +61,8 @@ public class Attack : MonoBehaviour {
             bool _hitsStanding = false,
             bool _hitsFloored = false, 
             bool _hitsAirborne = false,
-            bool _contact = true) {
+            bool _contact = true,
+            int _unblockable = 0) {
             HitboxAnimator = _HitboxAnimator;
             atkHitBox = _atkHitBox;
             GFXAnimation = _GFXAnimation;
@@ -70,6 +78,7 @@ public class Attack : MonoBehaviour {
             hitsFloored = _hitsFloored;
             hitsAirborne = _hitsAirborne;
             contact = _contact;
+            unblockable = _unblockable;
         }
     }
 
@@ -137,6 +146,12 @@ public class Attack : MonoBehaviour {
     public hitProperties onChargeHit;
     public hitProperties onGuard;
     public hitProperties onChargeGuard;
+    public hitProperties onVulnerableHit;
+    public hitProperties onVulnerableChargeHit;
+    public hitProperties onFlooredHit;
+    public hitProperties onFlooredChargeHit;
+    public hitProperties onAirborneHit;
+    public hitProperties onAirborneChargeHit;
 
     // Use this for initialization
     void Start () { //get the collider of the object - either sphere or box

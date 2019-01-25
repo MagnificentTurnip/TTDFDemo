@@ -19,7 +19,21 @@ public class PlayerBridgeWish : MonoBehaviour { //bridges between player input a
 	// Update is called once per frame
 	void Update () {
 
-        if (status.unsheathed) { //only do attack style stuff when unsheathed
+        wish.playerAnimator.SetBool("sheathed", status.sheathed);
+
+        //unsheathing
+        if (status.sheathed == true && playIn.button1 && status.canAttack()) {
+            if (status.sprinting) { // the player performs an unsheathe attack if sprinting at the point of drawing their weapon
+                wish.standardBladework1();
+            } else {
+                //play unsheathing animation for the body
+            }
+            //play unsheathing animation for the blade
+            status.sheathed = false;
+            
+        }
+
+        if (status.sheathed == false) { //only do attack style stuff when unsheathed
             //evades. Wish style has four directional evades out of attacks.
             if (playIn.evade && status.canRoll() && !status.canMove()) {
                 if (playIn.pointForward == true) {
@@ -38,8 +52,24 @@ public class PlayerBridgeWish : MonoBehaviour { //bridges between player input a
 
             //attacks
             if (status.canAttack()) {
-                if (wish.state == AtkStyleWish.attackStates.idle && playIn.fwdA.Check()) {
-                    wish.standardBladework1();
+
+                switch (wish.state) {
+
+                    case AtkStyleWish.attackStates.idle:
+                        if (playIn.sheathe) { //from idle you can sheathe again
+                            status.sheathed = true;
+                            //play the sheathing animation
+                        }
+                        if (playIn.fwdA.Check()) {
+                            wish.standardBladework1();
+                        }
+                        if (playIn.fwdS.Check()) {
+                            wish.standardBladework1();
+                        }
+                        break;
+
+                    case AtkStyleWish.attackStates.fEvade:
+                        break;
                 }
 
             }
