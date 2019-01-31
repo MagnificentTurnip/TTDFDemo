@@ -6,7 +6,7 @@ public class PlayerMovement : MonoBehaviour {
 
     //variable declarations
     StatusManager playerStatus; //going to need access to the player's status
-    Motor playerMotor; //also going to need a motor to actually drive the player's movement
+    public Motor playerMotor; //also going to need a motor to actually drive the player's movement
     PlayerInput playerInput; //going to need some input or else you won't be able to actually control anything
     public Animator animator; //the player's animator is needed to animate the character because I can't do it in a seperate script because I have grown to hate the unity animator for all of its annoyingness
     Vector3 mousePos; //a vector for the current position of the mouse on screen
@@ -29,9 +29,11 @@ public class PlayerMovement : MonoBehaviour {
 
     public void pointTowardCursor(float maxTurn) {
         if (playerInput.mouseDifAngle > maxTurn) { //the angle could be over the maximum, and to the player's right
-            transform.rotation = Quaternion.Euler(new Vector3(0, maxTurn, 0)); //in which case, turn it the maximum amount allowed to the right
+            print(transform.localEulerAngles.y + maxTurn);
+            transform.rotation = Quaternion.Euler(new Vector3(0, transform.localEulerAngles.y+maxTurn, 0)); //in which case, turn it the maximum amount allowed to the right
         } else if (playerInput.mouseDifAngle < -maxTurn) { //or it could also be over the maximum to the left
-            transform.rotation = Quaternion.Euler(new Vector3(0, -maxTurn, 0)); //in which case, turn it the maximum amount to the left
+            print(transform.localEulerAngles.y - maxTurn);
+            transform.rotation = Quaternion.Euler(new Vector3(0, transform.localEulerAngles.y-maxTurn, 0)); //in which case, turn it the maximum amount to the left
         } else { //if neither of these, then the cursor is within the maximum turning angle
             transform.rotation = Quaternion.Euler(new Vector3(0, playerInput.toMouseAngle, 0)); //then we can rotate directly to the cursor as in pointToCursor()
         }
@@ -40,7 +42,6 @@ public class PlayerMovement : MonoBehaviour {
     public void evade(float fbSpeed, float lrSpeed, float evadeTime) {
         playerStatus.rollLock = true;
         playerStatus.rolling = true;
-        pointToCursor();
         playerMotor.instantBurst(fbSpeed, lrSpeed);
         StartCoroutine(endroll(evadeTime, evadeTime));
     }
@@ -91,9 +92,11 @@ public class PlayerMovement : MonoBehaviour {
 
         if (playerInput.evade && playerStatus.canRoll() && playerStatus.canMove()) { //the reason why canMove() is included is because only this specific evade in the specific direction of the cursor can be done while moving
             if (playerStatus.sprinting) {
+                pointToCursor();
                 evade(diveSpeed, 0f, diveTime);
                 animator.Play("forwardDive");
             } else {
+                pointToCursor();
                 evade(rollSpeed, 0f, rollTime);
                 animator.Play("forwardRoll");
             } //other evades can be done at other times, but they are handled under the current attack style of the player, and are treated similarly to attacks.

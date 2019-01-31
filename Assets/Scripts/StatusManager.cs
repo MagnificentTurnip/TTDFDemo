@@ -9,6 +9,7 @@ public class StatusManager : MonoBehaviour {
     public bool guardLock; //the player is guarding
     public bool parryLock; //the player has just parried someone so they cannot use regular movement
     public bool attackLock; //the player is attacking so they cannot use regular movement
+    public bool toIdleLock; //the player needs to wait to return to idle to use movement
     public bool castLock; //the player is casting a spell so they will have to stop or cast something to act
     public bool channelLock; //the player is in the middle of channeling a spell. They can move slowly and may not attack, guard or parry. Evading is possible but breaks the channel.
     //END OF SELF-LOCKOUTS
@@ -44,6 +45,9 @@ public class StatusManager : MonoBehaviour {
                          //**Alternatively, limited-time inescapable grapples are simply a matter of also applying Stun for however long the grapple is inescapable***
     //END OF CONDITIONS
 
+    public AtkStyle atkStyle; //Reference to atkStyle for the sake of flinching (needs to return entity to idle)
+    public Animator animator; //reference to the animator for the sake of animating
+
     // Use this for initialization
     void Start () {
         //initialise the variables to the defaults;
@@ -51,6 +55,7 @@ public class StatusManager : MonoBehaviour {
         guardLock = false;
         parryLock = false;
         attackLock = false;
+        toIdleLock = false;
         castLock = false;
         channelLock = false;
 
@@ -76,6 +81,21 @@ public class StatusManager : MonoBehaviour {
         parryStunned = 0;
         grappled = 0;
 	}
+
+    //Flinch (breaks the entity out of all current actions)
+    void flinch() {
+        rollLock = false;
+        guardLock = false;
+        parryLock = false;
+        attackLock = false;
+        toIdleLock = false;
+        castLock = false;
+        channelLock = false;
+
+        atkStyle.state = AtkStyle.attackStates.idle;
+        //if getcomponent in children attack? componentattack.delete();
+        //and maybe play the flinch animation I guess not sure
+     }
 
     //STATE CHECKS
     public bool isFloored() { //FLOORED
@@ -128,7 +148,7 @@ public class StatusManager : MonoBehaviour {
     }
 
     public bool canMove() { //CAN MOVE
-        if (isFloored() || isStunned() || isGrappled() || isGuardStunned() || isParryStunned() || parryLock || rolling || attackLock || castLock) {
+        if (isFloored() || isStunned() || isGrappled() || isGuardStunned() || isParryStunned() || parryLock || rolling || attackLock || castLock || toIdleLock) {
             return false;
         }
         else {
@@ -146,6 +166,24 @@ public class StatusManager : MonoBehaviour {
     }
 
     public bool canAttack() { //CAN ATTACK
+        if (isFloored() || isStunned() || isGuardStunned() || isAirborne() || isParryStunned() || rollLock || attackLock || castLock) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+    public bool canGuard() {
+        if (isFloored() || isStunned() || isAirborne() || isParryStunned() || rollLock || attackLock || castLock) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+    public bool canParry() {
         if (isFloored() || isStunned() || isGuardStunned() || isAirborne() || isParryStunned() || rollLock || attackLock || castLock) {
             return false;
         }

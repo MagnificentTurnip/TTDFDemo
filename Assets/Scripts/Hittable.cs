@@ -7,6 +7,12 @@ public class Hittable : MonoBehaviour {
     public Attack currentAttack;
     public Motor motor;
     public StatusManager status;
+    public StatSheet stat;
+
+    //resistances?
+    //public float slashingTaken = 0.9 for 10% slashing resistance or something?
+
+    
 
 	// Use this for initialization
 	void Start () {
@@ -39,6 +45,16 @@ public class Hittable : MonoBehaviour {
                 }
                 else {
                     //apply attack
+
+                    print("Hit"); //testing
+
+                    for (int i = 0; i < currentAttack.onHit.damageInstances.Count; i++) { //loop through damage instances to apply them
+                        //if (currentAttack.onHit.damageInstances[i].damageType == Attack.typeOfDamage.Slashing) {
+                        stat.HP -= currentAttack.onHit.damageInstances[i].damageAmount/* *= slashingTaken*/;
+                        //}
+                        //stun equal to currentAttack.onHit.causesStun + currentAttack.data.attackDuration?
+                    }
+
                 }
             } //else do nothing
         }

@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class AtkStyle : MonoBehaviour {
 
+    public enum attackStates { idle }
+    public attackStates state;
+    public int idleCounter; //the current number of frames until the entity returns to idle after a move
 
-
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
 		
 	}
 	
