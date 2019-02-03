@@ -32,18 +32,6 @@ public class Motor : MonoBehaviour {
         }
     }
 
-    /*
-    public void leftBurst() {
-        rb.velocity = new Vector3(0, 0, 0);
-        rb.AddForce(transform.right * -speed);
-    }
-
-    public void backBurst() {
-        rb.velocity = new Vector3(0, 0, 0);
-        rb.AddForce(transform.right * -speed);
-    }
-    */
-
     // Use this for initialization
     void Start () {
         speed = 0f;

@@ -25,7 +25,6 @@ public class StatusManager : MonoBehaviour {
     public bool sneaking;
     public bool rolling;
     public bool sheathed;
-    public bool unsheathed;
     public bool HPRegenEnabled;
     public bool SPRegenEnabled;
     public bool MPRegenEnabled;
@@ -192,6 +191,14 @@ public class StatusManager : MonoBehaviour {
         }
     }
     //END OF STATE CHECKS
+
+    
+
+
+
+
+
+
     /*  
     
         TEMPLATE STATUS TRACKING/REFRESHING
@@ -234,6 +241,41 @@ public class StatusManager : MonoBehaviour {
         }
         
     */
+
+    // FixedUpdate is called once per frame consistently (not rendered frames like Update)
+    void FixedUpdate() {
+
+        //STATUS TRACKING / UPDATING (all of these statuses have frame timers. If they're above zero they're active, and they decrease by 1 each frame)
+        if (parryFrames > 0) {
+            parryFrames -= 1;
+        }
+        if (vulnerable > 0) {
+            vulnerable -= 1;
+        }
+        if (silenced > 0) {
+            silenced -= 1;
+        }
+        if (airborne > 0) {
+            airborne -= 1;
+        }
+        if (stunned > 0) {
+            stunned -= 1;
+        }
+        if (paralyzed > 0) {
+            paralyzed -= 1;
+        }
+        if (guardStunned > 0) {
+            guardStunned -= 1;
+        }
+        if (parryStunned > 0) {
+            parryStunned -= 1;
+        }
+        if (grappled > 0) {
+            grappled -= 1;
+        }
+        //END OF STATUS TRACKING / UPDATING
+
+    }
 
     // Update is called once per frame
     void Update () {

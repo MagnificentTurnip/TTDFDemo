@@ -5,21 +5,8 @@ using UnityEngine;
 public class AtkStyleWish : AtkStyle {
 
     new public enum attackStates { drawing, idle, fEvade, bEvade, rEvade, lEvade, spellcast, fParry, bParry, bladework1, bladework2, bladework3, bladework4 };
-
-    public bool debug;
-
-    public StatusManager status;
-    public CharStatSheet stat;
-
-    public Mesh cube; //for testing hitboxes
-    public Mesh sphere; //for testing hitboxes
-
-    private Attack currentAttack;
-    public List<Attack> instantiatedAttacks;
-    public GameObject attack;
-    public Animator playerAnimator;
-    public RuntimeAnimatorController hitboxAnimatorController;
-    public PlayerMovement movement;
+    
+    new public CharStatSheet stat; //this is an attack style for characters, so the statsheet in base AtkStyle needs to be overwritten by a charstatsheet
 
     public Attack.damage tempDamage;
 
@@ -42,28 +29,28 @@ public class AtkStyleWish : AtkStyle {
 
     public void evadeForward() {
         movement.evade(evadespeed, 0f, evadetime);
-        playerAnimator.Play("forwardRoll");
+        animator.Play("forwardRoll");
         state = attackStates.fEvade; //set the attack state;
         idleCounter = 30; //always remember to reset the idle counter
     }
 
     public void evadeBack() {
         movement.evade(-evadespeed, 0f, evadetime);
-        playerAnimator.Play("forwardRoll");
+        animator.Play("forwardRoll");
         state = attackStates.bEvade; //set the attack state;
         idleCounter = 30; //always remember to reset the idle counter
     }
 
     public void evadeRight() {
         movement.evade(0f, evadespeed, evadetime);
-        playerAnimator.Play("forwardRoll");
+        animator.Play("forwardRoll");
         state = attackStates.rEvade; //set the attack state;
         idleCounter = 30; //always remember to reset the idle counter
     }
 
     public void evadeLeft() {
         movement.evade(0f, -evadespeed, evadetime);
-        playerAnimator.Play("forwardRoll");
+        animator.Play("forwardRoll");
         state = attackStates.lEvade; //set the attack state;
         idleCounter = 30; //always remember to reset the idle counter
     }
@@ -100,9 +87,9 @@ public class AtkStyleWish : AtkStyle {
         tempDamage.damageAmount = 10f + (0.25f * stat.STR) + (0.25f * stat.DEX);
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage }, 
-            _causesFlinch: true, 
-            _causesStun: 50, 
+            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+            _causesFlinch: true,
+            _causesStun: 50,
             _onHitForwardBackward: -300f, 
             _onHitRightLeft: 50f);
 
@@ -162,11 +149,11 @@ public class AtkStyleWish : AtkStyle {
 
         //play the animations
         currentAttack.data.HitboxAnimator.Play(currentAttack.data.HitboxAnimation);
-        playerAnimator.Play(currentAttack.data.GFXAnimation);
+        animator.Play(currentAttack.data.GFXAnimation);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
-        movement.pointToCursor(); //this is a pretty accurately directed move so it goes right to the cursor's direction
-        StartCoroutine(movement.playerMotor.timedBurst(0.3f, 3000f, 50f, -2000f, 0f, 1, 0.5f)); //with this move, you jump forward and abruptly stop
+        movement.pointToTarget(); //this is a pretty accurately directed move so it goes right to the cursor's direction
+        StartCoroutine(movement.motor.timedBurst(0.3f, 3000f, 50f, -2000f, 0f, 1, 0.5f)); //with this move, you jump forward and abruptly stop
 
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 20; //always remember to reset the idle counter
     }
@@ -242,11 +229,11 @@ public class AtkStyleWish : AtkStyle {
 
         //play the animations
         currentAttack.data.HitboxAnimator.Play(currentAttack.data.HitboxAnimation);
-        playerAnimator.Play(currentAttack.data.GFXAnimation);
+        animator.Play(currentAttack.data.GFXAnimation);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
-        movement.pointTowardCursor(20f); //this move doesn't follow the cursor extremely well but it's a wide attack so it doesn't need to that much
-        StartCoroutine(movement.playerMotor.timedBurst(0.2f, 400f, 50f, 0f, 0f, 0, 0f)); //this move moves you a smidge forward
+        movement.pointTowardTarget(20f); //this move doesn't follow the cursor extremely well but it's a wide attack so it doesn't need to that much
+        StartCoroutine(movement.motor.timedBurst(0.2f, 400f, 50f, 0f, 0f, 0, 0f)); //this move moves you a smidge forward
 
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 25; //always remember to reset the idle counter
     }
@@ -339,11 +326,11 @@ public class AtkStyleWish : AtkStyle {
 
         //play the animations
         currentAttack.data.HitboxAnimator.Play(currentAttack.data.HitboxAnimation);
-        playerAnimator.Play(currentAttack.data.GFXAnimation);
+        animator.Play(currentAttack.data.GFXAnimation);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
-        movement.pointToCursor(); //this is a pretty accurately directed move so it goes right to the cursor's direction
-        StartCoroutine(movement.playerMotor.timedBurst(0.2f, 400f, -50f, 0f, 0f, 0, 0f)); //this move moves you a smidge forward
+        movement.pointToTarget(); //this is a pretty accurately directed move so it goes right to the cursor's direction
+        StartCoroutine(movement.motor.timedBurst(0.2f, 400f, -50f, 0f, 0f, 0, 0f)); //this move moves you a smidge forward
 
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 25; //always remember to reset the idle counter
     }
@@ -442,11 +429,11 @@ public class AtkStyleWish : AtkStyle {
 
         //play the animations
         currentAttack.data.HitboxAnimator.Play(currentAttack.data.HitboxAnimation);
-        playerAnimator.Play(currentAttack.data.GFXAnimation);
+        animator.Play(currentAttack.data.GFXAnimation);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
-        movement.pointToCursor(); //this is a pretty accurately directed move so it goes right to the cursor's direction
-        StartCoroutine(movement.playerMotor.timedBurst(0.1f, 300f, 50f, 0f, 0f, 0, 0f)); //this move moves you a smidge forward
+        movement.pointToTarget(); //this is a pretty accurately directed move so it goes right to the cursor's direction
+        StartCoroutine(movement.motor.timedBurst(0.1f, 300f, 50f, 0f, 0f, 0, 0f)); //this move moves you a smidge forward
 
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 30; //always remember to reset the idle counter
     }

@@ -2,14 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerBridgeWish : MonoBehaviour { //bridges between player input and the attacks in the Wish attacking style. Used so that it can be bridged via AI instead for different stuff if need be.
+public class PlayerBridgeWish : PlayerBridge { //bridges between player input and the attacks in the Wish attacking style. Used so that it can be bridged via AI instead for different stuff if need be.
 
-    public PlayerInput playIn;
-    public AtkStyleWish wish;
-    public StatusManager status;
-
+    new public AtkStyleWish style;
     public int drawCount;
-
 
     // Use this for initialization
     void Start () {
@@ -18,17 +14,19 @@ public class PlayerBridgeWish : MonoBehaviour { //bridges between player input a
 	
 	// Update is called once per frame
 	void Update () {
-        print(wish.state);
-        wish.playerAnimator.SetBool("sheathed", status.sheathed);
+        style.animator.SetBool("sheathed", status.sheathed);
+
+        //handling defences (see PlayerBridge)
+        handleDefences();
 
         //unsheathing
         if (status.sheathed == true && playIn.button1 && status.canAttack()) {
             if (status.sprinting) { // the player performs an unsheathe attack if sprinting at the point of drawing their weapon
-                wish.standardBladework1();
+                style.standardBladework1();
                 status.sheathed = false;
             } else {
-                wish.playerAnimator.Play("Draw", 1);//play the unsheathing animation
-                wish.state = AtkStyleWish.attackStates.drawing;
+                style.animator.Play("MainBladeOn", 1);//play the unsheathing animation
+                style.state = AtkStyleWish.attackStates.drawing;
                 drawCount = 10;
                 //play unsheathing animation for the body
             }
@@ -36,33 +34,33 @@ public class PlayerBridgeWish : MonoBehaviour { //bridges between player input a
 
         if (status.sheathed == false) { //only do attack style stuff when unsheathed
             //evades. Wish style has four directional evades out of attacks.
-            if (playIn.evade && status.canRoll() && wish.state != AtkStyleWish.attackStates.idle) {
+            if (playIn.evade && status.canRoll() && style.state != AtkStyleWish.attackStates.idle) {
                 if (playIn.pointForward == true) {
-                    wish.evadeForward();
+                    style.evadeForward();
                 }
                 if (playIn.pointBack == true) {
-                    wish.evadeBack();
+                    style.evadeBack();
                 }
                 if (playIn.pointRight == true) {
-                    wish.evadeRight();
+                    style.evadeRight();
                 }
                 if (playIn.pointLeft == true) {
-                    wish.evadeLeft();
+                    style.evadeLeft();
                 } //all of these evades do not alter the direction that the player is facing.
             }
 
             //attacks
             if (status.canAttack()) {
                 
-                switch (wish.state) {
+                switch (style.state) {
                     
                     case AtkStyleWish.attackStates.idle:
                         if (playIn.sheathe) { //from idle you can sheathe again
                             status.sheathed = true;
-                            wish.playerAnimator.Play("Sheathe", 1); //play the sheathing animation
+                            style.animator.Play("MainBladeOff", 1); //play the sheathing animation
                         }
                         if (playIn.fwdA.Check()) {
-                            wish.standardBladework1();
+                            style.standardBladework1();
                         }
                         if (playIn.fwdS.Check()) {
                             //wish.standardBladework1();
@@ -83,21 +81,21 @@ public class PlayerBridgeWish : MonoBehaviour { //bridges between player input a
 
                     case AtkStyleWish.attackStates.bladework1:
                         if (playIn.fwdA.Check()) {
-                            wish.standardBladework2();
+                            style.standardBladework2();
                             print("blade2");
                         }
                         break;
 
                     case AtkStyleWish.attackStates.bladework2:
                         if (playIn.fwdA.Check()) {
-                            wish.standardBladework3();
+                            style.standardBladework3();
                             print("blade3");
                         }
                         break;
 
                     case AtkStyleWish.attackStates.bladework3:
                         if (playIn.fwdA.Check()) {
-                            wish.standardBladework4();
+                            style.standardBladework4();
                             print("blade4");
                         }
                         break;
@@ -116,8 +114,8 @@ public class PlayerBridgeWish : MonoBehaviour { //bridges between player input a
         if (drawCount > 0) {
             drawCount--;
         }
-        if (wish.state == AtkStyleWish.attackStates.drawing && drawCount <= 0) {
-            wish.state = AtkStyleWish.attackStates.idle;
+        if (style.state == AtkStyleWish.attackStates.drawing && drawCount <= 0) {
+            style.state = AtkStyleWish.attackStates.idle;
             status.sheathed = false;
         }
     }
