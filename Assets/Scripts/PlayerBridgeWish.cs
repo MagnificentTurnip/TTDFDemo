@@ -5,7 +5,6 @@ using UnityEngine;
 public class PlayerBridgeWish : PlayerBridge { //bridges between player input and the attacks in the Wish attacking style. Used so that it can be bridged via AI instead for different stuff if need be.
 
     new public AtkStyleWish style;
-    public int drawCount;
 
     // Use this for initialization
     void Start () {
@@ -25,16 +24,15 @@ public class PlayerBridgeWish : PlayerBridge { //bridges between player input an
                 style.standardBladework1();
                 status.sheathed = false;
             } else {
-                style.animator.Play("MainBladeOn", 1);//play the unsheathing animation
                 style.state = AtkStyleWish.attackStates.drawing;
                 drawCount = 10;
-                //play unsheathing animation for the body
             }
+            style.animator.Play("MainBladeOn", 1);//play the unsheathing animation
         }
 
         if (status.sheathed == false) { //only do attack style stuff when unsheathed
             //evades. Wish style has four directional evades out of attacks.
-            if (playIn.evade && status.canRoll() && style.state != AtkStyleWish.attackStates.idle) {
+            if ((lck == buffer.evade || playIn.evade) && status.canRoll() && style.state != AtkStyleWish.attackStates.idle) {
                 if (playIn.pointForward == true) {
                     style.evadeForward();
                 }
@@ -59,15 +57,27 @@ public class PlayerBridgeWish : PlayerBridge { //bridges between player input an
                             status.sheathed = true;
                             style.animator.Play("MainBladeOff", 1); //play the sheathing animation
                         }
-                        if (playIn.fwdA.Check()) {
+                        if (cmdOut == buffer.fwdA || lck == buffer.fwdA) {
                             style.standardBladework1();
                         }
-                        if (playIn.fwdS.Check()) {
-                            //wish.standardBladework1();
+                        if (cmdOut == buffer.fwdS || lck == buffer.fwdS) {
+                            style.lightBladework1();
+                        }
+                        if (cmdOut == buffer.fwdD || lck == buffer.fwdD) {
+                            style.heavyBladework1();
                         }
                         break;
 
                     case AtkStyleWish.attackStates.fEvade:
+                        if (cmdOut == buffer.fwdA || lck == buffer.fwdA) {
+                            style.standardBladework3();
+                        }
+                        if (cmdOut == buffer.fwdS || lck == buffer.fwdS) {
+                            style.lightBladework3();
+                        }
+                        if (cmdOut == buffer.fwdD || lck == buffer.fwdD) {
+                            style.heavyBladework3();
+                        }
                         break;
 
                     case AtkStyleWish.attackStates.bEvade:
@@ -80,23 +90,38 @@ public class PlayerBridgeWish : PlayerBridge { //bridges between player input an
                         break;
 
                     case AtkStyleWish.attackStates.bladework1:
-                        if (playIn.fwdA.Check()) {
+                        if (cmdOut == buffer.fwdA || lck == buffer.fwdA) {
                             style.standardBladework2();
-                            print("blade2");
+                        }
+                        if (cmdOut == buffer.fwdS || lck == buffer.fwdS) {
+                            style.lightBladework2();
+                        }
+                        if (cmdOut == buffer.fwdD || lck == buffer.fwdD) {
+                            style.heavyBladework2();
                         }
                         break;
 
                     case AtkStyleWish.attackStates.bladework2:
-                        if (playIn.fwdA.Check()) {
+                        if (cmdOut == buffer.fwdA || lck == buffer.fwdA) {
                             style.standardBladework3();
-                            print("blade3");
+                        }
+                        if (cmdOut == buffer.fwdS || lck == buffer.fwdS) {
+                            style.lightBladework3();
+                        }
+                        if (cmdOut == buffer.fwdD || lck == buffer.fwdD) {
+                            style.heavyBladework3();
                         }
                         break;
 
                     case AtkStyleWish.attackStates.bladework3:
-                        if (playIn.fwdA.Check()) {
+                        if (cmdOut == buffer.fwdA || lck == buffer.fwdA) {
                             style.standardBladework4();
-                            print("blade4");
+                        }
+                        if (cmdOut == buffer.fwdS || lck == buffer.fwdS) {
+                            style.lightBladework4();
+                        }
+                        if (cmdOut == buffer.fwdD || lck == buffer.fwdD) {
+                            style.heavyBladework4();
                         }
                         break;
 
@@ -118,6 +143,13 @@ public class PlayerBridgeWish : PlayerBridge { //bridges between player input an
             style.state = AtkStyleWish.attackStates.idle;
             status.sheathed = false;
         }
+
+        if (status.sheathed == false && drawCount <= 0) {
+            cmdBuffer();
+        }
+
+        //print(style.state);
+        lckBuffer();
     }
 
 

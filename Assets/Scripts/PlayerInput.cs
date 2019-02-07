@@ -151,10 +151,6 @@ public class PlayerInput : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        //print(fwdA.Check());
-        //print(fwdS.Check());
-        //print(fwdAS.Check());
-
         cursorDistance = Vector2.Distance(new Vector2(Screen.width / 2, Screen.height / 2), Input.mousePosition); //get distance from player to cursor
 
         calculateMouseAngle(); //calculate the angles for the mouse so we can then discern where it's pointing

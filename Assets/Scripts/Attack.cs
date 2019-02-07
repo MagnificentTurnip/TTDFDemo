@@ -91,7 +91,7 @@ public class Attack : MonoBehaviour {
         public float MPcost;
 
         public bool causesFlinch; //Flinch is an instantaneous effect, so it can never be active for more than one frame from an attack. So, it's a bool.
-        public int causesVulnerable; //the other ones are conditions, active for a number of frames equal to these variables.
+        public int causesVulnerable; //the other ones are conditions, active for a number of frames equal to these variables plus whatever number remains of attackDuration unless it is zero.
         public int causesSilenced;
         public int causesFloored;
         public int causesAirborne;
@@ -140,6 +140,7 @@ public class Attack : MonoBehaviour {
 
     public List<GameObject> thingsHit;
     public int same;
+    public TrailRenderer trail;
 
     public atkData data;
     public hitProperties onHit;
@@ -155,11 +156,72 @@ public class Attack : MonoBehaviour {
 
     // Use this for initialization
     void Start () { //get the collider of the object - either sphere or box
-
+        trail = GetComponent<TrailRenderer>();
     }
 
     // Update is called once per frame
     void Update () {
-		
+
+        //set the colour of the trail
+        if (data.unblockable == 3) { //unblockable 3 attacks are red
+            //maybe also have different albedo maps set for each thing
+            //trail.material.SetTexture("_MainTex", (public Texture u3Tex));
+            if (data.attackDelay > 0) {
+                trail.material.SetColor("_Color", new Color(1f, 0.3f, 0.3f, 0.2f));
+            }
+
+            else if (data.attackDuration > 0) {
+                trail.material.SetColor("_Color", new Color(1f, 0.3f, 0.3f, 0.8f));
+            }
+
+            else if (data.attackEnd > 0) {
+                trail.material.SetColor("_Color", new Color(1f, 0.3f, 0.3f, 0.2f));
+            }
+        }
+
+
+        else if (data.unblockable == 2) { //unblockable 2 attacks are blue
+            if (data.attackDelay > 0) {
+                trail.material.SetColor("_Color", new Color(0.3f, 0.3f, 1f, 0.1f));
+            }
+
+            else if (data.attackDuration > 0) {
+                trail.material.SetColor("_Color", new Color(0.3f, 0.3f, 1f, 0.7f));
+            }
+
+            else if (data.attackEnd > 0) {
+                trail.material.SetColor("_Color", new Color(0.3f, 0.3f, 1f, 0.1f));
+            }
+        }
+
+        else if (data.unblockable == 1) { //unblockable 1 attacks are green
+            if (data.attackDelay > 0) {
+                trail.material.SetColor("_Color", new Color(0.3f, 1f, 0.3f, 0.1f));
+            }
+
+            else if (data.attackDuration > 0) {
+                trail.material.SetColor("_Color", new Color(0.3f, 1f, 0.3f, 0.7f));
+            }
+
+            else if (data.attackEnd > 0) {
+                trail.material.SetColor("_Color", new Color(0.3f, 1f, 0.3f, 0.1f));
+            }
+        }
+
+        else { //regular attacks are grey/white
+            if (data.attackDelay > 0) {
+                trail.material.SetColor("_Color", new Color(0.8f, 0.8f, 0.8f, 0.1f));
+            }
+
+            else if (data.attackDuration > 0) {
+                trail.material.SetColor("_Color", new Color(0.8f, 0.8f, 0.8f, 0.7f));
+            }
+
+            else if (data.attackEnd > 0) {
+                trail.material.SetColor("_Color", new Color(0.8f, 0.8f, 0.8f, 0.1f));
+            }
+        }
+
+        
 	}
 }

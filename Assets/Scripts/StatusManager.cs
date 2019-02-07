@@ -31,7 +31,7 @@ public class StatusManager : MonoBehaviour {
     //END OF MISCELLANEOUS STATES
 
     //CONDITIONS
-    public bool floored; //the target is on the floor. The target can evade to get up and end the condition.
+    public int floored; //the target is on the floor. The target can evade to get up and end the condition.
     public int vulnerable; //this condition itself doesn't do anything bad, but being hit by most things generally ends up worse for someone who is vulnerable than someone who isn't.
     public int silenced; //the target is prevented from casting or channeling spells.
     public int airborne; //the target is up in the air. Nothing is inherently debilitating about this condition, but it carries with it interactions of various niceness.
@@ -70,7 +70,7 @@ public class StatusManager : MonoBehaviour {
         SPRegenEnabled = true;
         MPRegenEnabled = true;
 
-        floored = false;
+        floored = 0;
         vulnerable = 0;
         silenced = 0;
         airborne = 0;
@@ -82,7 +82,7 @@ public class StatusManager : MonoBehaviour {
 	}
 
     //Flinch (breaks the entity out of all current actions)
-    void flinch() {
+    public void flinch() {
         rollLock = false;
         guardLock = false;
         parryLock = false;
@@ -91,14 +91,16 @@ public class StatusManager : MonoBehaviour {
         castLock = false;
         channelLock = false;
 
-        atkStyle.state = AtkStyle.attackStates.idle;
-        //if getcomponent in children attack? componentattack.delete();
-        //and maybe play the flinch animation I guess not sure
-     }
+        atkStyle.forceIdle();
+        atkStyle.destroyAllAttacks();
+        atkStyle.movement.motor.rb.velocity *= 0.2f; //reduce velocity because wahey you're being hit
+
+        animator.Play("flinch");//and maybe play the flinch animation I guess not sure
+    }
 
     //STATE CHECKS
     public bool isFloored() { //FLOORED
-        if (floored) {
+        if (floored > 0) {
             return true;
         }
         return false;
@@ -249,6 +251,9 @@ public class StatusManager : MonoBehaviour {
         if (parryFrames > 0) {
             parryFrames -= 1;
         }
+        if (floored > 0) {
+            floored -= 1;
+        }
         if (vulnerable > 0) {
             vulnerable -= 1;
         }
@@ -279,6 +284,8 @@ public class StatusManager : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-		
+        //THINGS FOR THE ANIMATOR
+        animator.SetBool("stunned", isStunned());
+        animator.SetBool("guardStunned", isGuardStunned());
 	}
 }

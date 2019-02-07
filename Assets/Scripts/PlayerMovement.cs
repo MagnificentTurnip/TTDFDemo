@@ -15,15 +15,12 @@ public class PlayerMovement : Movement {
 
     public override void pointToTarget() { //a function that makes the player point toward the cursor
         transform.rotation = Quaternion.Euler(new Vector3(0, playerInput.toMouseAngle, 0)); //rotation happens on the Y axis
-        print("instead of this overwriting it");
     }
 
     public override void pointTowardTarget(float maxTurn) {
         if (playerInput.mouseDifAngle > maxTurn) { //the angle could be over the maximum, and to the player's right
-            print(transform.localEulerAngles.y + maxTurn);
             transform.rotation = Quaternion.Euler(new Vector3(0, transform.localEulerAngles.y+maxTurn, 0)); //in which case, turn it the maximum amount allowed to the right
         } else if (playerInput.mouseDifAngle < -maxTurn) { //or it could also be over the maximum to the left
-            print(transform.localEulerAngles.y - maxTurn);
             transform.rotation = Quaternion.Euler(new Vector3(0, transform.localEulerAngles.y-maxTurn, 0)); //in which case, turn it the maximum amount to the left
         } else { //if neither of these, then the cursor is within the maximum turning angle
             transform.rotation = Quaternion.Euler(new Vector3(0, playerInput.toMouseAngle, 0)); //then we can rotate directly to the cursor as in pointToCursor()

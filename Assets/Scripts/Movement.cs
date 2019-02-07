@@ -45,6 +45,7 @@ public class Movement : MonoBehaviour {
         yield return new WaitForSeconds(delay);
         status.rolling = false;
         Invoke("rollLockout", evadeTime);
+        print("resetroll");
     }
 
     public void rollLockout() {
