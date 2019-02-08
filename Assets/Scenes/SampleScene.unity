@@ -179,6 +179,11 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 17.13, y: -30, z: 0}
+--- !u!1 &404970402 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 100006, guid: 5a561e40871b79f44a47db47d17ba8ef,
+    type: 3}
+  m_PrefabInternal: {fileID: 1350108068}
 --- !u!4 &416118703 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400008, guid: 5a561e40871b79f44a47db47d17ba8ef,
@@ -579,6 +584,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 823668810}
+  timeOut: 0
 --- !u!114 &823668812
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -787,10 +793,12 @@ MonoBehaviour:
   hitboxAnimatorController: {fileID: 9100000, guid: ab0c6283b633f264f9f7e1996735cefc,
     type: 2}
   state: 0
+  rgtHndBone: {fileID: 1647897797}
+  lftHndBone: {fileID: 1657856958}
   stat: {fileID: 823668817}
   wraithMode: 0
   evadespeed: 2200
-  evadetime: 0.4
+  evadetime: 0.5
 --- !u!114 &823668819
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2541,6 +2549,16 @@ Light:
   m_UseColorTemperature: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+--- !u!1 &1647897797 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 100008, guid: 5a561e40871b79f44a47db47d17ba8ef,
+    type: 3}
+  m_PrefabInternal: {fileID: 2078962488}
+--- !u!1 &1657856958 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 100006, guid: 5a561e40871b79f44a47db47d17ba8ef,
+    type: 3}
+  m_PrefabInternal: {fileID: 2078962488}
 --- !u!1 &1714802474
 GameObject:
   m_ObjectHideFlags: 0
@@ -2752,6 +2770,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 1792635136}
+  timeOut: 0
 --- !u!114 &1792635135
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2934,6 +2953,11 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.49819195, y: 0.041682415, z: -0.00085518695}
     m_Extent: {x: 0.5226284, y: 0.07657373, z: 0.018418131}
   m_DirtyAABB: 0
+--- !u!1 &1940608010 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 100008, guid: 5a561e40871b79f44a47db47d17ba8ef,
+    type: 3}
+  m_PrefabInternal: {fileID: 1350108068}
 --- !u!1 &1980608045
 GameObject:
   m_ObjectHideFlags: 0
@@ -2987,6 +3011,8 @@ MonoBehaviour:
   hitboxAnimatorController: {fileID: 9100000, guid: ab0c6283b633f264f9f7e1996735cefc,
     type: 2}
   state: 0
+  rgtHndBone: {fileID: 1940608010}
+  lftHndBone: {fileID: 404970402}
   stat: {fileID: 1980608048}
   wraithMode: 0
   evadespeed: 2200
@@ -3055,6 +3081,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 1980608051}
+  timeOut: 0
 --- !u!114 &1980608050
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3171,7 +3198,7 @@ MonoBehaviour:
   style: {fileID: 1980608046}
   status: {fileID: 1980608050}
   buh: 0
-  attacking: 0
+  attacking: 1
 --- !u!114 &1980608056
 MonoBehaviour:
   m_ObjectHideFlags: 0

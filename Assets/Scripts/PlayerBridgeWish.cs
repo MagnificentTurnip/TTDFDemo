@@ -47,6 +47,12 @@ public class PlayerBridgeWish : PlayerBridge { //bridges between player input an
                 } //all of these evades do not alter the direction that the player is facing.
             }
 
+            //manage regular movement rolling transitioning momentarily into the fEvade state
+            if ((lck == buffer.evade || playIn.evade) && status.canRoll() && style.state == AtkStyleWish.attackStates.idle) {
+                style.state = AtkStyleWish.attackStates.fEvade; //set the attack state;
+                style.idleCounter = 30; //always remember to reset the idle counter
+            }
+
             //attacks
             if (status.canAttack()) {
                 

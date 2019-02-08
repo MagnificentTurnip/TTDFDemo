@@ -6,6 +6,7 @@ public class Motor : MonoBehaviour {
 
     public Rigidbody rb;
     float speed;
+    public bool timeOut;
 
     public void SetSpeed(float inSpeed) { //sets the speed of the motor, self-explanatory
         speed = inSpeed;
@@ -22,12 +23,13 @@ public class Motor : MonoBehaviour {
     }
 
     public IEnumerator timedBurst(float timeBeforeStart, float initialFB, float initialRL, float incrementFB, float incrementRL, int totalKeyframes, float keyframeInterval) {
+        timeOut = false;
         yield return new WaitForSeconds(timeBeforeStart);
         rb.velocity = new Vector3(0, 0, 0);
         rb.AddForce(transform.forward * initialFB);
         rb.AddForce(transform.right * initialRL);
         yield return new WaitForSeconds(keyframeInterval);
-        if (totalKeyframes > 1) {
+        if (totalKeyframes > 1 && timeOut == false) {
             StartCoroutine(timedBurst(0f, initialFB + incrementFB, initialRL + incrementRL, incrementFB, incrementRL, totalKeyframes - 1, keyframeInterval));
         }
     }

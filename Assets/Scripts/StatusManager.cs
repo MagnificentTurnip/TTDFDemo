@@ -95,6 +95,10 @@ public class StatusManager : MonoBehaviour {
         atkStyle.destroyAllAttacks();
         atkStyle.movement.motor.rb.velocity *= 0.2f; //reduce velocity because wahey you're being hit
 
+        if (GetComponent<Motor>()) { //if the flinching entity has a motor, ensure that motor.timedBurst won't cause unexpected movement
+            GetComponent<Motor>().timeOut = true;
+        }
+
         animator.Play("flinch");//and maybe play the flinch animation I guess not sure
     }
 
@@ -158,7 +162,7 @@ public class StatusManager : MonoBehaviour {
     }
 
     public bool canRoll() { //CAN EVADE
-        if (isStunned() || isGuardStunned() || isAirborne() || isParryStunned() || rollLock || attackLock || castLock) {
+        if (isStunned() || isGuardStunned() || isAirborne() || isParryStunned() || parryLock || rollLock || attackLock || castLock) {
             return false;
         }
         else {
@@ -167,7 +171,7 @@ public class StatusManager : MonoBehaviour {
     }
 
     public bool canAttack() { //CAN ATTACK
-        if (isFloored() || isStunned() || isGuardStunned() || isAirborne() || isParryStunned() || rollLock || attackLock || castLock) {
+        if (isFloored() || isStunned() || isGuardStunned() || isAirborne() || isParryStunned() || parryLock || rolling || attackLock || castLock) {
             return false;
         }
         else {
