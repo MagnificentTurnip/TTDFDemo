@@ -158,7 +158,6 @@ public class Hittable : MonoBehaviour {
                         }
 
                         if (currentAttack.onHit.causesGuardStun + currentAttack.data.attackDuration > status.guardStunned && currentAttack.onHit.causesGuardStun != 0) {
-                            print("why");
                             print(currentAttack.onHit.causesGuardStun);
                             status.guardStunned = currentAttack.onHit.causesGuardStun + currentAttack.data.attackDuration;
                         }

@@ -13,7 +13,8 @@ public class verySimpleAI : MonoBehaviour {
     void Start () {
         buh = true;
         attacking = true;
-	}
+        style.animator.Play("MainBladeOn", 1);//play the unsheathing animation
+    }
 	
 	// Update is called once per frame
 	void Update () {

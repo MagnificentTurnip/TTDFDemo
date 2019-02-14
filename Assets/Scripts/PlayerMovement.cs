@@ -6,7 +6,7 @@ public class PlayerMovement : Movement {
 
     //variable declarations
 
-    PlayerInput playerInput; //going to need some input or else you won't be able to actually control anything
+    public PlayerInput playerInput; //going to need some input or else you won't be able to actually control anything
     Vector3 mousePos; //a vector for the current position of the mouse on screen
     Vector3 objectPos; //a vector for the current position of the object on screen
     public Camera cam; //going to need to put the main camera in here, because for some reason unity currently hates using Camera.main

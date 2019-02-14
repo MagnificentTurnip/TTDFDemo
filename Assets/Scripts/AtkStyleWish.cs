@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class AtkStyleWish : AtkStyle {
 
-    public enum attackStates { drawing, idle, fEvade, bEvade, rEvade, lEvade, spellcast, fParry, bParry, bladework1, bladework2, bladework3, bladework4 };
+    public enum attackStates { drawing, idle, fEvade, bEvade, rEvade, lEvade, spellcast, fParry, bParry, bladework1, bladework2, bladework3, bladework4 }; //Think I'm going to need a guard state because guarding between attacks is possible and not sure if I want that
     public attackStates state;
 
     public GameObject rgtHndBone; //just a couple of relevant bones for the sake of making sonme simple animations easier
@@ -972,9 +972,9 @@ public class AtkStyleWish : AtkStyle {
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "heavyBladework1",
             _HitboxAnimation: "rgtHndMatch", //just uses the default animation that matches the hitbox to the right hand bone
-            _attackDelay: 20, //delay of 20 frames before the attack starts
-            _attackDuration: 25, //25 frames within which the attack is active
-            _attackEnd: 10, //and 10 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
+            _attackDelay: 25, //delay of 25 frames before the attack starts
+            _attackDuration: 30, //30 frames within which the attack is active
+            _attackEnd: 7, //and 7 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
             _hitsAirborne: true, //hits airborne, standing and floored.
             _hitsStanding: true,
             _hitsFloored: true,
@@ -1075,8 +1075,8 @@ public class AtkStyleWish : AtkStyle {
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "heavyBladework2",
             _HitboxAnimation: "rgtHndMatch", //just uses the default animation that matches the hitbox to the right hand bone
-            _attackDelay: 20, //delay of 20 frames before the attack starts
-            _attackDuration: 25, //25 frames within which the attack is active
+            _attackDelay: 10, //delay of 20 frames before the attack starts
+            _attackDuration: 15, //25 frames within which the attack is active
             _attackEnd: 10, //and 10 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
             _hitsAirborne: true, //hits airborne, standing and floored.
             _hitsStanding: true,
@@ -1177,9 +1177,9 @@ public class AtkStyleWish : AtkStyle {
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "heavyBladework2",
             _HitboxAnimation: "rgtHndMatch", //just uses the default animation that matches the hitbox to the right hand bone
-            _attackDelay: 20, //delay of 20 frames before the attack starts
-            _attackDuration: 25, //25 frames within which the attack is active
-            _attackEnd: 10, //and 10 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
+            _attackDelay: 45, //delay of 20 frames before the attack starts
+            _attackDuration: 20, //25 frames within which the attack is active
+            _attackEnd: 15, //and 10 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
             _hitsAirborne: true, //hits airborne, standing and floored.
             _hitsStanding: true,
             _hitsFloored: true,
@@ -1280,9 +1280,9 @@ public class AtkStyleWish : AtkStyle {
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "heavyBladework3",
             _HitboxAnimation: "rgtHndMatch", //just uses the default animation that matches the hitbox to the right hand bone
-            _attackDelay: 20, //delay of 20 frames before the attack starts
+            _attackDelay: 22, //delay of 20 frames before the attack starts
             _attackDuration: 25, //25 frames within which the attack is active
-            _attackEnd: 10, //and 10 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
+            _attackEnd: 15, //and 10 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
             _hitsAirborne: true, //hits airborne, standing and floored.
             _hitsStanding: true,
             _hitsFloored: true,
@@ -1383,8 +1383,8 @@ public class AtkStyleWish : AtkStyle {
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "heavyBladework4",
             _HitboxAnimation: "rgtHndMatch", //just uses the default animation that matches the hitbox to the right hand bone
-            _attackDelay: 20, //delay of 20 frames before the attack starts
-            _attackDuration: 25, //25 frames within which the attack is active
+            _attackDelay: 5, //delay of 20 frames before the attack starts
+            _attackDuration: 20, //25 frames within which the attack is active
             _attackEnd: 10, //and 10 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
             _hitsAirborne: true, //hits airborne, standing and floored.
             _hitsStanding: true,
@@ -1485,9 +1485,9 @@ public class AtkStyleWish : AtkStyle {
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "heavyBladework4",
             _HitboxAnimation: "rgtHndMatch", //just uses the default animation that matches the hitbox to the right hand bone
-            _attackDelay: 20, //delay of 20 frames before the attack starts
+            _attackDelay: 38, //delay of 20 frames before the attack starts
             _attackDuration: 25, //25 frames within which the attack is active
-            _attackEnd: 10, //and 10 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
+            _attackEnd: 20, //and 10 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
             _hitsAirborne: true, //hits airborne, standing and floored.
             _hitsStanding: true,
             _hitsFloored: true,
