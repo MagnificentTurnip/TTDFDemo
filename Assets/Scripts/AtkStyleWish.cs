@@ -45,34 +45,56 @@ public class AtkStyleWish : AtkStyle {
         }
     }
 
+    public override void bParry() {
+        animator.Play("bParry");
+        if (status.sheathed == false) {
+            state = attackStates.bParry; //set the attack state;
+            idleCounter = 60; //always remember to reset the idle counter
+        }
+        status.parryLock = 60;
+        status.parryFrames = 10;
+        movement.motor.instantBurst(-100f, 50f);
+    }
+
+    public override void fParry() {
+        animator.Play("fParry");
+        if (status.sheathed == false) {
+            state = attackStates.fParry; //set the attack state;
+            idleCounter = 60; //always remember to reset the idle counter
+        }
+        status.parryLock = 60;
+        status.parryFrames = 10;
+        movement.motor.instantBurst(400f, -50f);
+    }
+
     public void defaultAttack() {
         currentAttack = Instantiate(attack).GetComponent<Attack>();
     }
 
     public void evadeForward() {
         movement.evade(evadespeed, 0f, evadetime);
-        animator.Play("forwardRoll");
+        animator.Play("fRoll");
         state = attackStates.fEvade; //set the attack state;
         idleCounter = 30; //always remember to reset the idle counter
     }
 
     public void evadeBack() {
         movement.evade(-evadespeed, 0f, evadetime);
-        animator.Play("forwardRoll");
+        animator.Play("bRoll", -1, 0.3f);
         state = attackStates.bEvade; //set the attack state;
         idleCounter = 30; //always remember to reset the idle counter
     }
 
     public void evadeRight() {
         movement.evade(0f, evadespeed, evadetime);
-        animator.Play("forwardRoll");
+        animator.Play("rRoll");
         state = attackStates.rEvade; //set the attack state;
         idleCounter = 30; //always remember to reset the idle counter
     }
 
     public void evadeLeft() {
         movement.evade(0f, -evadespeed, evadetime);
-        animator.Play("forwardRoll");
+        animator.Play("lRoll");
         state = attackStates.lEvade; //set the attack state;
         idleCounter = 30; //always remember to reset the idle counter
     }
@@ -85,6 +107,7 @@ public class AtkStyleWish : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
+            _attackOwnerStatus: status, //here's the status manager
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "standardBladework1",
@@ -175,7 +198,7 @@ public class AtkStyleWish : AtkStyle {
         animator.Play(currentAttack.data.GFXAnimation);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
-        movement.pointToTarget(); //this is a pretty accurately directed move so it goes right to the cursor's direction
+        movement.pointToTarget(); //this move takes perfect directional input, meaning you can even direct it outside of the space within which you can input the command for it
         StartCoroutine(movement.motor.timedBurst(0.3f, 3000f, 50f, 0f, 0f, 0, 0f)); //with this move, you jump forward
 
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 20; //always remember to reset the idle counter
@@ -189,6 +212,7 @@ public class AtkStyleWish : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
+            _attackOwnerStatus: status, //here's the status manager
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "standardBladework2",
@@ -269,6 +293,7 @@ public class AtkStyleWish : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
+            _attackOwnerStatus: status, //here's the status manager
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "standardBladework3",
@@ -352,7 +377,7 @@ public class AtkStyleWish : AtkStyle {
         animator.Play(currentAttack.data.GFXAnimation);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
-        movement.pointToTarget(); //this is a pretty accurately directed move so it goes right to the cursor's direction
+        movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
         StartCoroutine(movement.motor.timedBurst(0.2f, 400f, -50f, 0f, 0f, 0, 0f)); //this move moves you a smidge forward
 
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 25; //always remember to reset the idle counter
@@ -366,6 +391,7 @@ public class AtkStyleWish : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
+            _attackOwnerStatus: status, //here's the status manager
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "standardBladework4",
@@ -455,7 +481,7 @@ public class AtkStyleWish : AtkStyle {
         animator.Play(currentAttack.data.GFXAnimation);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
-        movement.pointToTarget(); //this is a pretty accurately directed move so it goes right to the cursor's direction
+        movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
         StartCoroutine(movement.motor.timedBurst(0.1f, 300f, 50f, 0f, 0f, 0, 0f)); //this move moves you a smidge forward
 
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 30; //always remember to reset the idle counter
@@ -469,6 +495,7 @@ public class AtkStyleWish : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
+            _attackOwnerStatus: status, //here's the status manager
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "lightBladework1",
@@ -542,7 +569,7 @@ public class AtkStyleWish : AtkStyle {
         animator.Play(currentAttack.data.GFXAnimation);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
-        movement.pointToTarget(); //this is a pretty accurately directed move so it goes right to the cursor's direction
+        movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
         StartCoroutine(movement.motor.timedBurst(0.4f, 500f, -100f, -1500f, 100f, 2, 0.1f)); //with this move, you jump forward and abruptly stop
 
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 20; //always remember to reset the idle counter
@@ -556,6 +583,7 @@ public class AtkStyleWish : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
+            _attackOwnerStatus: status, //here's the status manager
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "lightBladework2",
@@ -629,7 +657,7 @@ public class AtkStyleWish : AtkStyle {
         animator.Play(currentAttack.data.GFXAnimation);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
-        movement.pointToTarget(); //this is a pretty accurately directed move so it goes right to the cursor's direction
+        movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
         StartCoroutine(movement.motor.timedBurst(0.3f, 500f, 100f, -1200f, -100f, 2, 0.15f)); //with this move, you jump forward and abruptly stop
 
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 20; //always remember to reset the idle counter
@@ -643,6 +671,7 @@ public class AtkStyleWish : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
+            _attackOwnerStatus: status, //here's the status manager
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "lightBladework3",
@@ -709,7 +738,7 @@ public class AtkStyleWish : AtkStyle {
         animator.Play(currentAttack.data.GFXAnimation);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
-        movement.pointToTarget(); //this is a pretty accurately directed move so it goes right to the cursor's direction
+        movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
         StartCoroutine(movement.motor.timedBurst(0.2f, 300f, 0f, 300f, 0f, 2, 0.4f)); //with this move, you jump forward and abruptly stop
 
 
@@ -722,6 +751,7 @@ public class AtkStyleWish : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
+            _attackOwnerStatus: status, //here's the status manager
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "lightBladework3",
@@ -802,6 +832,7 @@ public class AtkStyleWish : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
+            _attackOwnerStatus: status, //here's the status manager
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "lightBladework4",
@@ -875,7 +906,7 @@ public class AtkStyleWish : AtkStyle {
         animator.Play(currentAttack.data.GFXAnimation);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
-        movement.pointToTarget(); //this is a pretty accurately directed move so it goes right to the cursor's direction
+        movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
         StartCoroutine(movement.motor.timedBurst(0.2f, 600f, 0f, -2500f, 0f, 2, 0.6f)); //with this move, you jump forward and abruptly stop
 
 
@@ -888,6 +919,7 @@ public class AtkStyleWish : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
+            _attackOwnerStatus: status, //here's the status manager
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "lightBladework4",
@@ -968,6 +1000,7 @@ public class AtkStyleWish : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
+            _attackOwnerStatus: status, //here's the status manager
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "heavyBladework1",
@@ -975,9 +1008,9 @@ public class AtkStyleWish : AtkStyle {
             _attackDelay: 25, //delay of 25 frames before the attack starts
             _attackDuration: 30, //30 frames within which the attack is active
             _attackEnd: 7, //and 7 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
-            _hitsAirborne: true, //hits airborne, standing and floored.
+            _hitsAirborne: true, //hits airborne, and standing.
             _hitsStanding: true,
-            _hitsFloored: true,
+            _hitsFloored: false,
             _contact: true); //and makes contact.
 
         if (debug == true) {
@@ -1004,7 +1037,7 @@ public class AtkStyleWish : AtkStyle {
         //set the attack's properties on guard
         currentAttack.onGuard = new Attack.hitProperties(
             _SPcost: 10f,
-            _causesGuardStun: 40,
+            _causesGuardStun: 30,
             _onHitForwardBackward: -250f,
             _onHitRightLeft: 50f);
 
@@ -1012,42 +1045,34 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onChargeGuard = currentAttack.onGuard; //this move doesn't charge so they're the same as on guard properties
 
         //set the attack's properties on vulnerable hit
-        tempDamage.damageAmount = 14f + (0.25f * stat.STR) + (0.25f * stat.DEX);
+        tempDamage.damageAmount = 20f + (0.5f * stat.STR) + (0.15f * stat.DEX);
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onVulnerableHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 70,
-            _causesFloored: 120,
-            _onHitForwardBackward: -300f,
-            _onHitRightLeft: 50f);
+            _onHitForwardBackward: -400f,
+            _onHitRightLeft: 100f);
 
         //set the attack's properties on vulnerable charge hit
         currentAttack.onVulnerableChargeHit = currentAttack.onVulnerableHit; //this move doesn't charge
 
         //set the attack's properties on floored hit
-        tempDamage.damageAmount = 8f + (0.25f * stat.STR) + (0.25f * stat.DEX);
-        tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onFlooredHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
-            _causesFlinch: true,
-            _causesStun: 30,
-            _onHitForwardBackward: -200f,
-            _onHitRightLeft: 50f);
+        currentAttack.onFlooredHit = currentAttack.onHit; //this move doesn't hit floored targets so just give it something to have
 
         //set the attack's properties on charged floored hit
         currentAttack.onFlooredChargeHit = currentAttack.onFlooredHit; //this move doesn't charge
 
         //set the attack's properties on airborne hit
-        tempDamage.damageAmount = 12f + (0.25f * stat.STR) + (0.25f * stat.DEX);
+        tempDamage.damageAmount = 12f + (0.35f * stat.STR) + (0.15f * stat.DEX);
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onAirborneHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
-            _causesStun: 60,
+            _causesStun: 50,
             _causesFloored: 120,
-            _onHitForwardBackward: -50f,
-            _onHitRightLeft: 50f);
+            _onHitForwardBackward: -500f,
+            _onHitRightLeft: 200f);
 
         //set the attack's properties on charged airborne hit
         currentAttack.onAirborneChargeHit = currentAttack.onAirborneHit; //this move doesn't charge
@@ -1057,7 +1082,7 @@ public class AtkStyleWish : AtkStyle {
         animator.Play(currentAttack.data.GFXAnimation);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
-        movement.pointToTarget(); //this is a pretty accurately directed move so it goes right to the cursor's direction
+        movement.pointToTarget(); //this move takes perfect directional input, meaning you can even direct it outside of the space within which you can input the command for it
         StartCoroutine(movement.motor.timedBurst(0.1f, -100f, -30f, 50f, 10f, 12, 0.05f)); //with this move, you jump forward and abruptly stop
 
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 20; //always remember to reset the idle counter
@@ -1071,6 +1096,7 @@ public class AtkStyleWish : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
+            _attackOwnerStatus: status, //here's the status manager
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "heavyBladework2",
@@ -1078,9 +1104,9 @@ public class AtkStyleWish : AtkStyle {
             _attackDelay: 10, //delay of 20 frames before the attack starts
             _attackDuration: 15, //25 frames within which the attack is active
             _attackEnd: 10, //and 10 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
-            _hitsAirborne: true, //hits airborne, standing and floored.
+            _hitsAirborne: false, //hits standing only.
             _hitsStanding: true,
-            _hitsFloored: true,
+            _hitsFloored: false,
             _contact: true); //and makes contact.
 
         if (debug == true) {
@@ -1097,9 +1123,9 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
-            _causesStun: 50,
-            _onHitForwardBackward: -300f,
-            _onHitRightLeft: 50f);
+            _causesStun: 16,
+            _onHitForwardBackward: -500f,
+            _onHitRightLeft: -100f);
 
         //set the attack's properties on charge hit
         currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
@@ -1115,42 +1141,26 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onChargeGuard = currentAttack.onGuard; //this move doesn't charge so they're the same as on guard properties
 
         //set the attack's properties on vulnerable hit
-        tempDamage.damageAmount = 14f + (0.25f * stat.STR) + (0.25f * stat.DEX);
+        tempDamage.damageAmount = 8f + (0.25f * stat.STR) + (0.05f * stat.DEX);
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onVulnerableHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
-            _causesStun: 70,
-            _causesFloored: 120,
-            _onHitForwardBackward: -300f,
-            _onHitRightLeft: 50f);
+            _causesStun: 40,
+            _onHitForwardBackward: -500f,
+            _onHitRightLeft: -100f);
 
         //set the attack's properties on vulnerable charge hit
         currentAttack.onVulnerableChargeHit = currentAttack.onVulnerableHit; //this move doesn't charge
 
         //set the attack's properties on floored hit
-        tempDamage.damageAmount = 8f + (0.25f * stat.STR) + (0.25f * stat.DEX);
-        tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onFlooredHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
-            _causesFlinch: true,
-            _causesStun: 30,
-            _onHitForwardBackward: -200f,
-            _onHitRightLeft: 50f);
+        currentAttack.onFlooredHit = currentAttack.onHit; //this attack doesn't hit floored targets
 
         //set the attack's properties on charged floored hit
         currentAttack.onFlooredChargeHit = currentAttack.onFlooredHit; //this move doesn't charge
 
         //set the attack's properties on airborne hit
-        tempDamage.damageAmount = 12f + (0.25f * stat.STR) + (0.25f * stat.DEX);
-        tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onAirborneHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
-            _causesFlinch: true,
-            _causesStun: 60,
-            _causesFloored: 120,
-            _onHitForwardBackward: -50f,
-            _onHitRightLeft: 50f);
+        currentAttack.onAirborneHit = currentAttack.onHit; //this attack doesn't hit airborne targets
 
         //set the attack's properties on charged airborne hit
         currentAttack.onAirborneChargeHit = currentAttack.onAirborneHit; //this move doesn't charge
@@ -1160,8 +1170,8 @@ public class AtkStyleWish : AtkStyle {
         animator.Play(currentAttack.data.GFXAnimation);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
-        movement.pointToTarget(); //this is a pretty accurately directed move so it goes right to the cursor's direction
-        StartCoroutine(movement.motor.timedBurst(0.1f, 300f, 0f, 8f, 0f, 18, 0.05f)); //with this move, you jump forward and abruptly stop
+        movement.pointTowardTarget(15f); //this move allows only 15 degrees of rotational adjustment
+        StartCoroutine(movement.motor.timedBurst(0.1f, 300f, 0f, 8f, 0f, 16, 0.05f)); //with this move, you jump forward and abruptly stop
 
 
         //THIS ATTACK HAS A SECOND ATTACK SLIGHTLY AFTER THE FIRST TAKE NOTE OF IT ----------------------------------------------------------------------------------
@@ -1173,6 +1183,7 @@ public class AtkStyleWish : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
+            _attackOwnerStatus: status, //here's the status manager
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "heavyBladework2",
@@ -1180,9 +1191,9 @@ public class AtkStyleWish : AtkStyle {
             _attackDelay: 45, //delay of 20 frames before the attack starts
             _attackDuration: 20, //25 frames within which the attack is active
             _attackEnd: 15, //and 10 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
-            _hitsAirborne: true, //hits airborne, standing and floored.
+            _hitsAirborne: false, //hits standing only.
             _hitsStanding: true,
-            _hitsFloored: true,
+            _hitsFloored: false,
             _contact: true); //and makes contact.
 
         if (debug == true) {
@@ -1199,9 +1210,9 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
-            _causesStun: 50,
+            _causesStun: 20,
             _onHitForwardBackward: -300f,
-            _onHitRightLeft: 50f);
+            _onHitRightLeft: -50f);
 
         //set the attack's properties on charge hit
         currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
@@ -1209,9 +1220,9 @@ public class AtkStyleWish : AtkStyle {
         //set the attack's properties on guard
         currentAttack.onGuard = new Attack.hitProperties(
             _SPcost: 10f,
-            _causesGuardStun: 40,
-            _onHitForwardBackward: -250f,
-            _onHitRightLeft: 50f);
+            _causesGuardStun: 15,
+            _onHitForwardBackward: -400f,
+            _onHitRightLeft: -100f);
 
         //set the attack's properties on charge guard
         currentAttack.onChargeGuard = currentAttack.onGuard; //this move doesn't charge so they're the same as on guard properties
@@ -1219,40 +1230,19 @@ public class AtkStyleWish : AtkStyle {
         //set the attack's properties on vulnerable hit
         tempDamage.damageAmount = 14f + (0.25f * stat.STR) + (0.25f * stat.DEX);
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onVulnerableHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
-            _causesFlinch: true,
-            _causesStun: 70,
-            _causesFloored: 120,
-            _onHitForwardBackward: -300f,
-            _onHitRightLeft: 50f);
+        currentAttack.onVulnerableHit = currentAttack.onHit; //this attack doesn't have additional properties on vulnerable hit
 
         //set the attack's properties on vulnerable charge hit
         currentAttack.onVulnerableChargeHit = currentAttack.onVulnerableHit; //this move doesn't charge
 
         //set the attack's properties on floored hit
-        tempDamage.damageAmount = 8f + (0.25f * stat.STR) + (0.25f * stat.DEX);
-        tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onFlooredHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
-            _causesFlinch: true,
-            _causesStun: 30,
-            _onHitForwardBackward: -200f,
-            _onHitRightLeft: 50f);
+        currentAttack.onFlooredHit = currentAttack.onHit; //this move doesn't hit floored targets
 
         //set the attack's properties on charged floored hit
         currentAttack.onFlooredChargeHit = currentAttack.onFlooredHit; //this move doesn't charge
 
         //set the attack's properties on airborne hit
-        tempDamage.damageAmount = 12f + (0.25f * stat.STR) + (0.25f * stat.DEX);
-        tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onAirborneHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
-            _causesFlinch: true,
-            _causesStun: 60,
-            _causesFloored: 120,
-            _onHitForwardBackward: -50f,
-            _onHitRightLeft: 50f);
+        currentAttack.onAirborneHit = currentAttack.onHit; //this move doesn't hit airborne targets
 
         //set the attack's properties on charged airborne hit
         currentAttack.onAirborneChargeHit = currentAttack.onAirborneHit; //this move doesn't charge
@@ -1276,14 +1266,15 @@ public class AtkStyleWish : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
+            _attackOwnerStatus: status, //here's the status manager
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "heavyBladework3",
             _HitboxAnimation: "rgtHndMatch", //just uses the default animation that matches the hitbox to the right hand bone
-            _attackDelay: 22, //delay of 20 frames before the attack starts
+            _attackDelay: 22, //delay of 22 frames before the attack starts
             _attackDuration: 25, //25 frames within which the attack is active
-            _attackEnd: 15, //and 10 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
-            _hitsAirborne: true, //hits airborne, standing and floored.
+            _attackEnd: 15, //and 15 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
+            _hitsAirborne: true, //hits airborne and standing.
             _hitsStanding: true,
             _hitsFloored: true,
             _contact: true); //and makes contact.
@@ -1302,7 +1293,8 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
-            _causesStun: 50,
+            _causesStun: 60,
+            _causesAirborne: 60,
             _onHitForwardBackward: -300f,
             _onHitRightLeft: 50f);
 
@@ -1312,50 +1304,43 @@ public class AtkStyleWish : AtkStyle {
         //set the attack's properties on guard
         currentAttack.onGuard = new Attack.hitProperties(
             _SPcost: 10f,
-            _causesGuardStun: 40,
-            _onHitForwardBackward: -250f,
+            _causesGuardStun: 17,
+            _onHitForwardBackward: -350f,
             _onHitRightLeft: 50f);
 
         //set the attack's properties on charge guard
         currentAttack.onChargeGuard = currentAttack.onGuard; //this move doesn't charge so they're the same as on guard properties
 
         //set the attack's properties on vulnerable hit
-        tempDamage.damageAmount = 14f + (0.25f * stat.STR) + (0.25f * stat.DEX);
+        tempDamage.damageAmount = 20f + (0.6f * stat.STR) + (0.05f * stat.DEX);
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onVulnerableHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
-            _causesStun: 70,
-            _causesFloored: 120,
-            _onHitForwardBackward: -300f,
-            _onHitRightLeft: 50f);
+            _causesStun: 90,
+            _causesAirborne: 90,
+            _onHitForwardBackward: -400f,
+            _onHitRightLeft: 100f);
 
         //set the attack's properties on vulnerable charge hit
         currentAttack.onVulnerableChargeHit = currentAttack.onVulnerableHit; //this move doesn't charge
 
         //set the attack's properties on floored hit
-        tempDamage.damageAmount = 8f + (0.25f * stat.STR) + (0.25f * stat.DEX);
-        tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onFlooredHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
-            _causesFlinch: true,
-            _causesStun: 30,
-            _onHitForwardBackward: -200f,
-            _onHitRightLeft: 50f);
+        currentAttack.onFlooredHit = currentAttack.onHit; //this attack doesn't hit floored targets
 
         //set the attack's properties on charged floored hit
         currentAttack.onFlooredChargeHit = currentAttack.onFlooredHit; //this move doesn't charge
 
         //set the attack's properties on airborne hit
-        tempDamage.damageAmount = 12f + (0.25f * stat.STR) + (0.25f * stat.DEX);
+        tempDamage.damageAmount = 12f + (0.4f * stat.STR) + (0.05f * stat.DEX);
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onAirborneHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
-            _causesStun: 60,
-            _causesFloored: 120,
-            _onHitForwardBackward: -50f,
-            _onHitRightLeft: 50f);
+            _causesStun: 30,
+            _causesAirborne: 30,
+            _onHitForwardBackward: -600f,
+            _onHitRightLeft: 200f);
 
         //set the attack's properties on charged airborne hit
         currentAttack.onAirborneChargeHit = currentAttack.onAirborneHit; //this move doesn't charge
@@ -1365,7 +1350,7 @@ public class AtkStyleWish : AtkStyle {
         animator.Play(currentAttack.data.GFXAnimation);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
-        movement.pointToTarget(); //this is a pretty accurately directed move so it goes right to the cursor's direction
+        movement.pointTowardTarget(25f); //this move allows 25 degrees of directional adjustment
         StartCoroutine(movement.motor.timedBurst(0.7f, 400f, -50f, 0f, 0f, 0, 0f)); //with this move, you jump forward and abruptly stop
 
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 20; //always remember to reset the idle counter
@@ -1379,6 +1364,7 @@ public class AtkStyleWish : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
+            _attackOwnerStatus: status, //here's the status manager
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "heavyBladework4",
@@ -1405,9 +1391,9 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
-            _causesStun: 50,
-            _onHitForwardBackward: -300f,
-            _onHitRightLeft: 50f);
+            _causesStun: 10,
+            _onHitForwardBackward: -500f,
+            _onHitRightLeft: -50f);
 
         //set the attack's properties on charge hit
         currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
@@ -1415,50 +1401,49 @@ public class AtkStyleWish : AtkStyle {
         //set the attack's properties on guard
         currentAttack.onGuard = new Attack.hitProperties(
             _SPcost: 10f,
-            _causesGuardStun: 40,
-            _onHitForwardBackward: -250f,
-            _onHitRightLeft: 50f);
+            _causesGuardStun: 30,
+            _onHitForwardBackward: -300f,
+            _onHitRightLeft: -40f);
 
         //set the attack's properties on charge guard
         currentAttack.onChargeGuard = currentAttack.onGuard; //this move doesn't charge so they're the same as on guard properties
 
         //set the attack's properties on vulnerable hit
-        tempDamage.damageAmount = 14f + (0.25f * stat.STR) + (0.25f * stat.DEX);
+        tempDamage.damageAmount = 8f + (0.25f * stat.STR) + (0.05f * stat.DEX);
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onVulnerableHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
-            _causesStun: 70,
-            _causesFloored: 120,
-            _onHitForwardBackward: -300f,
-            _onHitRightLeft: 50f);
+            _causesStun: 50,
+            _onHitForwardBackward: -500f,
+            _onHitRightLeft: -50f);
 
         //set the attack's properties on vulnerable charge hit
         currentAttack.onVulnerableChargeHit = currentAttack.onVulnerableHit; //this move doesn't charge
 
         //set the attack's properties on floored hit
-        tempDamage.damageAmount = 8f + (0.25f * stat.STR) + (0.25f * stat.DEX);
+        tempDamage.damageAmount = 5f + (0.2f * stat.STR) + (0.05f * stat.DEX);
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onFlooredHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
-            _causesStun: 30,
+            _causesStun: 20,
             _onHitForwardBackward: -200f,
-            _onHitRightLeft: 50f);
+            _onHitRightLeft: -50f);
 
         //set the attack's properties on charged floored hit
         currentAttack.onFlooredChargeHit = currentAttack.onFlooredHit; //this move doesn't charge
 
         //set the attack's properties on airborne hit
-        tempDamage.damageAmount = 12f + (0.25f * stat.STR) + (0.25f * stat.DEX);
+        tempDamage.damageAmount = 5f + (0.2f * stat.STR) + (0.05f * stat.DEX);
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onAirborneHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
-            _causesStun: 60,
+            _causesStun: 50,
             _causesFloored: 120,
-            _onHitForwardBackward: -50f,
-            _onHitRightLeft: 50f);
+            _onHitForwardBackward: -500f,
+            _onHitRightLeft: -50f);
 
         //set the attack's properties on charged airborne hit
         currentAttack.onAirborneChargeHit = currentAttack.onAirborneHit; //this move doesn't charge
@@ -1468,7 +1453,7 @@ public class AtkStyleWish : AtkStyle {
         animator.Play(currentAttack.data.GFXAnimation);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
-        movement.pointToTarget(); //this is a pretty accurately directed move so it goes right to the cursor's direction
+        movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
         StartCoroutine(movement.motor.timedBurst(0.3f, 800f, 0f, -50f, 0f, 12, 0.08f)); //with this move, you jump forward and abruptly stop
 
 
@@ -1481,13 +1466,14 @@ public class AtkStyleWish : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
+            _attackOwnerStatus: status, //here's the status manager
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "heavyBladework4",
             _HitboxAnimation: "rgtHndMatch", //just uses the default animation that matches the hitbox to the right hand bone
-            _attackDelay: 38, //delay of 20 frames before the attack starts
+            _attackDelay: 38, //delay of 38 frames before the attack starts
             _attackDuration: 25, //25 frames within which the attack is active
-            _attackEnd: 20, //and 10 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
+            _attackEnd: 20, //and 20 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
             _hitsAirborne: true, //hits airborne, standing and floored.
             _hitsStanding: true,
             _hitsFloored: true,
@@ -1508,8 +1494,9 @@ public class AtkStyleWish : AtkStyle {
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 50,
-            _onHitForwardBackward: -700f,
-            _onHitRightLeft: 50f);
+            _causesFloored: 120,
+            _onHitForwardBackward: -1200f,
+            _onHitRightLeft: -100f);
 
         //set the attack's properties on charge hit
         currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
@@ -1518,49 +1505,50 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onGuard = new Attack.hitProperties(
             _SPcost: 10f,
             _causesGuardStun: 40,
-            _onHitForwardBackward: -250f,
-            _onHitRightLeft: 50f);
+            _onHitForwardBackward: -1000f,
+            _onHitRightLeft: -50f);
 
         //set the attack's properties on charge guard
         currentAttack.onChargeGuard = currentAttack.onGuard; //this move doesn't charge so they're the same as on guard properties
 
         //set the attack's properties on vulnerable hit
-        tempDamage.damageAmount = 14f + (0.25f * stat.STR) + (0.25f * stat.DEX);
+        tempDamage.damageAmount = 15f + (0.35f * stat.STR) + (0.05f * stat.DEX);
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onVulnerableHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 70,
             _causesFloored: 120,
-            _onHitForwardBackward: -300f,
-            _onHitRightLeft: 50f);
+            _onHitForwardBackward: -1200f,
+            _onHitRightLeft: -100f);
 
         //set the attack's properties on vulnerable charge hit
         currentAttack.onVulnerableChargeHit = currentAttack.onVulnerableHit; //this move doesn't charge
 
         //set the attack's properties on floored hit
-        tempDamage.damageAmount = 8f + (0.25f * stat.STR) + (0.25f * stat.DEX);
+        tempDamage.damageAmount = 10f + (0.3f * stat.STR) + (0.05f * stat.DEX);
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onFlooredHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 30,
+            _causesFloored: 100,
             _onHitForwardBackward: -200f,
-            _onHitRightLeft: 50f);
+            _onHitRightLeft: -50f);
 
         //set the attack's properties on charged floored hit
         currentAttack.onFlooredChargeHit = currentAttack.onFlooredHit; //this move doesn't charge
 
         //set the attack's properties on airborne hit
-        tempDamage.damageAmount = 12f + (0.25f * stat.STR) + (0.25f * stat.DEX);
+        tempDamage.damageAmount = 18f + (0.35f * stat.STR) + (0.05f * stat.DEX);
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onAirborneHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
-            _causesStun: 60,
+            _causesStun: 70,
             _causesFloored: 120,
-            _onHitForwardBackward: -50f,
-            _onHitRightLeft: 50f);
+            _onHitForwardBackward: -400f,
+            _onHitRightLeft: -50f);
 
         //set the attack's properties on charged airborne hit
         currentAttack.onAirborneChargeHit = currentAttack.onAirborneHit; //this move doesn't charge

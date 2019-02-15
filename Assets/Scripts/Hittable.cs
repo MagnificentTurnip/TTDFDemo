@@ -42,12 +42,22 @@ public class Hittable : MonoBehaviour {
                     currentAttack.thingsHit.Add(this.gameObject);
 
 
-                    if (status.parryFrames > 0) {
+                    if (status.parryFrames > 0 && currentAttack.data.unblockable != 2 && currentAttack.data.unblockable != 3) {
                         //parry the attack
+
+                        status.parryLock = 0; //undo the parryLock
+                        //and the attack has no effect
+
+                        if (currentAttack.data.contact == true) {
+                            currentAttack.data.attackOwnerStatus.flinch();
+                            if (status.parryFrames + 60 > currentAttack.data.attackOwnerStatus.parryStunned) {
+                                currentAttack.data.attackOwnerStatus.parryStunned = status.parryFrames + 60;
+                            }
+                        }
                     }
 
 
-                    else if (status.guarding || status.isGuardStunned()) {
+                    else if ((status.guarding || status.isGuardStunned()) && currentAttack.data.unblockable != 1 && currentAttack.data.unblockable != 3) {
                         //guard the attack
 
                         print("Guard"); //testing

@@ -42,12 +42,12 @@ public class AtkStyle : MonoBehaviour {
         print("You need to override this function in a specific attack style that inherits from this class. The function should manage returning to idle gradually over time. Look at the existing AtkStyles.");
     }
 
-    public void fParry() {
-        
+    public virtual void fParry() {
+        print("You need to override this function in a specific attack style that inherits from this class. Look at the existing AtkStyles.");
     }
 
-    public void bParry() {
-
+    public virtual void bParry() {
+        print("You need to override this function in a specific attack style that inherits from this class. Look at the existing AtkStyles.");
     }
 
     public void attackProgression() { //manages attack progression from delay, to duration, to end, and eventually its automatic destruction

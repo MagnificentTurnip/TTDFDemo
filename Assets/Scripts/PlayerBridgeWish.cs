@@ -95,6 +95,21 @@ public class PlayerBridgeWish : PlayerBridge { //bridges between player input an
                     case AtkStyleWish.attackStates.lEvade:
                         break;
 
+                    case AtkStyleWish.attackStates.fParry:
+                        break;
+
+                    case AtkStyleWish.attackStates.bParry:
+                        if (cmdOut == buffer.fwdA || lck == buffer.fwdA) {
+                            style.standardBladework2();
+                        }
+                        //if (cmdOut == buffer.fwdS || lck == buffer.fwdS) {
+                        //    style.lightBladework3();
+                        //}
+                        if (cmdOut == buffer.fwdD || lck == buffer.fwdD) {
+                            style.heavyBladework2();
+                        }
+                        break;
+
                     case AtkStyleWish.attackStates.bladework1:
                         if (cmdOut == buffer.fwdA || lck == buffer.fwdA) {
                             style.standardBladework2();

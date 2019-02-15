@@ -7,7 +7,7 @@ public class StatusManager : MonoBehaviour {
     //SELF-LOCKOUTS
     public bool rollLock; //the player is rolling, so they cannot act - though they can (should be able to) buffer attacks.
     public bool guardLock; //the player is guarding
-    public bool parryLock; //the player has just parried someone so they cannot use regular movement
+    public int parryLock; //the player has just attempted to parry so they cannot use regular movement
     public bool attackLock; //the player is attacking so they cannot use regular movement
     public bool toIdleLock; //the player needs to wait to return to idle to use movement
     public bool castLock; //the player is casting a spell so they will have to stop or cast something to act
@@ -52,7 +52,7 @@ public class StatusManager : MonoBehaviour {
         //initialise the variables to the defaults;
         rollLock = false;
         guardLock = false;
-        parryLock = false;
+        parryLock = 0;
         attackLock = false;
         toIdleLock = false;
         castLock = false;
@@ -85,7 +85,7 @@ public class StatusManager : MonoBehaviour {
     public void flinch() {
         rollLock = false;
         guardLock = false;
-        parryLock = false;
+        parryLock = 0;
         attackLock = false;
         toIdleLock = false;
         castLock = false;
@@ -146,14 +146,14 @@ public class StatusManager : MonoBehaviour {
     }
 
     public bool isVulnerable() { //VULNERABLE
-        if (vulnerable > 0 || sprinting || castLock || parryStunned > 0) {
+        if (vulnerable > 0 || sprinting || castLock || isParryStunned() || parryLock > 0) {
             return true;
         }
         return false;
     }
 
     public bool canMove() { //CAN MOVE
-        if (isFloored() || isStunned() || isGrappled() || isGuardStunned() || isParryStunned() || parryLock || rolling || attackLock || castLock || toIdleLock) {
+        if (isFloored() || isStunned() || isGrappled() || isGuardStunned() || isParryStunned() || parryLock > 0 || rolling || attackLock || castLock || toIdleLock) {
             return false;
         }
         else {
@@ -162,7 +162,7 @@ public class StatusManager : MonoBehaviour {
     }
 
     public bool canRoll() { //CAN EVADE
-        if (isStunned() || isGuardStunned() || isAirborne() || isParryStunned() || parryLock || rollLock || attackLock || castLock) {
+        if (isStunned() || isGuardStunned() || isAirborne() || isParryStunned() || parryLock > 0 || rollLock || attackLock || castLock) {
             return false;
         }
         else {
@@ -171,7 +171,7 @@ public class StatusManager : MonoBehaviour {
     }
 
     public bool canAttack() { //CAN ATTACK
-        if (isFloored() || isStunned() || isGuardStunned() || isAirborne() || isParryStunned() || parryLock || rolling || attackLock || castLock) {
+        if (isFloored() || isStunned() || isGuardStunned() || isAirborne() || isParryStunned() || parryLock > 0 || rolling || attackLock || castLock) {
             return false;
         }
         else {
@@ -180,7 +180,7 @@ public class StatusManager : MonoBehaviour {
     }
 
     public bool canGuard() {
-        if (isFloored() || isStunned() || isAirborne() || isParryStunned() || rollLock || attackLock || castLock) {
+        if (isFloored() || isStunned() || isAirborne() || isParryStunned() || rollLock || attackLock || parryLock > 0 || castLock) {
             return false;
         }
         else {
@@ -189,7 +189,7 @@ public class StatusManager : MonoBehaviour {
     }
 
     public bool canParry() {
-        if (isFloored() || isStunned() || isGuardStunned() || isAirborne() || isParryStunned() || rollLock || attackLock || castLock) {
+        if (isFloored() || isStunned() || isGuardStunned() || isAirborne() || isParryStunned() || rollLock || attackLock || parryLock > 0 || parryFrames > 0 || castLock) {
             return false;
         }
         else {
@@ -254,6 +254,9 @@ public class StatusManager : MonoBehaviour {
         //STATUS TRACKING / UPDATING (all of these statuses have frame timers. If they're above zero they're active, and they decrease by 1 each frame)
         if (parryFrames > 0) {
             parryFrames -= 1;
+        }
+        if (parryLock > 0) {
+            parryLock -= 1;
         }
         if (floored > 0) {
             floored -= 1;
