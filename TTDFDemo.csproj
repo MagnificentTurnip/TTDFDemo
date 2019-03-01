@@ -314,6 +314,7 @@
     <Compile Include="Assets\Scripts\AtkStyleWish.cs" />
     <Compile Include="Assets\Scripts\Attack.cs" />
     <Compile Include="Assets\Scripts\CharStatSheet.cs" />
+    <Compile Include="Assets\Scripts\Effect.cs" />
     <Compile Include="Assets\Scripts\Hittable.cs" />
     <Compile Include="Assets\Scripts\KeyCombo.cs" />
     <Compile Include="Assets\Scripts\Motor.cs" />
@@ -323,6 +324,9 @@
     <Compile Include="Assets\Scripts\PlayerBridgeWish.cs" />
     <Compile Include="Assets\Scripts\PlayerInput.cs" />
     <Compile Include="Assets\Scripts\PlayerMovement.cs" />
+    <Compile Include="Assets\Scripts\PlayerSpellBook.cs" />
+    <Compile Include="Assets\Scripts\Spell Scripts\SeismicTorrent.cs" />
+    <Compile Include="Assets\Scripts\Spell.cs" />
     <Compile Include="Assets\Scripts\StatSheet.cs" />
     <Compile Include="Assets\Scripts\StatusManager.cs" />
     <Compile Include="Assets\Scripts\verySimpleAI.cs" />

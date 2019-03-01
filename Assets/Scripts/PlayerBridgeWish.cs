@@ -6,6 +6,7 @@ public class PlayerBridgeWish : PlayerBridge { //bridges between player input an
 
     new public AtkStyleWish style;
 
+
     // Use this for initialization
     void Start () {
         drawCount = 0;
@@ -32,8 +33,9 @@ public class PlayerBridgeWish : PlayerBridge { //bridges between player input an
 
         if (status.sheathed == false) { //only do attack style stuff when unsheathed
             //evades. Wish style has four directional evades out of attacks.
-            if ((lck == buffer.evade || playIn.evade) && status.canRoll() && style.state != AtkStyleWish.attackStates.idle) {
+            if ((lck == buffer.evade || playIn.evade) && status.canRoll() && style.state != AtkStyleWish.attackStates.idle && style.state != AtkStyleWish.attackStates.fEvade && style.state != AtkStyleWish.attackStates.bEvade && style.state != AtkStyleWish.attackStates.lEvade && style.state != AtkStyleWish.attackStates.rEvade) {
                 if (playIn.pointForward == true) {
+                    print(style.state);
                     style.evadeForward();
                 }
                 if (playIn.pointBack == true) {
@@ -48,7 +50,7 @@ public class PlayerBridgeWish : PlayerBridge { //bridges between player input an
             }
 
             //manage regular movement rolling transitioning momentarily into the fEvade state
-            if ((lck == buffer.evade || playIn.evade) && status.canRoll() && style.state == AtkStyleWish.attackStates.idle) {
+            if ((lck == buffer.evade || playIn.evade) && status.canRoll() && !status.sprinting && style.state == AtkStyleWish.attackStates.idle && style.state != AtkStyleWish.attackStates.fEvade && style.state != AtkStyleWish.attackStates.bEvade && style.state != AtkStyleWish.attackStates.lEvade && style.state != AtkStyleWish.attackStates.rEvade) {
                 style.state = AtkStyleWish.attackStates.fEvade; //set the attack state;
                 style.idleCounter = 30; //always remember to reset the idle counter
             }

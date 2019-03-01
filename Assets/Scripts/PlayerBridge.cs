@@ -7,6 +7,7 @@ public class PlayerBridge : MonoBehaviour {
     public PlayerInput playIn;
     public AtkStyle style;
     public StatusManager status;
+    public PlayerSpellBook spellBook;
 
     public enum buffer {
         nothing, spellcast, fparry, bparry, evade, sheathe,
@@ -32,6 +33,7 @@ public class PlayerBridge : MonoBehaviour {
         if ((playIn.guard && status.canGuard()) || status.isGuardStunned()) {
             status.guarding = true;
             status.guardLock = true;
+            style.forceGuarding(3);
             style.animator.SetBool("guarding", true);
         }
         else {
@@ -74,107 +76,115 @@ public class PlayerBridge : MonoBehaviour {
             cmdRunning = true;
         }
 
-        else if (playIn.fwdAS.Check()) {
-            cmdIn = buffer.fwdAS;
-            cmdRunning = true;
-        }
-        else if (playIn.bakAS.Check()) {
-            cmdIn = buffer.bakAS;
-            cmdRunning = true;
-        }
-        else if (playIn.rgtAS.Check()) {
-            cmdIn = buffer.rgtAS;
-            cmdRunning = true;
-        }
-        else if (playIn.lftAS.Check()) {
-            cmdIn = buffer.lftAS;
-            cmdRunning = true;
+        if (cmdIn != buffer.fwdASD && cmdIn != buffer.bakASD && cmdIn != buffer.rgtASD && cmdIn != buffer.lftASD) { //button commands with fewer inputs don't override button commands with more inputs
+            if (playIn.fwdAS.Check()) {
+                cmdIn = buffer.fwdAS;
+                cmdRunning = true;
+            }
+            else if (playIn.bakAS.Check()) {
+                cmdIn = buffer.bakAS;
+                cmdRunning = true;
+            }
+            else if (playIn.rgtAS.Check()) {
+                cmdIn = buffer.rgtAS;
+                cmdRunning = true;
+            }
+            else if (playIn.lftAS.Check()) {
+                cmdIn = buffer.lftAS;
+                cmdRunning = true;
+            }
+
+            else if (playIn.fwdAD.Check()) {
+                cmdIn = buffer.fwdAD;
+                cmdRunning = true;
+            }
+            else if (playIn.bakAD.Check()) {
+                cmdIn = buffer.bakAD;
+                cmdRunning = true;
+            }
+            else if (playIn.rgtAD.Check()) {
+                cmdIn = buffer.rgtAD;
+                cmdRunning = true;
+            }
+            else if (playIn.lftAD.Check()) {
+                cmdIn = buffer.lftAD;
+                cmdRunning = true;
+            }
+
+            else if (playIn.fwdSD.Check()) {
+                cmdIn = buffer.fwdSD;
+                cmdRunning = true;
+            }
+            else if (playIn.bakSD.Check()) {
+                cmdIn = buffer.bakSD;
+                cmdRunning = true;
+            }
+            else if (playIn.rgtSD.Check()) {
+                cmdIn = buffer.rgtSD;
+                cmdRunning = true;
+            }
+            else if (playIn.lftSD.Check()) {
+                cmdIn = buffer.lftSD;
+                cmdRunning = true;
+            }
+
+
+            if (cmdIn != buffer.fwdAS && cmdIn != buffer.bakAS && cmdIn != buffer.rgtAS && cmdIn != buffer.lftAS 
+                && cmdIn != buffer.fwdAD && cmdIn != buffer.bakAD && cmdIn != buffer.rgtAD && cmdIn != buffer.lftAD 
+                && cmdIn != buffer.fwdSD && cmdIn != buffer.bakSD && cmdIn != buffer.rgtSD && cmdIn != buffer.lftSD) { //button commands with fewer inputs don't override button commands with more inputs
+                if (playIn.fwdA.Check()) {
+                    cmdIn = buffer.fwdA;
+                    cmdRunning = true;
+                }
+                else if (playIn.bakAS.Check()) {
+                    cmdIn = buffer.bakA;
+                    cmdRunning = true;
+                }
+                else if (playIn.rgtAS.Check()) {
+                    cmdIn = buffer.rgtA;
+                    cmdRunning = true;
+                }
+                else if (playIn.lftAS.Check()) {
+                    cmdIn = buffer.lftA;
+                    cmdRunning = true;
+                }
+
+                else if (playIn.fwdS.Check()) {
+                    cmdIn = buffer.fwdS;
+                    cmdRunning = true;
+                }
+                else if (playIn.bakS.Check()) {
+                    cmdIn = buffer.bakS;
+                    cmdRunning = true;
+                }
+                else if (playIn.rgtS.Check()) {
+                    cmdIn = buffer.rgtS;
+                    cmdRunning = true;
+                }
+                else if (playIn.lftS.Check()) {
+                    cmdIn = buffer.lftS;
+                    cmdRunning = true;
+                }
+
+                else if (playIn.fwdD.Check()) {
+                    cmdIn = buffer.fwdD;
+                    cmdRunning = true;
+                }
+                else if (playIn.bakD.Check()) {
+                    cmdIn = buffer.bakD;
+                    cmdRunning = true;
+                }
+                else if (playIn.rgtD.Check()) {
+                    cmdIn = buffer.rgtD;
+                    cmdRunning = true;
+                }
+                else if (playIn.lftD.Check()) {
+                    cmdIn = buffer.lftD;
+                    cmdRunning = true;
+                }
+            }
         }
 
-        else if (playIn.fwdAD.Check()) {
-            cmdIn = buffer.fwdAD;
-            cmdRunning = true;
-        }
-        else if (playIn.bakAD.Check()) {
-            cmdIn = buffer.bakAD;
-            cmdRunning = true;
-        }
-        else if (playIn.rgtAD.Check()) {
-            cmdIn = buffer.rgtAD;
-            cmdRunning = true;
-        }
-        else if (playIn.lftAD.Check()) {
-            cmdIn = buffer.lftAD;
-            cmdRunning = true;
-        }
-
-        else if (playIn.fwdSD.Check()) {
-            cmdIn = buffer.fwdSD;
-            cmdRunning = true;
-        }
-        else if (playIn.bakSD.Check()) {
-            cmdIn = buffer.bakSD;
-            cmdRunning = true;
-        }
-        else if (playIn.rgtSD.Check()) {
-            cmdIn = buffer.rgtSD;
-            cmdRunning = true;
-        }
-        else if (playIn.lftSD.Check()) {
-            cmdIn = buffer.lftSD;
-            cmdRunning = true;
-        }
-
-        else if (playIn.fwdA.Check()) {
-            cmdIn = buffer.fwdA;
-            cmdRunning = true;
-        }
-        else if (playIn.bakAS.Check()) {
-            cmdIn = buffer.bakA;
-            cmdRunning = true;
-        }
-        else if (playIn.rgtAS.Check()) {
-            cmdIn = buffer.rgtA;
-            cmdRunning = true;
-        }
-        else if (playIn.lftAS.Check()) {
-            cmdIn = buffer.lftA;
-            cmdRunning = true;
-        }
-
-        else if (playIn.fwdS.Check()) {
-            cmdIn = buffer.fwdS;
-            cmdRunning = true;
-        }
-        else if (playIn.bakS.Check()) {
-            cmdIn = buffer.bakS;
-            cmdRunning = true;
-        }
-        else if (playIn.rgtS.Check()) {
-            cmdIn = buffer.rgtS;
-            cmdRunning = true;
-        }
-        else if (playIn.lftS.Check()) {
-            cmdIn = buffer.lftS;
-            cmdRunning = true;
-        }
-
-        else if (playIn.fwdD.Check()) {
-            cmdIn = buffer.fwdD;
-            cmdRunning = true;
-        }
-        else if (playIn.bakD.Check()) {
-            cmdIn = buffer.bakD;
-            cmdRunning = true;
-        }
-        else if (playIn.rgtD.Check()) {
-            cmdIn = buffer.rgtD;
-            cmdRunning = true;
-        }
-        else if (playIn.lftD.Check()) {
-            cmdIn = buffer.lftD;
-            cmdRunning = true;
-        }
 
         if (cmdRunning == true) { //the counter runs down every frame so long as the buffer has been activated
             cmdCounter -= 1;

@@ -37,6 +37,7 @@ public class Movement : MonoBehaviour {
     public void evade(float fbSpeed, float lrSpeed, float evadeTime) {
         status.rollLock = true;
         status.rolling = true;
+        status.floored = 0;
         motor.instantBurst(fbSpeed, lrSpeed);
         StartCoroutine(endroll(evadeTime, evadeTime));
     }

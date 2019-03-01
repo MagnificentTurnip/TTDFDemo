@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2015
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TTDFDemo", "TTDFDemo.csproj", "{7FB3905C-196D-9C03-8098-618D2A24EA01}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unity.TextMeshPro", "Unity.TextMeshPro.csproj", "{07A21C90-D344-AE1A-8456-9910C203B41A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TTDFDemo.Plugins", "TTDFDemo.Plugins.csproj", "{F90FD7DA-E090-878B-0228-2158A88A0EC9}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TTDFDemo", "TTDFDemo.csproj", "{7FB3905C-196D-9C03-8098-618D2A24EA01}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TTDFDemo.Editor.Plugins", "TTDFDemo.Editor.Plugins.csproj", "{8CC3281D-8F31-3A12-62B7-23D53818D738}"
 EndProject
@@ -21,6 +21,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7FB3905C-196D-9C03-8098-618D2A24EA01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FB3905C-196D-9C03-8098-618D2A24EA01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FB3905C-196D-9C03-8098-618D2A24EA01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FB3905C-196D-9C03-8098-618D2A24EA01}.Release|Any CPU.Build.0 = Release|Any CPU
 		{07A21C90-D344-AE1A-8456-9910C203B41A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{07A21C90-D344-AE1A-8456-9910C203B41A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{07A21C90-D344-AE1A-8456-9910C203B41A}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -29,10 +33,6 @@ Global
 		{F90FD7DA-E090-878B-0228-2158A88A0EC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F90FD7DA-E090-878B-0228-2158A88A0EC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F90FD7DA-E090-878B-0228-2158A88A0EC9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7FB3905C-196D-9C03-8098-618D2A24EA01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7FB3905C-196D-9C03-8098-618D2A24EA01}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7FB3905C-196D-9C03-8098-618D2A24EA01}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7FB3905C-196D-9C03-8098-618D2A24EA01}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8CC3281D-8F31-3A12-62B7-23D53818D738}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8CC3281D-8F31-3A12-62B7-23D53818D738}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8CC3281D-8F31-3A12-62B7-23D53818D738}.Release|Any CPU.ActiveCfg = Release|Any CPU

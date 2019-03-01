@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class CharStatSheet : StatSheet {
 
-    public int Level;
-
     public float STR;
     public float DEX;
     public float WIL;

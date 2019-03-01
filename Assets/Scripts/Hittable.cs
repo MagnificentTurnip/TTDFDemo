@@ -9,10 +9,10 @@ public class Hittable : MonoBehaviour {
     public StatusManager status;
     public StatSheet stat;
 
+    public float towardAttackerAngle;
+
     //resistances?
     //public float slashingTaken = 0.9 for 10% slashing resistance or something?
-
-    
 
 	// Use this for initialization
 	void Start () {
@@ -21,15 +21,70 @@ public class Hittable : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
-	}
+        //Mathf.DeltaAngle(transform.localEulerAngles.y, toMouseAngle);
+        //print(Vector3.Angle(transform.position, uhme.transform.position));
+    }
 
-    
+    public void applyHitProperties(Attack.hitProperties properties) {
+        if (properties.damageInstances != null) {
+            for (int i = 0; i < properties.damageInstances.Count; i++) { //loop through damage instances to apply them
+
+                //if (currentAttack.onHit.damageInstances[i].damageType == Attack.typeOfDamage.Slashing) {
+                stat.HP -= properties.damageInstances[i].damageAmount/* *= slashingTaken*/;
+                //}
+
+            }
+        }
+
+        if (properties.causesFlinch) {
+            status.flinch();
+            transform.LookAt(currentAttack.data.attackOwnerStatus.gameObject.transform.position, Vector3.up); //face the attacker that caused flinch;
+        }
+
+        if (properties.causesVulnerable + currentAttack.data.attackDuration > status.vulnerable && properties.causesVulnerable != 0) {
+            status.vulnerable = properties.causesVulnerable + currentAttack.data.attackDuration;
+        }
+
+        if (properties.causesSilenced + currentAttack.data.attackDuration > status.silenced && properties.causesSilenced != 0) {
+            status.silenced = properties.causesSilenced + currentAttack.data.attackDuration;
+        }
+
+        if (properties.causesFloored + currentAttack.data.attackDuration > status.floored && properties.causesFloored != 0) {
+            status.floored = properties.causesFloored + currentAttack.data.attackDuration;
+        }
+
+        if (properties.causesAirborne + currentAttack.data.attackDuration > status.airborne && properties.causesAirborne != 0) {
+            status.airborne = properties.causesAirborne + currentAttack.data.attackDuration;
+        }
+
+        if (properties.causesStun + currentAttack.data.attackDuration > status.stunned && properties.causesStun != 0) {
+            status.stunned = properties.causesStun + currentAttack.data.attackDuration;
+        }
+
+        if (properties.causesParalyze + currentAttack.data.attackDuration > status.paralyzed && properties.causesParalyze != 0) {
+            status.paralyzed = properties.causesParalyze + currentAttack.data.attackDuration;
+        }
+
+        if (properties.causesGrapple + currentAttack.data.attackDuration > status.grappled && properties.causesGrapple != 0) {
+            status.grappled = properties.causesGrapple + currentAttack.data.attackDuration;
+        }
+
+        if (properties.causesGuardStun + currentAttack.data.attackDuration > status.guardStunned && properties.causesGuardStun != 0) {
+            status.guardStunned = properties.causesGuardStun + currentAttack.data.attackDuration;
+        }
+    }
+
+
     private void OnTriggerEnter(Collider col) {
 
         if (col.gameObject.tag.Contains("attack") && col.gameObject.transform.parent != this.gameObject.transform.parent) {
+
             currentAttack = col.gameObject.GetComponent<Attack>();
-            Vector3 testforce = Vector3.Normalize(transform.position - currentAttack.transform.parent.transform.position); //testing knockback
+
+            //testing knockback
+            Vector3 awayForce = Vector3.Normalize(transform.position - currentAttack.data.attackOwnerStatus.gameObject.transform.position);
+            awayForce.y = 0f;
+
             if (currentAttack.data.attackDelay <= 0 && currentAttack.data.attackDuration > 0) {
                 currentAttack.same = 0;
                 for (int i = 0; i < currentAttack.thingsHit.Count; i++) {
@@ -41,9 +96,11 @@ public class Hittable : MonoBehaviour {
                 if (currentAttack.same <= 0) { //if something has been hit and it wasn't something that was hit before
                     currentAttack.thingsHit.Add(this.gameObject);
 
+                    //calculate the angle this unit needs to turn to be facing the attacker
+                    towardAttackerAngle = Mathf.DeltaAngle(transform.localEulerAngles.y, Mathf.Atan2(currentAttack.data.attackOwnerStatus.transform.position.x - transform.position.x, currentAttack.data.attackOwnerStatus.transform.position.z - transform.position.z) * Mathf.Rad2Deg);
 
-                    if (status.parryFrames > 0 && currentAttack.data.unblockable != 2 && currentAttack.data.unblockable != 3) {
-                        //parry the attack
+                    if (status.parryFrames > 0 && currentAttack.data.unblockable != 2 && currentAttack.data.unblockable != 3 && towardAttackerAngle >= -90 && towardAttackerAngle <= 90) {
+                        //parry the attack if this unit is parrying, the attack can be parried, and this unit doesn't have its back facing the attacker
 
                         status.parryLock = 0; //undo the parryLock
                         //and the attack has no effect
@@ -57,122 +114,76 @@ public class Hittable : MonoBehaviour {
                     }
 
 
-                    else if ((status.guarding || status.isGuardStunned()) && currentAttack.data.unblockable != 1 && currentAttack.data.unblockable != 3) {
-                        //guard the attack
+                    else if ((status.guarding || status.isGuardStunned()) && currentAttack.data.unblockable != 1 && currentAttack.data.unblockable != 3 && towardAttackerAngle >= -90 && towardAttackerAngle <= 90) {
+                        //guard the attack if this unit is guarding, the attack can be guarded, and this unit doesn't have its back facing the attacker
 
                         print("Guard"); //testing
+                        applyHitProperties(currentAttack.onGuard);
 
-                        if (currentAttack.onGuard.damageInstances != null) {
-                            for (int i = 0; i < currentAttack.onGuard.damageInstances.Count; i++) { //loop through damage instances to apply them
+                        //awayForce = -awayForce * currentAttack.onGuard.onHitForwardBackward; //testing knockback, change this to onHitAwayToward when implemented
+                        //motor.rb.AddForce(awayForce);
 
-                                //if (currentAttack.onHit.damageInstances[i].damageType == Attack.typeOfDamage.Slashing) {
-                                stat.HP -= currentAttack.onGuard.damageInstances[i].damageAmount/* *= slashingTaken*/;
-                                //}
+                        motor.rb.AddForce(currentAttack.data.attackOwnerStatus.gameObject.transform.forward * -currentAttack.onGuard.onHitForwardBackward);
+                        motor.rb.AddForce(currentAttack.data.attackOwnerStatus.gameObject.transform.right * -currentAttack.onGuard.onHitRightLeft);
 
-                            }
-                        }
+                    }
+                    else if (status.isVulnerable()) {
+                        //apply attack
 
-                        testforce = -testforce * currentAttack.onGuard.onHitForwardBackward; //testing knockback
-                        motor.rb.AddForce(testforce);
-                        //find some way to apply onHitRightLeft
+                        print("VulnerableHit"); //testing
 
-                        if (currentAttack.onGuard.causesFlinch) {
-                            status.flinch();
-                        }
+                        //consume vulnerable status
+                        status.vulnerable = 0;
 
-                        if (currentAttack.onGuard.causesVulnerable + currentAttack.data.attackDuration > status.vulnerable && currentAttack.onGuard.causesVulnerable != 0) {
-                            status.vulnerable = currentAttack.onGuard.causesVulnerable + currentAttack.data.attackDuration;
-                        }
+                        applyHitProperties(currentAttack.onVulnerableHit);
 
-                        if (currentAttack.onGuard.causesSilenced + currentAttack.data.attackDuration > status.silenced && currentAttack.onGuard.causesSilenced != 0) {
-                            status.silenced = currentAttack.onGuard.causesSilenced + currentAttack.data.attackDuration;
-                        }
+                        //testforce = -testforce * currentAttack.onVulnerableHit.onHitForwardBackward; //testing knockback
+                        //motor.rb.AddForce(testforce);
 
-                        if (currentAttack.onGuard.causesFloored + currentAttack.data.attackDuration > status.floored && currentAttack.onGuard.causesFloored != 0) {
-                            status.floored = currentAttack.onGuard.causesFloored + currentAttack.data.attackDuration;
-                        }
+                        motor.rb.AddForce(currentAttack.data.attackOwnerStatus.gameObject.transform.forward * -currentAttack.onVulnerableHit.onHitForwardBackward);
+                        motor.rb.AddForce(currentAttack.data.attackOwnerStatus.gameObject.transform.right * -currentAttack.onVulnerableHit.onHitRightLeft);
 
-                        if (currentAttack.onGuard.causesAirborne + currentAttack.data.attackDuration > status.airborne && currentAttack.onGuard.causesAirborne != 0) {
-                            status.airborne = currentAttack.onGuard.causesAirborne + currentAttack.data.attackDuration;
-                        }
+                    }
+                    else if (status.isFloored()) {
+                        //apply attack
 
-                        if (currentAttack.onGuard.causesStun + currentAttack.data.attackDuration > status.stunned && currentAttack.onGuard.causesStun != 0) {
-                            status.stunned = currentAttack.onGuard.causesStun + currentAttack.data.attackDuration;
-                        }
+                        print("FlooredHit"); //testing
 
-                        if (currentAttack.onGuard.causesParalyze + currentAttack.data.attackDuration > status.paralyzed && currentAttack.onGuard.causesParalyze != 0) {
-                            status.paralyzed = currentAttack.onGuard.causesParalyze + currentAttack.data.attackDuration;
-                        }
+                        applyHitProperties(currentAttack.onFlooredHit);
 
-                        if (currentAttack.onGuard.causesGrapple + currentAttack.data.attackDuration > status.grappled && currentAttack.onGuard.causesGrapple != 0) {
-                            status.grappled = currentAttack.onGuard.causesGrapple + currentAttack.data.attackDuration;
-                        }
+                        //testforce = -testforce * currentAttack.onFlooredHit.onHitForwardBackward; //testing knockback
+                        //motor.rb.AddForce(testforce);
 
-                        if (currentAttack.onGuard.causesGuardStun + currentAttack.data.attackDuration > status.guardStunned && currentAttack.onGuard.causesGuardStun != 0) {
-                            status.guardStunned = currentAttack.onGuard.causesGuardStun + currentAttack.data.attackDuration;
-                        }
+                        motor.rb.AddForce(currentAttack.data.attackOwnerStatus.gameObject.transform.forward * -currentAttack.onFlooredHit.onHitForwardBackward);
+                        motor.rb.AddForce(currentAttack.data.attackOwnerStatus.gameObject.transform.right * -currentAttack.onFlooredHit.onHitRightLeft);
 
+                    }
+                    else if (status.isAirborne()) {
+                        //apply attack
 
+                        print("AirborneHit"); //testing
 
+                        applyHitProperties(currentAttack.onAirborneHit);
+                        
+                        //testforce = -testforce * currentAttack.onAirborneHit.onHitForwardBackward; //testing knockback
+                        //motor.rb.AddForce(testforce);
 
-                    } else {
+                        motor.rb.AddForce(currentAttack.data.attackOwnerStatus.gameObject.transform.forward * -currentAttack.onAirborneHit.onHitForwardBackward);
+                        motor.rb.AddForce(currentAttack.data.attackOwnerStatus.gameObject.transform.right * -currentAttack.onAirborneHit.onHitRightLeft);
+
+                    }
+                    else {
                         //apply attack
 
                         print("Hit"); //testing
 
-                        if (currentAttack.onHit.damageInstances != null) {
-                            for (int i = 0; i < currentAttack.onHit.damageInstances.Count; i++) { //loop through damage instances to apply them
-
-                                //if (currentAttack.onHit.damageInstances[i].damageType == Attack.typeOfDamage.Slashing) {
-                                stat.HP -= currentAttack.onHit.damageInstances[i].damageAmount/* *= slashingTaken*/;
-                                //}
-
-                            }
-                        }
-
-                        //motor.instantBurst(currentAttack.onHit.onHitForwardBackward, currentAttack.onHit.onHitRightLeft);
-                        testforce = -testforce * currentAttack.onHit.onHitForwardBackward;
-                        motor.rb.AddForce(testforce);
-                        //find some way to apply onHitRightLeft
-
-                        if (currentAttack.onHit.causesFlinch) {
-                            status.flinch();
-                        }
-
-                        if (currentAttack.onHit.causesVulnerable + currentAttack.data.attackDuration > status.vulnerable && currentAttack.onHit.causesVulnerable != 0) {
-                            status.vulnerable = currentAttack.onHit.causesVulnerable + currentAttack.data.attackDuration;
-                        }
-
-                        if (currentAttack.onHit.causesSilenced + currentAttack.data.attackDuration > status.silenced && currentAttack.onHit.causesSilenced != 0) {
-                            status.silenced = currentAttack.onHit.causesSilenced + currentAttack.data.attackDuration;
-                        }
-
-                        if (currentAttack.onHit.causesFloored + currentAttack.data.attackDuration > status.floored && currentAttack.onHit.causesFloored != 0) {
-                            status.floored = currentAttack.onHit.causesFloored + currentAttack.data.attackDuration;
-                        }
-
-                        if (currentAttack.onHit.causesAirborne + currentAttack.data.attackDuration > status.airborne && currentAttack.onHit.causesAirborne != 0) {
-                            status.airborne = currentAttack.onHit.causesAirborne + currentAttack.data.attackDuration;
-                        }
-
-                        if (currentAttack.onHit.causesStun + currentAttack.data.attackDuration > status.stunned && currentAttack.onHit.causesStun != 0) {
-                            status.stunned = currentAttack.onHit.causesStun + currentAttack.data.attackDuration;
-                        }
-
-                        if (currentAttack.onHit.causesParalyze + currentAttack.data.attackDuration > status.paralyzed && currentAttack.onHit.causesParalyze != 0) {
-                            status.paralyzed = currentAttack.onHit.causesParalyze + currentAttack.data.attackDuration;
-                        }
-
-                        if (currentAttack.onHit.causesGrapple + currentAttack.data.attackDuration > status.grappled && currentAttack.onHit.causesParalyze != 0) {
-                            status.grappled = currentAttack.onHit.causesGrapple + currentAttack.data.attackDuration;
-                        }
-
-                        if (currentAttack.onHit.causesGuardStun + currentAttack.data.attackDuration > status.guardStunned && currentAttack.onHit.causesGuardStun != 0) {
-                            print(currentAttack.onHit.causesGuardStun);
-                            status.guardStunned = currentAttack.onHit.causesGuardStun + currentAttack.data.attackDuration;
-                        }
+                        applyHitProperties(currentAttack.onHit);
                         
+                        //testforce = -testforce * currentAttack.onHit.onHitForwardBackward; //testing knockback
+                        //motor.rb.AddForce(testforce);
 
+                        motor.rb.AddForce(currentAttack.data.attackOwnerStatus.gameObject.transform.forward * -currentAttack.onHit.onHitForwardBackward);
+                        motor.rb.AddForce(currentAttack.data.attackOwnerStatus.gameObject.transform.right * -currentAttack.onHit.onHitRightLeft);
 
                     }
                 } //else do nothing

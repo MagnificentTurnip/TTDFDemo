@@ -27,7 +27,7 @@ public class verySimpleAI : MonoBehaviour {
     public IEnumerator bup() {
         yield return new WaitForSeconds(2);
         if (status.canAttack()) {
-            style.standardBladework2();
+            style.heavyBladework4();
         }
         buh = true;
     }

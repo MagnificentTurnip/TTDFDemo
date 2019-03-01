@@ -6,6 +6,8 @@ public class StatSheet : MonoBehaviour {
 
     public StatusManager status;
 
+    public int Level;
+
     public float MaxHP;
     public float MaxSP;
     public float MaxMP;

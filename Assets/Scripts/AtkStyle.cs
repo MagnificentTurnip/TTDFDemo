@@ -7,20 +7,25 @@ public class AtkStyle : MonoBehaviour {
     /* 
      Inheriting AtkStyle classes should contain something along the lines of:
 
-        public enum attackStates { idle, fEvade, bEvade, standardAttack1, standardAttack2, weirdAttack3, geoff4 ...(etc.) };
+        public enum attackStates { idle, fEvade, bEvade, guarding, spellcast, standardAttack1, standardAttack2, weirdAttack3, geoff4 ...(etc.) };
         public attackStates state;
+
+        A reminder that idle, guarding and spellcast states need to be altered from outside the atkStyle script, and thus also have force functions.
     */
 
     public int idleCounter; //the current number of frames until the entity returns to idle after a move
 
     public StatusManager status;
     public StatSheet stat;
+    public CharStatSheet charStat; //an attack style might use either a character stat sheet or just a regular one
     public Movement movement;
 
     public bool debug;
     public Mesh cube; //for testing hitboxes
     public Mesh sphere; //for testing hitboxes
     public Mesh capsule;
+
+    public Attack.damage tempDamage;
 
     public Attack currentAttack;
     public List<Attack> instantiatedAttacks;
@@ -36,6 +41,14 @@ public class AtkStyle : MonoBehaviour {
 
     public virtual void forceIdle() { //this function is for outside access, to set the attack state of inheriting attack styles to its idle position
         print("You need to override this function in a specific attack style that inherits from this class. The function should simply set the attack state to idle. Look at the existing AtkStyles.");
+    }
+
+    public virtual void forceGuarding(int counterIdle) { //this function is for outside access, to set the attack state of inheriting attack styles to the guarding state
+        print("You need to override this function in a specific attack style that inherits from this class. The function should set the attack state to guarding and also set the idle counter to an appropriate amount (counterIdle). Look at the existing AtkStyles.");
+    }
+
+    public virtual void forceSpellcast(int counterIdle) { //this function is for outside access, to set the attack state of inheriting attack styles to the spellcast state
+        print("You need to override this function in a specific attack style that inherits from this class.The function should set the attack state to spellcast and also set the idle counter to an appropriate amount (counterIdle). Look at the existing AtkStyles.");
     }
 
     public virtual void returnToIdle() {

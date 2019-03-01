@@ -4,15 +4,11 @@ using UnityEngine;
 
 public class AtkStyleWish : AtkStyle {
 
-    public enum attackStates { drawing, idle, fEvade, bEvade, rEvade, lEvade, spellcast, fParry, bParry, bladework1, bladework2, bladework3, bladework4 }; //Think I'm going to need a guard state because guarding between attacks is possible and not sure if I want that
+    public enum attackStates { drawing, idle, fEvade, bEvade, rEvade, lEvade, guarding, spellcast, fParry, bParry, bladework1, bladework2, bladework3, bladework4 }; 
     public attackStates state;
 
     public GameObject rgtHndBone; //just a couple of relevant bones for the sake of making sonme simple animations easier
     public GameObject lftHndBone;
-
-    new public CharStatSheet stat; //this is an attack style for characters, so the statsheet in base AtkStyle needs to be overwritten by a charstatsheet
-
-    public Attack.damage tempDamage;
 
     public int wraithMode; //wish style has a powered-up state (which I may or may not have time to implement wahey)
     public float evadespeed; //you may want attack-break evades to be faster or slower than regular ones
@@ -29,10 +25,20 @@ public class AtkStyleWish : AtkStyle {
         state = attackStates.idle;
     }
 
+    public override void forceGuarding(int counterIdle) {
+        state = attackStates.guarding;
+        idleCounter = counterIdle;
+    }
+
+    public override void forceSpellcast(int counterIdle) {
+        state = attackStates.spellcast;
+        idleCounter = counterIdle;
+    }
+
     public override void returnToIdle() {
         //manage returning to idle
         if (state != attackStates.idle) {
-            if (state != attackStates.drawing) {
+            if (state != attackStates.drawing && state != attackStates.guarding) {
                 status.toIdleLock = true;
             }
             idleCounter--;
@@ -52,7 +58,7 @@ public class AtkStyleWish : AtkStyle {
             idleCounter = 60; //always remember to reset the idle counter
         }
         status.parryLock = 60;
-        status.parryFrames = 10;
+        status.parryFrames = 15;
         movement.motor.instantBurst(-100f, 50f);
     }
 
@@ -63,8 +69,8 @@ public class AtkStyleWish : AtkStyle {
             idleCounter = 60; //always remember to reset the idle counter
         }
         status.parryLock = 60;
-        status.parryFrames = 10;
-        movement.motor.instantBurst(400f, -50f);
+        status.parryFrames = 15;
+        movement.motor.instantBurst(700f, -100f);
     }
 
     public void defaultAttack() {
@@ -99,6 +105,8 @@ public class AtkStyleWish : AtkStyle {
         idleCounter = 30; //always remember to reset the idle counter
     }
 
+    //IDEA FOR KNOCKBACK. Instead of just forwardback and leftright, include awaytowards force too. Awaytowards is the current implementation. forwardback and leftright are currentAttack.data.attackOwnerStatus.gameObject.transform.(forward or right) * force respectively.
+
     public void standardBladework1() {
         //create the new attack as a child of this object
         currentAttack = Instantiate(attack).GetComponent<Attack>();
@@ -119,7 +127,7 @@ public class AtkStyleWish : AtkStyle {
             _hitsStanding: true,
             _hitsFloored: true,
             _contact: true, //makes contact.
-            _unblockable: 0); //and isn't unblockable
+            _unblockable: 0); //and isn't unblockable (this is the default, so it doesn't need to be here but I like keeping it here as an example if I want to change it)
 
         if (debug == true){
         currentAttack.gameObject.GetComponent<MeshFilter>().mesh = cube; //for testing the hitbox
@@ -130,13 +138,18 @@ public class AtkStyleWish : AtkStyle {
         state = attackStates.bladework1; //set the attack state;
 
         //set the attack's properties on hit (all unset properties are defaults)
-        tempDamage.damageAmount = 10f + (0.25f * stat.STR) + (0.25f * stat.DEX);
+        if (charStat != null) {
+            tempDamage.damageAmount = 10f + (0.25f * charStat.STR) + (0.25f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 10f + 1f * stat.Level;
+        }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 20,
-            _onHitForwardBackward: -300f, 
+            _onHitForwardBackward: -600f, 
             _onHitRightLeft: 50f);
 
         //set the attack's properties on charge hit
@@ -146,48 +159,63 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onGuard = new Attack.hitProperties(
             _SPcost : 10f, 
             _causesGuardStun: 20, 
-            _onHitForwardBackward: -250f, 
+            _onHitForwardBackward: -650f, 
             _onHitRightLeft: 50f);
 
         //set the attack's properties on charge guard
         currentAttack.onChargeGuard = currentAttack.onGuard; //this move doesn't charge so they're the same as on guard properties
 
         //set the attack's properties on vulnerable hit
-        tempDamage.damageAmount = 14f + (0.25f * stat.STR) + (0.25f * stat.DEX);
+        if (charStat != null) {
+            tempDamage.damageAmount = 14f + (0.25f * charStat.STR) + (0.25f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 14f + 1.4f * stat.Level;
+        }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onVulnerableHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 50,
             _causesFloored: 120,
-            _onHitForwardBackward: -300f,
+            _onHitForwardBackward: -550f,
             _onHitRightLeft: 50f);
 
         //set the attack's properties on vulnerable charge hit
         currentAttack.onVulnerableChargeHit = currentAttack.onVulnerableHit; //this move doesn't charge
 
         //set the attack's properties on floored hit
-        tempDamage.damageAmount = 8f + (0.25f * stat.STR) + (0.25f * stat.DEX);
+        if (charStat != null) {
+            tempDamage.damageAmount = 8f + (0.25f * charStat.STR) + (0.25f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 8f + 0.8f * stat.Level;
+        }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onFlooredHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 15,
-            _onHitForwardBackward: -200f,
+            _onHitForwardBackward: -400f,
             _onHitRightLeft: 50f);
 
         //set the attack's properties on charged floored hit
         currentAttack.onFlooredChargeHit = currentAttack.onFlooredHit; //this move doesn't charge
 
         //set the attack's properties on airborne hit
-        tempDamage.damageAmount = 12f + (0.25f * stat.STR) + (0.25f * stat.DEX);
+        if (charStat != null) {
+            tempDamage.damageAmount = 12f + (0.25f * charStat.STR) + (0.25f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 12f + 1.2f * stat.Level;
+        }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onAirborneHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 50,
             _causesFloored: 100,
-            _onHitForwardBackward: -50f,
+            _onHitForwardBackward: -300f,
             _onHitRightLeft: 50f);
 
         //set the attack's properties on charged airborne hit
@@ -234,7 +262,11 @@ public class AtkStyleWish : AtkStyle {
         state = attackStates.bladework2; //set the attack state;
 
         //set the attack's properties on hit (all unset properties are defaults)
-        tempDamage.damageAmount = 8f + (0.25f * stat.STR) + (0.1f * stat.DEX);
+        if (charStat != null) {
+            tempDamage.damageAmount = 8f + (0.25f * charStat.STR) + (0.1f * charStat.DEX);
+        } else {
+            tempDamage.damageAmount = 8f + 0.8f * stat.Level;
+        }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
@@ -250,7 +282,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onGuard = new Attack.hitProperties(
             _SPcost: 8f,
             _causesGuardStun: 5,
-            _onHitForwardBackward: -250f,
+            _onHitForwardBackward: -1000f,
             _onHitRightLeft: -50f);
 
         //set the attack's properties on charge guard
@@ -314,8 +346,13 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.data.atkHitBox.isTrigger = true; //make the hitbox a trigger so that it doesn't have physics
         state = attackStates.bladework3; //set the attack state;
 
-        //set the attack's properties on hit (all unset properties are defaults)12+(0.2xSTR)+(0.25xDEX)
-        tempDamage.damageAmount = 12f + (0.2f * stat.STR) + (0.25f * stat.DEX);
+        //set the attack's properties on hit (all unset properties are defaults)
+        if (charStat != null) {
+            tempDamage.damageAmount = 12f + (0.2f * charStat.STR) + (0.25f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 12f + 1.2f * stat.Level;
+        }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
@@ -338,7 +375,12 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onChargeGuard = currentAttack.onGuard; //this move doesn't charge so they're the same as on guard properties
 
         //set the attack's properties on vulnerable hit
-        tempDamage.damageAmount = 15f + (0.25f * stat.STR) + (0.3f * stat.DEX);
+        if (charStat != null) {
+            tempDamage.damageAmount = 15f + (0.25f * charStat.STR) + (0.3f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 15f + 1.5f * stat.Level;
+        }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onVulnerableHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
@@ -352,7 +394,13 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onVulnerableChargeHit = currentAttack.onVulnerableHit; //this move doesn't charge
 
         //set the attack's properties on floored hit
-        tempDamage.damageAmount = 8f + (0.25f * stat.STR) + (0.25f * stat.DEX);
+        if (charStat != null) {
+            tempDamage.damageAmount = 8f + (0.25f * charStat.STR) + (0.25f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 8f + 1f * stat.Level;
+        }
+        tempDamage.damageAmount = 8f + (0.25f * charStat.STR) + (0.25f * charStat.DEX);
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onFlooredHit = currentAttack.onHit; //this move doesn't hit floored targets
 
@@ -360,7 +408,13 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onFlooredChargeHit = currentAttack.onFlooredHit; //this move doesn't charge
 
         //set the attack's properties on airborne hit
-        tempDamage.damageAmount = 8f + (0.15f * stat.STR) + (0.25f * stat.DEX);
+        if (charStat != null) {
+            tempDamage.damageAmount = 8f + (0.15f * charStat.STR) + (0.25f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 8f + 0.8f*stat.Level;
+        }
+        tempDamage.damageAmount = 8f + (0.15f * charStat.STR) + (0.25f * charStat.DEX);
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onAirborneHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
@@ -413,7 +467,12 @@ public class AtkStyleWish : AtkStyle {
         state = attackStates.bladework4; //set the attack state;
 
         //set the attack's properties on hit (all unset properties are defaults)
-        tempDamage.damageAmount = 8f + (0.1f * stat.STR) + (0.35f * stat.DEX);
+        if (charStat != null) {
+            tempDamage.damageAmount = 8f + (0.1f * charStat.STR) + (0.35f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 8f + 0.9f * stat.Level;
+        }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
@@ -429,14 +488,19 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onGuard = new Attack.hitProperties(
             _SPcost: 10f,
             _causesGuardStun: 16,
-            _onHitForwardBackward: -250f,
+            _onHitForwardBackward: -300f,
             _onHitRightLeft: -50f);
 
         //set the attack's properties on charge guard
         currentAttack.onChargeGuard = currentAttack.onGuard; //this move doesn't charge so they're the same as on guard properties
 
         //set the attack's properties on vulnerable hit
-        tempDamage.damageAmount = 12f + (0.1f * stat.STR) + (0.35f * stat.DEX);
+        if (charStat != null) {
+            tempDamage.damageAmount = 12f + (0.1f * charStat.STR) + (0.35f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 12f + 1f * stat.Level;
+        }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onVulnerableHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
@@ -450,7 +514,13 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onVulnerableChargeHit = currentAttack.onVulnerableHit; //this move doesn't charge
 
         //set the attack's properties on floored hit
-        tempDamage.damageAmount = 8f + (0.1f * stat.STR) + (0.30f * stat.DEX);
+        if (charStat != null) {
+            tempDamage.damageAmount = 8f + (0.1f * charStat.STR) + (0.30f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 8f + 0.8f * stat.Level;
+        }
+        tempDamage.damageAmount = 8f + (0.1f * charStat.STR) + (0.30f * charStat.DEX);
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onFlooredHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
@@ -463,7 +533,12 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onFlooredChargeHit = currentAttack.onFlooredHit; //this move doesn't charge
 
         //set the attack's properties on airborne hit
-        tempDamage.damageAmount = 12f + (0.1f * stat.STR) + (0.35f * stat.DEX);
+        if (charStat != null) {
+            tempDamage.damageAmount = 12f + (0.1f * charStat.STR) + (0.35f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 12f + 1f * stat.Level;
+        }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onAirborneHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
@@ -517,7 +592,12 @@ public class AtkStyleWish : AtkStyle {
         state = attackStates.bladework1; //set the attack state;
 
         //set the attack's properties on hit (all unset properties are defaults)
-        tempDamage.damageAmount = 5f + (0.1f * stat.STR) + (0.4f * stat.DEX);
+        if (charStat != null) {
+            tempDamage.damageAmount = 5f + (0.1f * charStat.STR) + (0.4f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 5f + 0.9f * stat.Level;
+        }
         tempDamage.damageType = Attack.typeOfDamage.Piercing;
         currentAttack.onHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
@@ -533,14 +613,19 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onGuard = new Attack.hitProperties(
             _SPcost: 30f,
             _causesGuardStun: 15,
-            _onHitForwardBackward: -300f,
+            _onHitForwardBackward: -500f,
             _onHitRightLeft: 50f);
 
         //set the attack's properties on charge guard
         currentAttack.onChargeGuard = currentAttack.onGuard; //this move doesn't charge so they're the same as on guard properties
 
         //set the attack's properties on vulnerable hit
-        tempDamage.damageAmount = 10f + (0.1f * stat.STR) + (0.4f * stat.DEX);
+        if (charStat != null) {
+            tempDamage.damageAmount = 10f + (0.1f * charStat.STR) + (0.4f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 10f + 0.9f * stat.Level;
+        }
         tempDamage.damageType = Attack.typeOfDamage.Piercing;
         currentAttack.onVulnerableHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
@@ -605,7 +690,12 @@ public class AtkStyleWish : AtkStyle {
         state = attackStates.bladework2; //set the attack state;
 
         //set the attack's properties on hit (all unset properties are defaults)
-        tempDamage.damageAmount = 4f + (0.1f * stat.STR) + (0.35f * stat.DEX);
+        if (charStat != null) {
+            tempDamage.damageAmount = 4f + (0.1f * charStat.STR) + (0.35f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 4f + 0.8f * stat.Level;
+        }
         tempDamage.damageType = Attack.typeOfDamage.Piercing;
         currentAttack.onHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
@@ -621,14 +711,19 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onGuard = new Attack.hitProperties(
             _SPcost: 30f,
             _causesGuardStun: 20,
-            _onHitForwardBackward: -300f,
+            _onHitForwardBackward: -500f,
             _onHitRightLeft: 50f);
 
         //set the attack's properties on charge guard
         currentAttack.onChargeGuard = currentAttack.onGuard; //this move doesn't charge so they're the same as on guard properties
 
         //set the attack's properties on vulnerable hit
-        tempDamage.damageAmount = 10f + (0.1f * stat.STR) + (0.35f * stat.DEX);
+        if (charStat != null) {
+            tempDamage.damageAmount = 10f + (0.1f * charStat.STR) + (0.35f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 10f + 0.9f * stat.Level;
+        }
         tempDamage.damageType = Attack.typeOfDamage.Piercing;
         currentAttack.onHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
@@ -693,13 +788,18 @@ public class AtkStyleWish : AtkStyle {
         state = attackStates.bladework3; //set the attack state;
 
         //set the attack's properties on hit (all unset properties are defaults)
-        tempDamage.damageAmount = 3f + (0.05f * stat.STR) + (0.25f * stat.DEX);
+        if (charStat != null) {
+            tempDamage.damageAmount = 3f + (0.05f * charStat.STR) + (0.25f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 3f + 0.5f*stat.Level;
+        }
         tempDamage.damageType = Attack.typeOfDamage.Piercing;
         currentAttack.onHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 10,
-            _onHitForwardBackward: -100f,
+            _onHitForwardBackward: -150f,
             _onHitRightLeft: 0f);
 
         //set the attack's properties on charge hit
@@ -773,13 +873,18 @@ public class AtkStyleWish : AtkStyle {
         //the attack state has already been set
 
         //set the attack's properties on hit (all unset properties are defaults)
-        tempDamage.damageAmount = 3f + (0.2f * stat.DEX);
+        if (charStat != null) {
+            tempDamage.damageAmount = 3f + (0.2f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 3f + 0.3f * stat.Level;
+        }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 14,
-            _onHitForwardBackward: -150f,
+            _onHitForwardBackward: -350f,
             _onHitRightLeft: 150f);
 
         //set the attack's properties on charge hit
@@ -789,8 +894,8 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onGuard = new Attack.hitProperties(
             _SPcost: 10f,
             _causesGuardStun: 7,
-            _onHitForwardBackward: -100f,
-            _onHitRightLeft: 100f);
+            _onHitForwardBackward: -150f,
+            _onHitRightLeft: 150f);
 
         //set the attack's properties on charge guard
         currentAttack.onChargeGuard = currentAttack.onGuard; //this move doesn't charge so they're the same as on guard properties
@@ -854,7 +959,12 @@ public class AtkStyleWish : AtkStyle {
         state = attackStates.bladework4; //set the attack state;
 
         //set the attack's properties on hit (all unset properties are defaults)
-        tempDamage.damageAmount = 3f + (0.2f * stat.DEX);
+        if (charStat != null) {
+            tempDamage.damageAmount = 3f + (0.2f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 3f + 0.3f * stat.Level;
+        }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
@@ -889,7 +999,12 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onFlooredChargeHit = currentAttack.onFlooredHit; //this move doesn't charge
 
         //set the attack's properties on airborne hit
-        tempDamage.damageAmount = 3f + (0.2f * stat.DEX);
+        if (charStat != null) {
+            tempDamage.damageAmount = 3f + (0.2f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 3f + 0.3f * stat.Level;
+        }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
@@ -941,7 +1056,12 @@ public class AtkStyleWish : AtkStyle {
         //the attack state has already been set
 
         //set the attack's properties on hit (all unset properties are defaults)
-        tempDamage.damageAmount = 3f + (0.05f * stat.STR) + (0.25f * stat.DEX);
+        if (charStat != null) {
+            tempDamage.damageAmount = 4f + (0.05f * charStat.STR) + (0.25f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 4f + 0.4f * stat.Level;
+        }
         tempDamage.damageType = Attack.typeOfDamage.Piercing;
         currentAttack.onHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
@@ -1022,13 +1142,18 @@ public class AtkStyleWish : AtkStyle {
         state = attackStates.bladework1; //set the attack state;
 
         //set the attack's properties on hit (all unset properties are defaults)
-        tempDamage.damageAmount = 15f + (0.45f * stat.STR) + (0.15f * stat.DEX);
+        if (charStat != null) {
+            tempDamage.damageAmount = 15f + (0.45f * charStat.STR) + (0.15f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 15f + 1.5f * stat.Level;
+        }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 50,
-            _onHitForwardBackward: -300f,
+            _onHitForwardBackward: -350f,
             _onHitRightLeft: 50f);
 
         //set the attack's properties on charge hit
@@ -1045,7 +1170,12 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onChargeGuard = currentAttack.onGuard; //this move doesn't charge so they're the same as on guard properties
 
         //set the attack's properties on vulnerable hit
-        tempDamage.damageAmount = 20f + (0.5f * stat.STR) + (0.15f * stat.DEX);
+        if (charStat != null) {
+            tempDamage.damageAmount = 20f + (0.5f * charStat.STR) + (0.15f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 20f + 1.7f * stat.Level;
+        }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onVulnerableHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
@@ -1064,7 +1194,12 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onFlooredChargeHit = currentAttack.onFlooredHit; //this move doesn't charge
 
         //set the attack's properties on airborne hit
-        tempDamage.damageAmount = 12f + (0.35f * stat.STR) + (0.15f * stat.DEX);
+        if (charStat != null) {
+            tempDamage.damageAmount = 12f + (0.35f * charStat.STR) + (0.15f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 12f + 1.2f * stat.Level;
+        }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onAirborneHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
@@ -1118,13 +1253,18 @@ public class AtkStyleWish : AtkStyle {
         state = attackStates.bladework2; //set the attack state;
 
         //set the attack's properties on hit (all unset properties are defaults)
-        tempDamage.damageAmount = 8f + (0.25f * stat.STR) + (0.05f * stat.DEX);
+        if (charStat != null) {
+            tempDamage.damageAmount = 8f + (0.25f * charStat.STR) + (0.05f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 8f + 0.4f * stat.Level;
+        }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 16,
-            _onHitForwardBackward: -500f,
+            _onHitForwardBackward: -800f,
             _onHitRightLeft: -100f);
 
         //set the attack's properties on charge hit
@@ -1134,20 +1274,25 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onGuard = new Attack.hitProperties(
             _SPcost: 10f,
             _causesGuardStun: 40,
-            _onHitForwardBackward: -250f,
+            _onHitForwardBackward: -300f,
             _onHitRightLeft: 50f);
 
         //set the attack's properties on charge guard
         currentAttack.onChargeGuard = currentAttack.onGuard; //this move doesn't charge so they're the same as on guard properties
 
         //set the attack's properties on vulnerable hit
-        tempDamage.damageAmount = 8f + (0.25f * stat.STR) + (0.05f * stat.DEX);
+        if (charStat != null) {
+            tempDamage.damageAmount = 8f + (0.25f * charStat.STR) + (0.05f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 8f + 0.4f * stat.Level;
+        }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onVulnerableHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 40,
-            _onHitForwardBackward: -500f,
+            _onHitForwardBackward: -800f,
             _onHitRightLeft: -100f);
 
         //set the attack's properties on vulnerable charge hit
@@ -1205,13 +1350,19 @@ public class AtkStyleWish : AtkStyle {
         //the attack state has already been set
 
         //set the attack's properties on hit (all unset properties are defaults)
-        tempDamage.damageAmount = 8f + (0.2f * stat.STR) + (0.05f * stat.DEX);
+        if (charStat != null) {
+            tempDamage.damageAmount = 8f + (0.2f * charStat.STR) + (0.05f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 8f + 0.4f * stat.Level;
+        }
+        tempDamage.damageAmount = 8f + (0.2f * charStat.STR) + (0.05f * charStat.DEX);
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 20,
-            _onHitForwardBackward: -300f,
+            _onHitForwardBackward: -800f,
             _onHitRightLeft: -50f);
 
         //set the attack's properties on charge hit
@@ -1221,14 +1372,19 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onGuard = new Attack.hitProperties(
             _SPcost: 10f,
             _causesGuardStun: 15,
-            _onHitForwardBackward: -400f,
+            _onHitForwardBackward: -900f,
             _onHitRightLeft: -100f);
 
         //set the attack's properties on charge guard
         currentAttack.onChargeGuard = currentAttack.onGuard; //this move doesn't charge so they're the same as on guard properties
 
         //set the attack's properties on vulnerable hit
-        tempDamage.damageAmount = 14f + (0.25f * stat.STR) + (0.25f * stat.DEX);
+        if (charStat != null) {
+            tempDamage.damageAmount = 14f + (0.25f * charStat.STR) + (0.25f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 14f + 0.8f * stat.Level;
+        }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onVulnerableHit = currentAttack.onHit; //this attack doesn't have additional properties on vulnerable hit
 
@@ -1288,13 +1444,18 @@ public class AtkStyleWish : AtkStyle {
         state = attackStates.bladework3; //set the attack state;
 
         //set the attack's properties on hit (all unset properties are defaults)
-        tempDamage.damageAmount = 15f + (0.55f * stat.STR) + (0.05f * stat.DEX);
+        if (charStat != null) {
+            tempDamage.damageAmount = 15f + (0.55f * charStat.STR) + (0.05f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 15f + 1.6f * stat.Level;
+        }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 60,
-            _causesAirborne: 60,
+            _causesAirborne: 40,
             _onHitForwardBackward: -300f,
             _onHitRightLeft: 50f);
 
@@ -1312,7 +1473,12 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onChargeGuard = currentAttack.onGuard; //this move doesn't charge so they're the same as on guard properties
 
         //set the attack's properties on vulnerable hit
-        tempDamage.damageAmount = 20f + (0.6f * stat.STR) + (0.05f * stat.DEX);
+        if (charStat != null) {
+            tempDamage.damageAmount = 20f + (0.6f * charStat.STR) + (0.05f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 20f + 2f * stat.Level;
+        }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onVulnerableHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
@@ -1332,7 +1498,12 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onFlooredChargeHit = currentAttack.onFlooredHit; //this move doesn't charge
 
         //set the attack's properties on airborne hit
-        tempDamage.damageAmount = 12f + (0.4f * stat.STR) + (0.05f * stat.DEX);
+        if (charStat != null) {
+            tempDamage.damageAmount = 12f + (0.4f * charStat.STR) + (0.05f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 12f + 1f * stat.Level;
+        }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onAirborneHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
@@ -1386,13 +1557,18 @@ public class AtkStyleWish : AtkStyle {
         state = attackStates.bladework4; //set the attack state;
 
         //set the attack's properties on hit (all unset properties are defaults)
-        tempDamage.damageAmount = 5f + (0.2f * stat.STR) + (0.05f * stat.DEX);
+        if (charStat != null) {
+            tempDamage.damageAmount = 5f + (0.2f * charStat.STR) + (0.05f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 5f + 0.5f * stat.Level;
+        }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 10,
-            _onHitForwardBackward: -500f,
+            _onHitForwardBackward: -600f,
             _onHitRightLeft: -50f);
 
         //set the attack's properties on charge hit
@@ -1402,27 +1578,37 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onGuard = new Attack.hitProperties(
             _SPcost: 10f,
             _causesGuardStun: 30,
-            _onHitForwardBackward: -300f,
+            _onHitForwardBackward: -700f,
             _onHitRightLeft: -40f);
 
         //set the attack's properties on charge guard
         currentAttack.onChargeGuard = currentAttack.onGuard; //this move doesn't charge so they're the same as on guard properties
 
         //set the attack's properties on vulnerable hit
-        tempDamage.damageAmount = 8f + (0.25f * stat.STR) + (0.05f * stat.DEX);
+        if (charStat != null) {
+            tempDamage.damageAmount = 8f + (0.25f * charStat.STR) + (0.05f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 8f + 0.6f * stat.Level;
+        }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onVulnerableHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 50,
-            _onHitForwardBackward: -500f,
+            _onHitForwardBackward: -600f,
             _onHitRightLeft: -50f);
 
         //set the attack's properties on vulnerable charge hit
         currentAttack.onVulnerableChargeHit = currentAttack.onVulnerableHit; //this move doesn't charge
 
         //set the attack's properties on floored hit
-        tempDamage.damageAmount = 5f + (0.2f * stat.STR) + (0.05f * stat.DEX);
+        if (charStat != null) {
+            tempDamage.damageAmount = 5f + (0.2f * charStat.STR) + (0.05f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 5f + 0.5f * stat.Level;
+        }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onFlooredHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
@@ -1435,15 +1621,30 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onFlooredChargeHit = currentAttack.onFlooredHit; //this move doesn't charge
 
         //set the attack's properties on airborne hit
-        tempDamage.damageAmount = 5f + (0.2f * stat.STR) + (0.05f * stat.DEX);
+        if (charStat != null) {
+            tempDamage.damageAmount = 5f + (0.2f * charStat.STR) + (0.05f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 5f + 0.5f * stat.Level;
+        }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onAirborneHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 50,
             _causesFloored: 120,
-            _onHitForwardBackward: -500f,
+            _onHitForwardBackward: -600f,
             _onHitRightLeft: -50f);
+
+        //add an extra bit of impact damage
+        if (charStat != null) {
+            tempDamage.damageAmount = 3f + (0.05f * charStat.STR);
+        }
+        else {
+            tempDamage.damageAmount = 3f + 0.1f * stat.Level;
+        }
+        tempDamage.damageType = Attack.typeOfDamage.Impact;
+        currentAttack.onAirborneHit.damageInstances.Add(tempDamage);
 
         //set the attack's properties on charged airborne hit
         currentAttack.onAirborneChargeHit = currentAttack.onAirborneHit; //this move doesn't charge
@@ -1488,14 +1689,19 @@ public class AtkStyleWish : AtkStyle {
         //the attack state has already been set
 
         //set the attack's properties on hit (all unset properties are defaults)
-        tempDamage.damageAmount = 12f + (0.3f * stat.STR) + (0.05f * stat.DEX);
+        if (charStat != null) {
+            tempDamage.damageAmount = 12f + (0.3f * charStat.STR) + (0.05f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 12f + 0.5f * stat.Level;
+        }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 50,
             _causesFloored: 120,
-            _onHitForwardBackward: -1200f,
+            _onHitForwardBackward: -2500f,
             _onHitRightLeft: -100f);
 
         //set the attack's properties on charge hit
@@ -1505,28 +1711,38 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onGuard = new Attack.hitProperties(
             _SPcost: 10f,
             _causesGuardStun: 40,
-            _onHitForwardBackward: -1000f,
+            _onHitForwardBackward: -1500f,
             _onHitRightLeft: -50f);
 
         //set the attack's properties on charge guard
         currentAttack.onChargeGuard = currentAttack.onGuard; //this move doesn't charge so they're the same as on guard properties
 
         //set the attack's properties on vulnerable hit
-        tempDamage.damageAmount = 15f + (0.35f * stat.STR) + (0.05f * stat.DEX);
+        if (charStat != null) {
+            tempDamage.damageAmount = 15f + (0.35f * charStat.STR) + (0.05f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 15f + 0.6f * stat.Level;
+        }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onVulnerableHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 70,
             _causesFloored: 120,
-            _onHitForwardBackward: -1200f,
+            _onHitForwardBackward: -3000f,
             _onHitRightLeft: -100f);
 
         //set the attack's properties on vulnerable charge hit
         currentAttack.onVulnerableChargeHit = currentAttack.onVulnerableHit; //this move doesn't charge
 
         //set the attack's properties on floored hit
-        tempDamage.damageAmount = 10f + (0.3f * stat.STR) + (0.05f * stat.DEX);
+        if (charStat != null) {
+            tempDamage.damageAmount = 10f + (0.3f * charStat.STR) + (0.05f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 10f + 0.4f * stat.Level;
+        }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onFlooredHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
@@ -1540,15 +1756,31 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onFlooredChargeHit = currentAttack.onFlooredHit; //this move doesn't charge
 
         //set the attack's properties on airborne hit
-        tempDamage.damageAmount = 18f + (0.35f * stat.STR) + (0.05f * stat.DEX);
+
+        if (charStat != null) {
+            tempDamage.damageAmount = 15f + (0.35f * charStat.STR) + (0.05f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 15f + 0.5f * stat.Level;
+        }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onAirborneHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 70,
             _causesFloored: 120,
-            _onHitForwardBackward: -400f,
+            _onHitForwardBackward: -1000f,
             _onHitRightLeft: -50f);
+
+        //add an extra bit of impact damage
+        if (charStat != null) {
+            tempDamage.damageAmount = 3f + (0.05f * charStat.STR);
+        }
+        else {
+            tempDamage.damageAmount = 3f + 0.1f * stat.Level;
+        }
+        tempDamage.damageType = Attack.typeOfDamage.Impact;
+        currentAttack.onAirborneHit.damageInstances.Add(tempDamage);
 
         //set the attack's properties on charged airborne hit
         currentAttack.onAirborneChargeHit = currentAttack.onAirborneHit; //this move doesn't charge

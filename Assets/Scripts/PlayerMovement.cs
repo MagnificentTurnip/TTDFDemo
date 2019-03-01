@@ -64,7 +64,7 @@ public class PlayerMovement : Movement {
             status.moving = false;
         }
 
-        if (playerInput.evade && status.canRoll() && status.canMove()) { //the reason why canMove() is included is because only this specific evade in the specific direction of the cursor can be done while moving
+        if (playerInput.evade && status.canRoll()) {
             if (status.sprinting) {
                 pointToTarget();
                 evade(diveSpeed, 0f, diveTime);
