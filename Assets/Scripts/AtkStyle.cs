@@ -74,7 +74,21 @@ public class AtkStyle : MonoBehaviour {
             }
 
             else if (instantiatedAttacks[i].data.attackDuration > 0) {
+                if (charStat != null) {
+                    charStat.HP -= instantiatedAttacks[i].data.HPcost; //apply costs
+                    charStat.MP -= instantiatedAttacks[i].data.MPcost;
+                    charStat.SP -= instantiatedAttacks[i].data.SPcost;
+                } else {
+                    stat.HP -= instantiatedAttacks[i].data.HPcost; //apply costs
+                    stat.MP -= instantiatedAttacks[i].data.MPcost;
+                    stat.SP -= instantiatedAttacks[i].data.SPcost;
+                }
+                instantiatedAttacks[i].data.HPcost = 0; //costs are only applied once
+                instantiatedAttacks[i].data.MPcost = 0;
+                instantiatedAttacks[i].data.SPcost = 0;
+
                 instantiatedAttacks[i].data.attackDuration -= 1;
+
                 if (debug) {
                     instantiatedAttacks[i].GetComponent<MeshRenderer>().material.SetColor("_Color", new Color(1f, 0.3f, 0.3f, 0.8f));
                 }

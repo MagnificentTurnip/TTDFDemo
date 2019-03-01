@@ -32,7 +32,7 @@ public class StatSheet : MonoBehaviour {
         if (status.HPRegenEnabled && HP < MaxHP) {
             HP += HPregen / 60;
         }
-        if (status.SPRegenEnabled && SP < MaxSP) {
+        if (status.SPRegenEnabled && SP < MaxSP && !status.sprinting) { //it's easier to just negate SPregen while sprinting here
             SP += SPregen / 60;
         }
         if (status.MPRegenEnabled && MP < MaxMP) {
@@ -49,6 +49,27 @@ public class StatSheet : MonoBehaviour {
         if (MP > MaxMP) {
             MP = MaxMP;
         }
+
+        if (status.sprinting) {
+            SP--;
+        }
+
+        if (SP < 0) {
+            if (status.vulnerable < 60) {
+                status.vulnerable = 60;
+            }
+            if (status.paralyzed < 120) {
+                status.paralyzed = 120;
+            }
+            SP = 0;
+        }
+
+        if (MP < 0) {
+            if (status.silenced < 180) {
+                status.silenced = 180;
+            }
+        }
+
 
     }
 }

@@ -49,6 +49,7 @@ public class StatusManager : MonoBehaviour {
     public List<Effect> effects; //a list of effects that are currently active on this entity
 
     public AtkStyle atkStyle; //Reference to atkStyle for the sake of flinching (needs to return entity to idle)
+    public StatSheet stat; //reference to the stat sheet to decrease SP mainly
     public Animator animator; //reference to the animator for the sake of animating
 
     public bool spellFlinchTrigger; //to be referenced by any associated spellcasting to stop it if the entity flinches
@@ -212,7 +213,7 @@ public class StatusManager : MonoBehaviour {
     }
 
     public bool canCast() {
-        if (isFloored() || isStunned() || isGuardStunned() || isParryStunned() || rollLock || attackLock || parryLock > 0 || parryFrames > 0 || castLock > 0) {
+        if (isFloored() || isStunned() || isGuardStunned() || isParryStunned() || silenced > 0 || rollLock || attackLock || parryLock > 0 || parryFrames > 0 || castLock > 0) {
             return false;
         }
         else {
@@ -312,7 +313,7 @@ public class StatusManager : MonoBehaviour {
             grappled -= 1;
         }
         //END OF STATUS TRACKING / UPDATING
-
+        
     }
 
     // Update is called once per frame

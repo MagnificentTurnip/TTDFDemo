@@ -8,9 +8,9 @@ public class SeismicTorrent : Spell {
 	public override void Start () {
         base.Start();
         spellCode = "234";
-        castTime = 15;
+        castTime = 30;
         channelTime = 0;
-        duration = 60;
+        duration = 80;
     }
 
     public override void CastSpell() {
@@ -30,7 +30,7 @@ public class SeismicTorrent : Spell {
             _GFXAnimation: "seismicTorrent",
             _HitboxAnimation: "something", //not sure if this is needed rn
             _attackDelay: 4, //attack begins quickly
-            _attackDuration: 30, //30 frames within which the attack is active
+            _attackDuration: 60, //30 frames within which the attack is active
             _attackEnd: 0, //when the attack ends it's done.
             _hitsAirborne: false, //hits standing and floored.
             _hitsStanding: true,
@@ -117,8 +117,9 @@ public class SeismicTorrent : Spell {
     // FixedUpdate is called once per physics frame
     public override void FixedUpdate() {
         base.FixedUpdate();
-        if (active) {
-            transform.Translate(transform.forward * 0.3f);
+        if (ready == 2) {
+            transform.Translate(transform.forward * 0.2f, Space.World);
         }
     }
+    
 }

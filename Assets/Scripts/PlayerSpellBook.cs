@@ -13,6 +13,7 @@ public class PlayerSpellBook : MonoBehaviour {
 
     public string currentSpellCode;
     public int reclickCounter;
+    public bool repeatSpell; //bool that checks for a repeated spell - no copies of the same spell existing at a time, thanks
 
     public bool b1release;
     public bool b2release;
@@ -82,22 +83,31 @@ public class PlayerSpellBook : MonoBehaviour {
                 b4release = true;
             }
 
-            if (playIn.movement && style.status.canCast()) {
+            if (playIn.movement && style.status.canCast() && style.status.castLock <= 0) {
                 //check to see if the current spellCode matches that of any of the player's known spells.
                 for (int i = 0; i < spellsKnown.Count; i++) {
                     if (currentSpellCode == spellsKnown[i].GetComponent<Spell>().spellCode) {
-                        currentSpell = Instantiate(spellsKnown[i]).GetComponent<Spell>();
-                        currentSpell.debug = true; //testing mode
-                        currentSpell.status = style.status;
-                        currentSpell.charStat = style.charStat;
-                        currentSpell.movement = style.movement;
-                        currentSpell.transform.position = transform.position;
-                        currentSpell.transform.rotation = transform.rotation;
-                        currentSpell.active = true;
-                        currentSpell.ready = 0;
-                        style.status.castLock = currentSpell.castTime;
-                        currentSpellCode = "";
-                        runningSpells.Add(currentSpell.gameObject);
+                        repeatSpell = false;
+                        for (int i2 = 0; i2 < runningSpells.Count; i2++) {
+                            if (currentSpellCode == runningSpells[i2].GetComponent<Spell>().spellCode) {
+                                repeatSpell = true;
+                            }
+                        }
+                            if (!repeatSpell) {
+                            currentSpell = Instantiate(spellsKnown[i]).GetComponent<Spell>();
+                            currentSpell.debug = true; //testing mode
+                            currentSpell.status = style.status;
+                            currentSpell.charStat = style.charStat;
+                            currentSpell.movement = style.movement;
+                            currentSpell.transform.position = transform.position;
+                            currentSpell.transform.rotation = transform.rotation;
+                            currentSpell.active = true;
+                            currentSpell.ready = 0;
+                            style.status.castLock = currentSpell.castTime;
+                            currentSpellCode = "";
+                            runningSpells.Add(currentSpell.gameObject);
+                            style.forceSpellcast(currentSpell.castTime + 5); //set the spellcast state for a while
+                        }
                     }
                 }
             }

@@ -31,9 +31,9 @@ public class CharStatSheet : StatSheet {
         SP = MaxSP;
         MP = MaxMP;
 
-        HPregen = 2f + (0.1f * Level) + (0.1f * VIT) + (0.05f * CON);
-        SPregen = 100f + (5f * Level) + (2f * END) + (0.5f * AGI);
-        MPregen = 10f + (0.5f * Level) + (1f * ATT) + (0.2f * PRE);
+        HPregen = 1f + (0.1f * Level) + (0.1f * VIT) + (0.05f * CON);
+        SPregen = 50f + (5f * Level) + (2f * END) + (0.5f * AGI);
+        MPregen = 5f + (0.5f * Level) + (1f * ATT) + (0.2f * PRE);
 
     }
 	

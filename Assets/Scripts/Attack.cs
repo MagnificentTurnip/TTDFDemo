@@ -30,6 +30,10 @@ public class Attack : MonoBehaviour {
         public float yScale;
         public float zScale;
 
+        public float HPcost; //Some attacks cost a certain amount of HP, SP or MP to perform.
+        public float SPcost;
+        public float MPcost;
+
         public int attackDelay; //the number of frames before the attack actually begins
         public int attackCharge; //the number of frames, if any, that the attacker can spend charging up the attack by holding down the attacking button(s)
         public int attackDuration; //the number of frames during which the attack will take place
@@ -58,6 +62,9 @@ public class Attack : MonoBehaviour {
             float _xScale = 1f, 
             float _yScale = 1f, 
             float _zScale = 1f,
+            float _HPcost = 0,
+            float _SPcost = 0,
+            float _MPcost = 0,
             int _attackDelay = 0,
             int _attackCharge = 0,
             int _attackDuration = 0,
@@ -75,6 +82,9 @@ public class Attack : MonoBehaviour {
             xScale = _xScale;
             yScale = _yScale;
             zScale = _zScale;
+            HPcost = _HPcost;
+            SPcost = _SPcost;
+            MPcost = _MPcost;
             attackDelay = _attackDelay;
             attackCharge = _attackCharge;
             attackDuration = _attackDuration;
@@ -91,7 +101,7 @@ public class Attack : MonoBehaviour {
 
         public List<damage> damageInstances;
 
-        public float HPcost; //Some attacks, although unusual, require a certain amount of HP, SP or MP to perform.
+        public float HPcost; //Some attacks, although unusual, cost a certain amount of HP, SP or MP on guard, hit, etc.
         public float SPcost;
         public float MPcost;
 
