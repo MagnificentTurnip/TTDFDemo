@@ -67,6 +67,7 @@ MonoBehaviour:
   hitboxAnimatorController: {fileID: 0}
   spellCode: 234
   castTime: 30
+  cost: 40
   channelTime: 0
   duration: 65
   active: 0

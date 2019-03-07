@@ -5,6 +5,16 @@ TagManager:
   serializedVersion: 2
   tags:
   - attack
+  - invulnerableSlider
+  - flooredSlider
+  - vulnerableSlider
+  - silencedSlider
+  - airborneSlider
+  - stunnedSlider
+  - guardStunnedSlider
+  - paralyzedSlider
+  - parryStunnedSlider
+  - grappledSlider
   layers:
   - Default
   - TransparentFX

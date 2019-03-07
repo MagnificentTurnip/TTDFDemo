@@ -725,7 +725,7 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 10f + 0.9f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Piercing;
-        currentAttack.onHit = new Attack.hitProperties(
+        currentAttack.onVulnerableHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 35,

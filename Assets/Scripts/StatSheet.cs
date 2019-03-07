@@ -68,8 +68,20 @@ public class StatSheet : MonoBehaviour {
             if (status.silenced < 180) {
                 status.silenced = 180;
             }
+            SP += MP*2;
+            if (HP + MP*2 > 0) {
+                HP += MP*2;
+            } else {
+                HP = 1;
+                if (status.stunned < status.castLock + 60) {
+                    status.stunned = status.castLock + 60;
+                }
+            }
+            MP = 0;
         }
 
-
+        if (HP < 0) {
+            //u ded boi
+        }
     }
 }

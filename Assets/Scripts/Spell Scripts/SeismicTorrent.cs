@@ -10,7 +10,8 @@ public class SeismicTorrent : Spell {
         spellCode = "234";
         castTime = 30;
         channelTime = 0;
-        duration = 80;
+        duration = 60;
+        cost = 40;
     }
 
     public override void CastSpell() {
@@ -29,7 +30,7 @@ public class SeismicTorrent : Spell {
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "seismicTorrent",
             _HitboxAnimation: "something", //not sure if this is needed rn
-            _attackDelay: 4, //attack begins quickly
+            _attackDelay: 10, //attack begins quickly
             _attackDuration: 60, //30 frames within which the attack is active
             _attackEnd: 0, //when the attack ends it's done.
             _hitsAirborne: false, //hits standing and floored.
@@ -56,8 +57,8 @@ public class SeismicTorrent : Spell {
         currentAttack.onHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
-            _causesStun: 60,
-            _causesAirborne: 60,
+            _causesStun: 20,
+            _causesAirborne: 20,
             _causesFloored: 180,
             _onHitForwardBackward: -200f,
             _onHitRightLeft: 0f);
@@ -118,7 +119,7 @@ public class SeismicTorrent : Spell {
     public override void FixedUpdate() {
         base.FixedUpdate();
         if (ready == 2) {
-            transform.Translate(transform.forward * 0.2f, Space.World);
+            transform.Translate(transform.forward * 0.25f, Space.World);
         }
     }
     

@@ -1,8 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class Hittable : MonoBehaviour {
+
+    public GameObject damageNumber;
+    GameObject currentDamageNumber;
+
+    public Camera cam;
+    public Canvas damageNumberCanvas;
 
     public Attack currentAttack;
     public Motor motor;
@@ -16,7 +23,6 @@ public class Hittable : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		
 	}
 	
 	// Update is called once per frame
@@ -30,11 +36,18 @@ public class Hittable : MonoBehaviour {
             for (int i = 0; i < properties.damageInstances.Count; i++) { //loop through damage instances to apply them
 
                 //if (currentAttack.onHit.damageInstances[i].damageType == Attack.typeOfDamage.Slashing) {
+                currentDamageNumber = Instantiate(damageNumber);
+                currentDamageNumber.GetComponent<RectTransform>().position = cam.WorldToScreenPoint(transform.position);
+                currentDamageNumber.GetComponent<RectTransform>().parent = damageNumberCanvas.transform;
+                currentDamageNumber.GetComponent<RectTransform>().Translate(Random.Range(-40, 40), Random.Range(-40, 40), 0);
+                currentDamageNumber.GetComponent<TextMeshProUGUI>().text = (Mathf.CeilToInt(stat.HP) - Mathf.CeilToInt(stat.HP - properties.damageInstances[i].damageAmount)).ToString();
+
                 stat.HP -= properties.damageInstances[i].damageAmount/* *= slashingTaken*/;
                 //}
 
             }
         }
+        
 
         if (properties.causesFlinch) {
             status.flinch();
@@ -77,8 +90,7 @@ public class Hittable : MonoBehaviour {
         }
     }
 
-
-    private void OnTriggerEnter(Collider col) {
+    private void OnTriggerStay(Collider col) {
 
         if (col.gameObject.tag.Contains("attack") && col.gameObject.transform.parent != this.gameObject.transform.parent) {
 

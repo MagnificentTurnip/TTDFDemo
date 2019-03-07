@@ -94,6 +94,7 @@ public class StatusManager : MonoBehaviour {
 
     //Flinch (breaks the entity out of all current actions)
     public void flinch() {
+        print("flinch");
         rollLock = false;
         guardLock = false;
         parryLock = 0;

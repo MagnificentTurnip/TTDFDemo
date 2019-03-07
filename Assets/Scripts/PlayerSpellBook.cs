@@ -20,10 +20,14 @@ public class PlayerSpellBook : MonoBehaviour {
     public bool b3release;
     public bool b4release;
 
-    public void stopCasting() {
+    public void StopCasting() {
         for (int i = 0; i < runningSpells.Count; i++) {
-            if (runningSpells[i].GetComponent<Spell>().castTime > 0) {
-                runningSpells[i].GetComponent<Spell>().destroySpell();
+            if (runningSpells[i] != null) {
+                if (runningSpells[i].GetComponent<Spell>().castTime > 0) {
+                    toDestroy = runningSpells[i];
+                    runningSpells.Remove(runningSpells[i]);
+                    toDestroy.GetComponent<Spell>().destroySpell();
+                }
             }
         }
     }
@@ -47,10 +51,7 @@ public class PlayerSpellBook : MonoBehaviour {
         }
 
         if (style.status.casting) {
-
-            if (style.status.castLock <= 0) {
-                style.movement.pointToTarget(); //point to the mouse cursor while casting (unless castlocked)
-            }
+            
             style.forceSpellcast(1); //set the spellcast state while casting
 
             //Spell input management - needs to be only on press to prevent large strings of the same command on a single tap of the button/key
@@ -104,6 +105,7 @@ public class PlayerSpellBook : MonoBehaviour {
                             currentSpell.active = true;
                             currentSpell.ready = 0;
                             style.status.castLock = currentSpell.castTime;
+                            style.stat.MP -= currentSpell.cost;
                             currentSpellCode = "";
                             runningSpells.Add(currentSpell.gameObject);
                             style.forceSpellcast(currentSpell.castTime + 5); //set the spellcast state for a while
@@ -112,7 +114,7 @@ public class PlayerSpellBook : MonoBehaviour {
                 }
             }
 
-            if (playIn.spellcast && style.status.canCast() && reclickCounter <= 0) {
+            if (!playIn.spellcast && style.status.castLock <= 0 && reclickCounter <= 0) {
                 style.status.casting = false;
                 reclickCounter = 15; //can't re-enter spellcasting for 15 frames
                 if (currentSpellCode == "") {
@@ -127,8 +129,11 @@ public class PlayerSpellBook : MonoBehaviour {
 	}
 
     private void FixedUpdate() {
+        if (style.status.casting && style.status.castLock <= 0) {
+            style.movement.pointToTarget(); //point to the mouse cursor while casting (unless castlocked) (in fixedUpdate because it looks weird to point places while paused)
+        }
         if (style.status.spellFlinchTrigger) {
-            stopCasting();
+            StopCasting();
             style.status.spellFlinchTrigger = false;
         }
         if (reclickCounter > 0) {

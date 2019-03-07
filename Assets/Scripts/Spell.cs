@@ -6,6 +6,7 @@ public class Spell : AtkStyle {
 
     public string spellCode; //the inputted spell code required to cast the spell
     public int castTime; //the time it takes to cast the spell after the spell code has been input
+    public int cost; //the spell's cost in MP
     public int channelTime; //the time spent channelling the spell after it is cast - can be 0, and often is.
     public int duration; //the duration of the spell itself (transferred effects can have longer durations) - after this timer runs to 0 the spell object is destroyed
     // public List<Effect> effects; //a spell may well have effects but doesn't a fair amount of the time. I think this can be added to each spell that has effects, but just in case this is here as a reminder.
