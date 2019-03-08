@@ -232,6 +232,68 @@ public class UISliderManager : MonoBehaviour {
 
         for (int i = 0; i < conditionSliders.Count; i++) {
 
+            //checking if each condition is refreshed (THIS CAN BE MAYBE MORE EFFICIENT? PUT INSIDE THE IF STATUS.EG > 0 AND LOOP THROUGH THEN FOR EACH ONE)
+
+            //invulnerable
+            if (conditionSliders[i].tag.Contains("invulnerableSlider") && status.invulnerable > conditionSliders[i].GetComponent<setConditionSlider>().value) {
+                conditionSliders[i].GetComponent<Slider>().maxValue = status.invulnerable;
+                conditionSliders[i].GetComponent<setConditionSlider>().value = status.invulnerable;
+            }
+
+            //floored
+            if (conditionSliders[i].tag.Contains("flooredSlider") && status.floored > conditionSliders[i].GetComponent<setConditionSlider>().value) {
+                conditionSliders[i].GetComponent<Slider>().maxValue = status.floored;
+                conditionSliders[i].GetComponent<setConditionSlider>().value = status.floored;
+            }
+
+            //vulnerable
+            if (conditionSliders[i].tag.Contains("invulnerableSlider") && status.invulnerable > conditionSliders[i].GetComponent<setConditionSlider>().value) {
+                conditionSliders[i].GetComponent<Slider>().maxValue = status.invulnerable;
+                conditionSliders[i].GetComponent<setConditionSlider>().value = status.invulnerable;
+            }
+
+            //silenced
+            if (conditionSliders[i].tag.Contains("vulnerableSlider") && status.vulnerable > conditionSliders[i].GetComponent<setConditionSlider>().value) {
+                conditionSliders[i].GetComponent<Slider>().maxValue = status.vulnerable;
+                conditionSliders[i].GetComponent<setConditionSlider>().value = status.vulnerable;
+            }
+
+            //airborne
+            if (conditionSliders[i].tag.Contains("airborneSlider") && status.airborne > conditionSliders[i].GetComponent<setConditionSlider>().value) {
+                conditionSliders[i].GetComponent<Slider>().maxValue = status.airborne;
+                conditionSliders[i].GetComponent<setConditionSlider>().value = status.airborne;
+            }
+
+            //stunned
+            if (conditionSliders[i].tag.Contains("stunnedSlider") && status.stunned > conditionSliders[i].GetComponent<setConditionSlider>().value) {
+                conditionSliders[i].GetComponent<Slider>().maxValue = status.stunned;
+                conditionSliders[i].GetComponent<setConditionSlider>().value = status.stunned;
+            }
+
+            //paralyzed
+            if (conditionSliders[i].tag.Contains("paralyzedSlider") && status.paralyzed > conditionSliders[i].GetComponent<setConditionSlider>().value) {
+                conditionSliders[i].GetComponent<Slider>().maxValue = status.paralyzed;
+                conditionSliders[i].GetComponent<setConditionSlider>().value = status.paralyzed;
+            }
+
+            //guardStunned
+            if (conditionSliders[i].tag.Contains("guardStunnedSlider") && status.guardStunned > conditionSliders[i].GetComponent<setConditionSlider>().value) {
+                conditionSliders[i].GetComponent<Slider>().maxValue = status.guardStunned;
+                conditionSliders[i].GetComponent<setConditionSlider>().value = status.guardStunned;
+            }
+
+            //parryStunned
+            if (conditionSliders[i].tag.Contains("parryStunnedSlider") && status.parryStunned > conditionSliders[i].GetComponent<setConditionSlider>().value) {
+                conditionSliders[i].GetComponent<Slider>().maxValue = status.parryStunned;
+                conditionSliders[i].GetComponent<setConditionSlider>().value = status.parryStunned;
+            }
+
+            //grappled
+            if (conditionSliders[i].tag.Contains("grappledSlider") && status.grappled > conditionSliders[i].GetComponent<setConditionSlider>().value) {
+                conditionSliders[i].GetComponent<Slider>().maxValue = status.grappled;
+                conditionSliders[i].GetComponent<setConditionSlider>().value = status.grappled;
+            }
+
             //checking if a condition is over
             switch (conditionSliders[i].gameObject.tag) {
                 case "invulnerableSlider":
@@ -314,70 +376,6 @@ public class UISliderManager : MonoBehaviour {
                         Destroy(toDestroy);
                     }
                     break;
-            }
-            
-
-
-            //checking if each condition is refreshed (THIS CAN BE MAYBE MORE EFFICIENT? PUT INSIDE THE IF STATUS.EG > 0 AND LOOP THROUGH THEN FOR EACH ONE)
-
-                //invulnerable
-            if (conditionSliders[i].tag.Contains("invulnerableSlider") && status.invulnerable > conditionSliders[i].GetComponent<setConditionSlider>().value) {
-                conditionSliders[i].GetComponent<Slider>().maxValue = status.invulnerable;
-                conditionSliders[i].GetComponent<setConditionSlider>().value = status.invulnerable;
-            }
-
-            //floored
-            if (conditionSliders[i].tag.Contains("flooredSlider") && status.floored > conditionSliders[i].GetComponent<setConditionSlider>().value) {
-                conditionSliders[i].GetComponent<Slider>().maxValue = status.floored;
-                conditionSliders[i].GetComponent<setConditionSlider>().value = status.floored;
-            }
-
-            //vulnerable
-            if (conditionSliders[i].tag.Contains("invulnerableSlider") && status.invulnerable > conditionSliders[i].GetComponent<setConditionSlider>().value) {
-                conditionSliders[i].GetComponent<Slider>().maxValue = status.invulnerable;
-                conditionSliders[i].GetComponent<setConditionSlider>().value = status.invulnerable;
-            }
-
-            //silenced
-            if (conditionSliders[i].tag.Contains("vulnerableSlider") && status.vulnerable > conditionSliders[i].GetComponent<setConditionSlider>().value) {
-                conditionSliders[i].GetComponent<Slider>().maxValue = status.vulnerable;
-                conditionSliders[i].GetComponent<setConditionSlider>().value = status.vulnerable;
-            }
-
-            //airborne
-            if (conditionSliders[i].tag.Contains("airborneSlider") && status.airborne > conditionSliders[i].GetComponent<setConditionSlider>().value) {
-                conditionSliders[i].GetComponent<Slider>().maxValue = status.airborne;
-                conditionSliders[i].GetComponent<setConditionSlider>().value = status.airborne;
-            }
-
-            //stunned
-            if (conditionSliders[i].tag.Contains("stunnedSlider") && status.stunned > conditionSliders[i].GetComponent<setConditionSlider>().value) {
-                conditionSliders[i].GetComponent<Slider>().maxValue = status.stunned;
-                conditionSliders[i].GetComponent<setConditionSlider>().value = status.stunned;
-            }
-
-            //paralyzed
-            if (conditionSliders[i].tag.Contains("paralyzedSlider") && status.paralyzed > conditionSliders[i].GetComponent<setConditionSlider>().value) {
-                conditionSliders[i].GetComponent<Slider>().maxValue = status.paralyzed;
-                conditionSliders[i].GetComponent<setConditionSlider>().value = status.paralyzed;
-            }
-
-            //guardStunned
-            if (conditionSliders[i].tag.Contains("guardStunnedSlider") && status.guardStunned > conditionSliders[i].GetComponent<setConditionSlider>().value) {
-                conditionSliders[i].GetComponent<Slider>().maxValue = status.guardStunned;
-                conditionSliders[i].GetComponent<setConditionSlider>().value = status.guardStunned;
-            }
-
-            //parryStunned
-            if (conditionSliders[i].tag.Contains("parryStunnedSlider") && status.parryStunned > conditionSliders[i].GetComponent<setConditionSlider>().value) {
-                conditionSliders[i].GetComponent<Slider>().maxValue = status.parryStunned;
-                conditionSliders[i].GetComponent<setConditionSlider>().value = status.parryStunned;
-            }
-
-            //grappled
-            if (conditionSliders[i].tag.Contains("grappledSlider") && status.grappled > conditionSliders[i].GetComponent<setConditionSlider>().value) {
-                conditionSliders[i].GetComponent<Slider>().maxValue = status.grappled;
-                conditionSliders[i].GetComponent<setConditionSlider>().value = status.grappled;
             }
 
 

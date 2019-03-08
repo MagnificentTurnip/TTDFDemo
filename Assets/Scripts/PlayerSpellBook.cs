@@ -10,6 +10,7 @@ public class PlayerSpellBook : MonoBehaviour {
     public AtkStyle style;
     public PlayerInput playIn;
     public GameObject toDestroy;
+    public TMPro.TextMeshProUGUI codeDisplay;
 
     public string currentSpellCode;
     public int reclickCounter;
@@ -84,6 +85,17 @@ public class PlayerSpellBook : MonoBehaviour {
                 b4release = true;
             }
 
+            //check to see if it's one of the funky spells that aren't cast with lmb and have the honour of being hardcoded into the spellbook
+            if (playIn.evade && style.status.canCast() && style.status.castLock <= 0 && currentSpellCode == "") {
+                //perform the magical evade
+                style.movement.evade(style.movement.rollSpeed, 0f, style.movement.rollTime);
+                style.animator.Play("fRoll");
+                style.status.invulnerable = 30;
+                style.status.Incorporealise(30);
+                style.status.castLock = 30;
+                style.stat.MP -= 30;
+            }
+
             if (playIn.movement && style.status.canCast() && style.status.castLock <= 0) {
                 //check to see if the current spellCode matches that of any of the player's known spells.
                 for (int i = 0; i < spellsKnown.Count; i++) {
@@ -123,12 +135,14 @@ public class PlayerSpellBook : MonoBehaviour {
                     //need time to dispel stuff if a spellcode is queued
                     style.status.castLock = 30;
                 }
+                currentSpellCode = "";
             }
 
         }
 	}
 
     private void FixedUpdate() {
+        codeDisplay.text = currentSpellCode;
         if (style.status.casting && style.status.castLock <= 0) {
             style.movement.pointToTarget(); //point to the mouse cursor while casting (unless castlocked) (in fixedUpdate because it looks weird to point places while paused)
         }
@@ -155,7 +169,7 @@ public class PlayerSpellBook : MonoBehaviour {
                 runningSpells.Remove(runningSpells[i]);
                 toDestroy.GetComponent<Spell>().destroySpell();
             }
-            if (runningSpells[i].GetComponent<Spell>().ready == 1) {
+             else if (runningSpells[i].GetComponent<Spell>().ready == 1) {
                 runningSpells[i].GetComponent<Spell>().CastSpell();
             }
         }

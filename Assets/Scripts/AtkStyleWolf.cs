@@ -69,19 +69,19 @@ public class AtkStyleWolf : AtkStyle {
 
     }
 
-    public void forwardBite() {
+    public void forwardBite(int unblock) { //this attack takes an int because it is sometimes unblockable
 
     }
 
-    public void lSwipe() {
+    public void lSwipe(int unblock) { //this attack takes an int because it is sometimes unblockable
 
     }
 
-    public void rSwipe() {
+    public void rSwipe(int unblock) { //this attack takes an int because it is sometimes unblockable
 
     }
 
-    public void pounce() {
+    public void pounce(int unblock) { //this attack takes an int because it is sometimes unblockable
 
     }
 

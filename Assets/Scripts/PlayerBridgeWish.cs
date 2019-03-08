@@ -4,7 +4,16 @@ using UnityEngine;
 
 public class PlayerBridgeWish : PlayerBridge { //bridges between player input and the attacks in the Wish attacking style. Used so that it can be bridged via AI instead for different stuff if need be.
 
-    new public AtkStyleWish style;
+    public AtkStyleWish style;
+    public override AtkStyle Style {
+        get {
+            return style;
+        }
+
+        set {
+            throw new System.NotImplementedException();
+        }
+    }
 
 
     // Use this for initialization

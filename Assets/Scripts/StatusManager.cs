@@ -29,6 +29,7 @@ public class StatusManager : MonoBehaviour {
     public bool HPRegenEnabled;
     public bool SPRegenEnabled;
     public bool MPRegenEnabled;
+    public int incorporealFrames; //not really a condition as it overlaps with a lot of other proper conditions - more of a mechanic
     //END OF MISCELLANEOUS STATES
 
     //CONDITIONS
@@ -51,6 +52,7 @@ public class StatusManager : MonoBehaviour {
     public AtkStyle atkStyle; //Reference to atkStyle for the sake of flinching (needs to return entity to idle)
     public StatSheet stat; //reference to the stat sheet to decrease SP mainly
     public Animator animator; //reference to the animator for the sake of animating
+    public Collider col; //reference to the entity's collider for the sake of going incorporeal
 
     public bool spellFlinchTrigger; //to be referenced by any associated spellcasting to stop it if the entity flinches
 
@@ -92,9 +94,14 @@ public class StatusManager : MonoBehaviour {
         spellFlinchTrigger = false;
 	}
 
+    public void Incorporealise(int frames) {
+        col.isTrigger = true;
+        incorporealFrames = frames;
+    }
+
     //Flinch (breaks the entity out of all current actions)
     public void flinch() {
-        print("flinch");
+        //print("flinch");
         rollLock = false;
         guardLock = false;
         parryLock = 0;
@@ -205,7 +212,7 @@ public class StatusManager : MonoBehaviour {
     }
 
     public bool canParry() {
-        if (isFloored() || isStunned() || isGuardStunned() || isParryStunned() || rollLock || attackLock || parryLock > 0 || parryFrames > 0 || casting || castLock > 0) {
+        if (isFloored() || isStunned() || isGuardStunned() || rollLock || attackLock || parryLock > 0 || parryFrames > 0 || casting || castLock > 0) {
             return false;
         }
         else {
@@ -277,6 +284,9 @@ public class StatusManager : MonoBehaviour {
     void FixedUpdate() {
 
         //STATUS TRACKING / UPDATING (all of these statuses have frame timers. If they're above zero they're active, and they decrease by 1 each frame)
+        if (invulnerable > 0) {
+            invulnerable -= 1;
+        }
         if (parryFrames > 0) {
             parryFrames -= 1;
         }
@@ -314,7 +324,14 @@ public class StatusManager : MonoBehaviour {
             grappled -= 1;
         }
         //END OF STATUS TRACKING / UPDATING
-        
+
+        //track incorporeality too even if it's not a status it's kind of like one but not, don't question my naming conventions
+        if (incorporealFrames > 0) {
+            incorporealFrames -= 1;
+        } else {
+            col.isTrigger = false;
+        }
+
     }
 
     // Update is called once per frame
@@ -325,4 +342,11 @@ public class StatusManager : MonoBehaviour {
         animator.SetBool("floored", isFloored());
         animator.SetBool("casting", casting);
 	}
+
+    private void OnTriggerEnter(Collider other) {
+        if (other.gameObject.tag.Contains("waltal")) {
+            col.isTrigger = false;
+            incorporealFrames = 0;
+        }
+    }
 }

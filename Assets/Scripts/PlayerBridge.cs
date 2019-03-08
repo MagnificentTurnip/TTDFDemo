@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerBridge : MonoBehaviour {
 
     public PlayerInput playIn;
-    public AtkStyle style;
+    public virtual AtkStyle Style { get; set; }
     public StatusManager status;
     public PlayerSpellBook spellBook;
 
@@ -33,23 +33,23 @@ public class PlayerBridge : MonoBehaviour {
         if ((playIn.guard && status.canGuard()) || status.isGuardStunned()) {
             status.guarding = true;
             status.guardLock = true;
-            style.forceGuarding(3);
-            style.animator.SetBool("guarding", true);
+            Style.forceGuarding(3);
+            Style.animator.SetBool("guarding", true);
         }
         else {
             status.guarding = false;
             status.guardLock = false;
-            style.animator.SetBool("guarding", false);
+            Style.animator.SetBool("guarding", false);
         }
 
 
         //parrying
         if (playIn.fParry && status.canParry()) {
-            style.fParry();
+            Style.fParry();
         }
 
         if (playIn.bParry && status.canParry()) {
-            style.bParry();
+            Style.bParry();
         }
     }
 
