@@ -6,7 +6,7 @@ using TMPro;
 public class Hittable : MonoBehaviour {
 
     public GameObject damageNumber;
-    GameObject currentDamageNumber;
+    public GameObject currentDamageNumber;
 
     public Camera cam;
     public Canvas damageNumberCanvas;
@@ -31,7 +31,7 @@ public class Hittable : MonoBehaviour {
         //print(Vector3.Angle(transform.position, uhme.transform.position));
     }
 
-    public void applyHitProperties(Attack.hitProperties properties) {
+    public virtual void applyHitProperties(Attack.hitProperties properties) {
         if (properties.damageInstances != null) {
             for (int i = 0; i < properties.damageInstances.Count; i++) { //loop through damage instances to apply them
 

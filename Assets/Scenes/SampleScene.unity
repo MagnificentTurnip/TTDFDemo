@@ -2409,6 +2409,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damageNumber: {fileID: 1163370531694862, guid: d21669f8d6573944199392021bebb5ad,
     type: 2}
+  currentDamageNumber: {fileID: 0}
   cam: {fileID: 534669904}
   damageNumberCanvas: {fileID: 818933134}
   currentAttack: {fileID: 0}
@@ -5862,6 +5863,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageNumber: {fileID: 0}
+  currentDamageNumber: {fileID: 0}
   cam: {fileID: 0}
   damageNumberCanvas: {fileID: 0}
   currentAttack: {fileID: 0}
@@ -6321,6 +6323,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damageNumber: {fileID: 1163370531694862, guid: d21669f8d6573944199392021bebb5ad,
     type: 2}
+  currentDamageNumber: {fileID: 0}
   cam: {fileID: 534669904}
   damageNumberCanvas: {fileID: 818933134}
   currentAttack: {fileID: 0}
