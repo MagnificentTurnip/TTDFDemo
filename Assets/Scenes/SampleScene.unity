@@ -1737,7 +1737,7 @@ GameObject:
   - component: {fileID: 812445447}
   m_Layer: 0
   m_Name: Cube
-  m_TagString: Untagged
+  m_TagString: TgtObj
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2416,6 +2416,9 @@ MonoBehaviour:
   motor: {fileID: 823668811}
   status: {fileID: 823668814}
   stat: {fileID: 823668817}
+  hitlag: {fileID: 2146917195}
+  hitLagStatus: {fileID: 0}
+  hitLagTime: 0
   towardAttackerAngle: 0
 --- !u!33 &823668820
 MeshFilter:
@@ -5870,6 +5873,9 @@ MonoBehaviour:
   motor: {fileID: 1792635134}
   status: {fileID: 1792635133}
   stat: {fileID: 0}
+  hitlag: {fileID: 0}
+  hitLagStatus: {fileID: 0}
+  hitLagTime: 0
   towardAttackerAngle: 0
 --- !u!54 &1792635136
 Rigidbody:
@@ -6273,7 +6279,7 @@ GameObject:
   - component: {fileID: 1980608057}
   m_Layer: 0
   m_Name: dummy
-  m_TagString: Untagged
+  m_TagString: TgtEnmBos
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -6330,6 +6336,9 @@ MonoBehaviour:
   motor: {fileID: 1980608049}
   status: {fileID: 1980608050}
   stat: {fileID: 1980608048}
+  hitlag: {fileID: 2146917195}
+  hitLagStatus: {fileID: 0}
+  hitLagTime: 0
   towardAttackerAngle: 0
 --- !u!114 &1980608048
 MonoBehaviour:
@@ -6954,3 +6963,44 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2107534689}
   m_CullTransparentMesh: 0
+--- !u!1 &2146917194
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2146917196}
+  - component: {fileID: 2146917195}
+  m_Layer: 0
+  m_Name: timescaleManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2146917195
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2146917194}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 244b5c1f3a3f60f4aa6162899da31b4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  counter: 0
+--- !u!4 &2146917196
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2146917194}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 54.046993, y: 399.7206, z: -192.21738}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 12
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

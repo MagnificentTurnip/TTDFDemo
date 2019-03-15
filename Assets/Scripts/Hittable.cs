@@ -16,6 +16,11 @@ public class Hittable : MonoBehaviour {
     public StatusManager status;
     public StatSheet stat;
 
+    public HitLag hitlag;
+
+    public StatusManager hitLagStatus;
+    public float hitLagTime;
+
     public float towardAttackerAngle;
 
     //resistances?
@@ -30,6 +35,15 @@ public class Hittable : MonoBehaviour {
         //Mathf.DeltaAngle(transform.localEulerAngles.y, toMouseAngle);
         //print(Vector3.Angle(transform.position, uhme.transform.position));
     }
+
+    public IEnumerator HitLag(Animator animator, float newSpeed, float lagTime) {
+        animator.speed = newSpeed;
+        yield return new WaitForSeconds(lagTime);
+        animator.speed = 2f - newSpeed;
+        yield return new WaitForSeconds(lagTime);
+        animator.speed = 1f;
+    }
+
 
     public virtual void applyHitProperties(Attack.hitProperties properties) {
         if (properties.damageInstances != null) {
@@ -51,10 +65,13 @@ public class Hittable : MonoBehaviour {
 
         if (properties.causesFlinch) {
             status.flinch();
-            transform.LookAt(currentAttack.transform.parent, Vector3.up); //face the attacker that caused flinch;
-            transform.localEulerAngles = new Vector3(0, transform.eulerAngles.y, 0);
-            //lock rotation on x and z;
-            //transform.LookAt(currentAttack.data.attackOwnerStatus.gameObject.transform.position, Vector3.up); //face the attacker that caused flinch;
+            transform.LookAt(currentAttack.transform.parent, Vector3.up); //face the attack that caused flinch;
+            transform.localEulerAngles = new Vector3(0, transform.eulerAngles.y, 0); //lock rotation on x and z;
+            StartCoroutine(HitLag(currentAttack.data.attackOwnerStatus.animator, 0.2f, 0.15f));
+            //if (hitlag != null) {
+            //    hitlag.counter = 2; //testing 2 frames of hitlag
+            //}
+            //transform.LookAt(currentAttack.data.attackOwnerStatus.gameObject.transform.position, Vector3.up); //face the attacker that caused flinch
         }
 
         if (properties.causesVulnerable + currentAttack.data.attackDuration > status.vulnerable && properties.causesVulnerable != 0) {

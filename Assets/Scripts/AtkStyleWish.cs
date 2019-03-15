@@ -52,6 +52,7 @@ public class AtkStyleWish : AtkStyle {
     }
 
     public override void bParry() {
+        movement.pointToTarget();
         animator.Play("bParry");
         if (status.sheathed == false) {
             state = attackStates.bParry; //set the attack state;
@@ -63,6 +64,7 @@ public class AtkStyleWish : AtkStyle {
     }
 
     public override void fParry() {
+        movement.pointToTarget();
         animator.Play("fParry");
         if (status.sheathed == false) {
             state = attackStates.fParry; //set the attack state;

@@ -24,7 +24,7 @@ public class CCResistHittable : Hittable {
 
             }
         }
-
+        
         if (properties.causesFlinch && flinchCounter < flinchLimit) {
             flinchCounter += 1;
         }
@@ -33,8 +33,7 @@ public class CCResistHittable : Hittable {
             if (properties.causesFlinch) {
                 status.flinch();
                 transform.LookAt(currentAttack.transform.parent, Vector3.up); //face the attacker that caused flinch;
-                transform.localEulerAngles = new Vector3(0, transform.eulerAngles.y, 0);
-                //lock rotation on x and z;
+                transform.localEulerAngles = new Vector3(0, transform.eulerAngles.y, 0); //lock rotation on x and z;
                 //transform.LookAt(currentAttack.data.attackOwnerStatus.gameObject.transform.position, Vector3.up); //face the attacker that caused flinch;
             }
 

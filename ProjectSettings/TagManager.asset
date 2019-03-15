@@ -15,6 +15,11 @@ TagManager:
   - paralyzedSlider
   - parryStunnedSlider
   - grappledSlider
+  - TgtPla
+  - TgtEnm
+  - TgtEnmBos
+  - Tgt
+  - TgtObj
   layers:
   - Default
   - TransparentFX
