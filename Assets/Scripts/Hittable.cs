@@ -5,6 +5,20 @@ using TMPro;
 
 public class Hittable : MonoBehaviour {
 
+    //Damage resistances (or vulnerabilities)
+    public float slashingTaken;
+    public float impactTaken;
+    public float piercingTaken;
+    public float fireTaken;
+    public float coldTaken;
+    public float causticTaken;
+    public float shockTaken;
+    public float astralTaken;
+    public float ruinousTaken;
+    public float magicTaken;
+    public float SPdamageTaken;
+    public float MPdamageTaken;
+
     public GameObject damageNumber;
     public GameObject currentDamageNumber;
 
@@ -22,9 +36,6 @@ public class Hittable : MonoBehaviour {
     public float hitLagTime;
 
     public float towardAttackerAngle;
-
-    //resistances?
-    //public float slashingTaken = 0.9 for 10% slashing resistance or something?
 
 	// Use this for initialization
 	void Start () {
@@ -46,32 +57,75 @@ public class Hittable : MonoBehaviour {
 
 
     public virtual void applyHitProperties(Attack.hitProperties properties) {
+
+
         if (properties.damageInstances != null) {
             for (int i = 0; i < properties.damageInstances.Count; i++) { //loop through damage instances to apply them
-
-                //if (currentAttack.onHit.damageInstances[i].damageType == Attack.typeOfDamage.Slashing) {
                 currentDamageNumber = Instantiate(damageNumber);
                 currentDamageNumber.GetComponent<RectTransform>().position = cam.WorldToScreenPoint(transform.position);
                 currentDamageNumber.GetComponent<RectTransform>().SetParent(damageNumberCanvas.transform);
                 currentDamageNumber.GetComponent<RectTransform>().Translate(Random.Range(-40, 40), Random.Range(-40, 40), 0);
-                currentDamageNumber.GetComponent<TextMeshProUGUI>().text = (Mathf.CeilToInt(stat.HP) - Mathf.CeilToInt(stat.HP - properties.damageInstances[i].damageAmount)).ToString();
 
-                stat.HP -= properties.damageInstances[i].damageAmount/* *= slashingTaken*/;
-                //}
+                
+                switch (properties.damageInstances[i].damageType) {
+                    case Attack.typeOfDamage.Slashing:
+                        currentDamageNumber.GetComponent<TextMeshProUGUI>().text = (Mathf.CeilToInt(stat.HP) - Mathf.CeilToInt(stat.HP - properties.damageInstances[i].damageAmount * slashingTaken)).ToString();
+                        stat.HP -= properties.damageInstances[i].damageAmount * slashingTaken;
+                        break;
+                    case Attack.typeOfDamage.Impact:
+                        currentDamageNumber.GetComponent<TextMeshProUGUI>().text = (Mathf.CeilToInt(stat.HP) - Mathf.CeilToInt(stat.HP - properties.damageInstances[i].damageAmount * impactTaken)).ToString();
+                        stat.HP -= properties.damageInstances[i].damageAmount * impactTaken;
+                        break;
+                    case Attack.typeOfDamage.Piercing:
+                        currentDamageNumber.GetComponent<TextMeshProUGUI>().text = (Mathf.CeilToInt(stat.HP) - Mathf.CeilToInt(stat.HP - properties.damageInstances[i].damageAmount * piercingTaken)).ToString();
+                        stat.HP -= properties.damageInstances[i].damageAmount * piercingTaken;
+                        break;
+                    case Attack.typeOfDamage.Fire:
+                        currentDamageNumber.GetComponent<TextMeshProUGUI>().text = (Mathf.CeilToInt(stat.HP) - Mathf.CeilToInt(stat.HP - properties.damageInstances[i].damageAmount * fireTaken)).ToString();
+                        stat.HP -= properties.damageInstances[i].damageAmount * fireTaken;
+                        break;
+                    case Attack.typeOfDamage.Cold:
+                        currentDamageNumber.GetComponent<TextMeshProUGUI>().text = (Mathf.CeilToInt(stat.HP) - Mathf.CeilToInt(stat.HP - properties.damageInstances[i].damageAmount * coldTaken)).ToString();
+                        stat.HP -= properties.damageInstances[i].damageAmount * coldTaken;
+                        break;
+                    case Attack.typeOfDamage.Caustic:
+                        currentDamageNumber.GetComponent<TextMeshProUGUI>().text = (Mathf.CeilToInt(stat.HP) - Mathf.CeilToInt(stat.HP - properties.damageInstances[i].damageAmount * causticTaken)).ToString();
+                        stat.HP -= properties.damageInstances[i].damageAmount * causticTaken;
+                        break;
+                    case Attack.typeOfDamage.Shock:
+                        currentDamageNumber.GetComponent<TextMeshProUGUI>().text = (Mathf.CeilToInt(stat.HP) - Mathf.CeilToInt(stat.HP - properties.damageInstances[i].damageAmount * shockTaken)).ToString();
+                        stat.HP -= properties.damageInstances[i].damageAmount * shockTaken;
+                        break;
+                    case Attack.typeOfDamage.Astral:
+                        currentDamageNumber.GetComponent<TextMeshProUGUI>().text = (Mathf.CeilToInt(stat.HP) - Mathf.CeilToInt(stat.HP - properties.damageInstances[i].damageAmount * astralTaken)).ToString();
+                        stat.HP -= properties.damageInstances[i].damageAmount * astralTaken;
+                        break;
+                    case Attack.typeOfDamage.Ruinous:
+                        currentDamageNumber.GetComponent<TextMeshProUGUI>().text = (Mathf.CeilToInt(stat.HP) - Mathf.CeilToInt(stat.HP - properties.damageInstances[i].damageAmount * ruinousTaken)).ToString();
+                        stat.HP -= properties.damageInstances[i].damageAmount * ruinousTaken;
+                        break;
+                    case Attack.typeOfDamage.Magic:
+                        currentDamageNumber.GetComponent<TextMeshProUGUI>().text = (Mathf.CeilToInt(stat.HP) - Mathf.CeilToInt(stat.HP - properties.damageInstances[i].damageAmount * magicTaken)).ToString();
+                        stat.HP -= properties.damageInstances[i].damageAmount * magicTaken;
+                        break;
+                    case Attack.typeOfDamage.SPdamage:
+                        currentDamageNumber.GetComponent<TextMeshProUGUI>().text = (Mathf.CeilToInt(stat.SP) - Mathf.CeilToInt(stat.SP - properties.damageInstances[i].damageAmount * SPdamageTaken)).ToString();
+                        stat.SP -= properties.damageInstances[i].damageAmount * SPdamageTaken;
+                        break;
+                    case Attack.typeOfDamage.MPdamage:
+                        currentDamageNumber.GetComponent<TextMeshProUGUI>().text = (Mathf.CeilToInt(stat.MP) - Mathf.CeilToInt(stat.MP - properties.damageInstances[i].damageAmount * MPdamageTaken)).ToString();
+                        stat.MP -= properties.damageInstances[i].damageAmount * MPdamageTaken;
+                        break;
+                }
+                
 
             }
         }
         
-
         if (properties.causesFlinch) {
             status.flinch();
             transform.LookAt(currentAttack.transform.parent, Vector3.up); //face the attack that caused flinch;
             transform.localEulerAngles = new Vector3(0, transform.eulerAngles.y, 0); //lock rotation on x and z;
-            StartCoroutine(HitLag(currentAttack.data.attackOwnerStatus.animator, 0.2f, 0.15f));
-            //if (hitlag != null) {
-            //    hitlag.counter = 2; //testing 2 frames of hitlag
-            //}
-            //transform.LookAt(currentAttack.data.attackOwnerStatus.gameObject.transform.position, Vector3.up); //face the attacker that caused flinch
         }
 
         if (properties.causesVulnerable + currentAttack.data.attackDuration > status.vulnerable && properties.causesVulnerable != 0) {
@@ -152,6 +206,8 @@ public class Hittable : MonoBehaviour {
                         print("Guard"); //testing
                         applyHitProperties(currentAttack.onGuard);
 
+                        StartCoroutine(HitLag(currentAttack.data.attackOwnerStatus.animator, 0.1f, 0.1f)); //guard hitlag
+
                         //awayForce = -awayForce * currentAttack.onGuard.onHitForwardBackward; //testing knockback, change this to onHitAwayToward when implemented
                         //motor.rb.AddForce(awayForce);
 
@@ -169,6 +225,8 @@ public class Hittable : MonoBehaviour {
 
                         applyHitProperties(currentAttack.onVulnerableHit);
 
+                        StartCoroutine(HitLag(currentAttack.data.attackOwnerStatus.animator, 0.2f, 0.3f)); //Vulnerable Hitlag
+
                         //testforce = -testforce * currentAttack.onVulnerableHit.onHitForwardBackward; //testing knockback
                         //motor.rb.AddForce(testforce);
 
@@ -183,6 +241,8 @@ public class Hittable : MonoBehaviour {
 
                         applyHitProperties(currentAttack.onFlooredHit);
 
+                        StartCoroutine(HitLag(currentAttack.data.attackOwnerStatus.animator, 0.4f, 0.15f)); //floored hitlag
+
                         //testforce = -testforce * currentAttack.onFlooredHit.onHitForwardBackward; //testing knockback
                         //motor.rb.AddForce(testforce);
 
@@ -196,7 +256,9 @@ public class Hittable : MonoBehaviour {
                         print("AirborneHit"); //testing
 
                         applyHitProperties(currentAttack.onAirborneHit);
-                        
+
+                        StartCoroutine(HitLag(currentAttack.data.attackOwnerStatus.animator, 0.4f, 0.3f)); //airborne hitlag
+
                         //testforce = -testforce * currentAttack.onAirborneHit.onHitForwardBackward; //testing knockback
                         //motor.rb.AddForce(testforce);
 
@@ -210,6 +272,8 @@ public class Hittable : MonoBehaviour {
                             print("Hit"); //testing
 
                             applyHitProperties(currentAttack.onHit);
+
+                            StartCoroutine(HitLag(currentAttack.data.attackOwnerStatus.animator, 0.2f, 0.15f)); //normal hitlag
 
                             //testforce = -testforce * currentAttack.onHit.onHitForwardBackward; //testing knockback
                             //motor.rb.AddForce(testforce);

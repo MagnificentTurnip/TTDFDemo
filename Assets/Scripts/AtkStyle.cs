@@ -22,8 +22,10 @@ public class AtkStyle : MonoBehaviour {
 
     public bool debug;
     public Mesh cube; //for testing hitboxes
-    public Mesh sphere; //for testing hitboxes
+    public Mesh sphere; 
     public Mesh capsule;
+
+    public bool hurtboxShown; //whether the hurtbox is displayed or not
 
     public Attack.damage tempDamage;
 
@@ -36,7 +38,7 @@ public class AtkStyle : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-		
+        hurtboxShown = false;
 	}
 
     public virtual void forceIdle() { //this function is for outside access, to set the attack state of inheriting attack styles to its idle position
@@ -66,45 +68,50 @@ public class AtkStyle : MonoBehaviour {
     public void attackProgression() { //manages attack progression from delay, to duration, to end, and eventually its automatic destruction
         for (int i = 0; i < instantiatedAttacks.Count; i++) {
 
-            if (instantiatedAttacks[i].data.attackDelay > 0) {
-                instantiatedAttacks[i].data.attackDelay -= 1;
-                if (debug) {
-                    instantiatedAttacks[i].GetComponent<MeshRenderer>().material.SetColor("_Color", new Color(0.3f, 1f, 0.3f, 0.8f));
+            
+                if (instantiatedAttacks[i].data.attackDelay > 0) {
+                    instantiatedAttacks[i].data.attackDelay -= 1;
+                    if (debug && instantiatedAttacks[i] != null) {
+                        instantiatedAttacks[i].GetComponent<MeshRenderer>().material.SetColor("_Color", new Color(0.3f, 1f, 0.3f, 0.8f));
+                    }
                 }
-            }
 
-            else if (instantiatedAttacks[i].data.attackDuration > 0) {
-                if (charStat != null) {
-                    charStat.HP -= instantiatedAttacks[i].data.HPcost; //apply costs
-                    charStat.MP -= instantiatedAttacks[i].data.MPcost;
-                    charStat.SP -= instantiatedAttacks[i].data.SPcost;
-                } else {
-                    stat.HP -= instantiatedAttacks[i].data.HPcost; //apply costs
-                    stat.MP -= instantiatedAttacks[i].data.MPcost;
-                    stat.SP -= instantiatedAttacks[i].data.SPcost;
+                else if (instantiatedAttacks[i].data.attackDuration > 0) {
+                    if (charStat != null) {
+                        charStat.HP -= instantiatedAttacks[i].data.HPcost; //apply costs
+                        charStat.MP -= instantiatedAttacks[i].data.MPcost;
+                        charStat.SP -= instantiatedAttacks[i].data.SPcost;
+                    }
+                    else {
+                        stat.HP -= instantiatedAttacks[i].data.HPcost; //apply costs
+                        stat.MP -= instantiatedAttacks[i].data.MPcost;
+                        stat.SP -= instantiatedAttacks[i].data.SPcost;
+                    }
+                    instantiatedAttacks[i].data.HPcost = 0; //costs are only applied once
+                    instantiatedAttacks[i].data.MPcost = 0;
+                    instantiatedAttacks[i].data.SPcost = 0;
+
+                    instantiatedAttacks[i].data.attackDuration -= 1;
+
+                    if (debug && instantiatedAttacks[i] != null) {
+                        instantiatedAttacks[i].GetComponent<MeshRenderer>().material.SetColor("_Color", new Color(1f, 0.3f, 0.3f, 0.8f));
+                    }
                 }
-                instantiatedAttacks[i].data.HPcost = 0; //costs are only applied once
-                instantiatedAttacks[i].data.MPcost = 0;
-                instantiatedAttacks[i].data.SPcost = 0;
 
-                instantiatedAttacks[i].data.attackDuration -= 1;
-
-                if (debug) {
-                    instantiatedAttacks[i].GetComponent<MeshRenderer>().material.SetColor("_Color", new Color(1f, 0.3f, 0.3f, 0.8f));
+                else if (instantiatedAttacks[i].data.attackEnd > 0) {
+                    if (debug && instantiatedAttacks[i] != null) {
+                        instantiatedAttacks[i].GetComponent<MeshRenderer>().material.SetColor("_Color", new Color(0.3f, 1f, 0.3f, 0.8f));
+                    }
+                    instantiatedAttacks[i].data.attackEnd -= 1;
                 }
-            }
-
-            else if (instantiatedAttacks[i].data.attackEnd > 0) {
-                instantiatedAttacks[i].data.attackEnd -= 1;
-                if (debug) {
-                    instantiatedAttacks[i].GetComponent<MeshRenderer>().material.SetColor("_Color", new Color(0.3f, 1f, 0.3f, 0.8f));
+                if (instantiatedAttacks[i].data.attackEnd <= 0 && instantiatedAttacks[i].data.attackDuration <= 0 && instantiatedAttacks[i].data.attackDelay <= 0) {
+                    toDestroy = instantiatedAttacks[i];
+                    instantiatedAttacks.Remove(instantiatedAttacks[i]);
+                    if (toDestroy != null) {
+                        Destroy(toDestroy.gameObject);
+                    }
                 }
-            }
-            if (instantiatedAttacks[i].data.attackEnd <= 0 && instantiatedAttacks[i].data.attackDuration <= 0 && instantiatedAttacks[i].data.attackDelay <= 0) {
-                toDestroy = instantiatedAttacks[i];
-                instantiatedAttacks.Remove(instantiatedAttacks[i]);
-                Destroy(toDestroy.gameObject);
-            }
+            
         }
     }
 
@@ -117,7 +124,18 @@ public class AtkStyle : MonoBehaviour {
     }
 
     public void showHurtBox() {
-        gameObject.GetComponent<MeshFilter>().mesh = capsule;
+        if (gameObject.GetComponent<CapsuleCollider>() && !hurtboxShown) {
+            gameObject.GetComponent<MeshFilter>().mesh = capsule;
+            hurtboxShown = true;
+        }
+        if (gameObject.GetComponent<BoxCollider>() && !hurtboxShown) {
+            gameObject.GetComponent<MeshFilter>().mesh = cube;
+            hurtboxShown = true;
+        }
+        if (gameObject.GetComponent<SphereCollider>() && !hurtboxShown) {
+            gameObject.GetComponent<MeshFilter>().mesh = sphere;
+            hurtboxShown = true;
+        }
     }
 	
 	// Update is called once per frame

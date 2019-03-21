@@ -7,9 +7,10 @@ public class AtkStyleWolf : AtkStyle {
     public enum attackStates { idle, fEvade, bEvade, rEvade, lEvade, guarding, spellcast, fParry, bParry, attack};
     public attackStates state;
 
-    public GameObject rgtPawBone; //3 relevant bones to follow to make simple animations easier
+    public GameObject rgtPawBone; //4 relevant bones to follow to make simple animations easier
     public GameObject lftPawBone;
     public GameObject jawBone;
+    public GameObject chest;
 
     // Use this for initialization
     void Start() {
@@ -82,10 +83,10 @@ public class AtkStyleWolf : AtkStyle {
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "quickBite",
-            _HitboxAnimation: "jawMatch", //just uses the default animation that matches the hitbox to the right hand bone
-            _attackDelay: 5, //delay of 5 frames before the attack starts
-            _attackDuration: 15, //15 frames within which the attack is active
-            _attackEnd: 10, //and 10 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
+            _HitboxAnimation: "bite", //uses the bite hitbox animation
+            _attackDelay: 7, //delay of 7 frames before the attack starts
+            _attackDuration: 11, //11 frames within which the attack is active
+            _attackEnd: 12, //and 12 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
             _hitsAirborne: false, //hits standing only.
             _hitsStanding: true,
             _hitsFloored: false,
@@ -101,7 +102,7 @@ public class AtkStyleWolf : AtkStyle {
 
         //set the attack's properties on hit (all unset properties are defaults)
         if (charStat != null) {
-            tempDamage.damageAmount = 5f + (0.1f * charStat.STR) + (0.4f * charStat.DEX);
+            tempDamage.damageAmount = 5f + (0.2f * charStat.STR) + (0.2f * charStat.DEX);
         }
         else {
             tempDamage.damageAmount = 5f + 0.9f * stat.Level;
@@ -118,7 +119,15 @@ public class AtkStyleWolf : AtkStyle {
         currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
 
         //set the attack's properties on guard
+        if (charStat != null) {
+            tempDamage.damageAmount = 5f + (0.1f * charStat.STR) + (0.4f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 5f + 0.9f * stat.Level;
+        }
+        tempDamage.damageType = Attack.typeOfDamage.SPdamage;
         currentAttack.onGuard = new Attack.hitProperties(
+            _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _SPcost: 30f,
             _causesGuardStun: 5,
             _onHitForwardBackward: -500f,
@@ -163,7 +172,7 @@ public class AtkStyleWolf : AtkStyle {
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
         //movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
-        StartCoroutine(movement.motor.timedBurst(0.2f, 400f, 50f, 0f, 0f, 0, 0f)); //this move moves you a smidge forward
+        StartCoroutine(movement.motor.timedBurst(0.1f, 300f, 50f, 0f, 0f, 0, 0f)); //this move moves you a smidge forward
 
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 20; //always remember to reset the idle counter
     }
@@ -181,10 +190,10 @@ public class AtkStyleWolf : AtkStyle {
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "forwardBite",
-            _HitboxAnimation: "jawMatch", //just uses the default animation that matches the hitbox to the right hand bone
+            _HitboxAnimation: "bite", //uses the bite hitbox animation
             _attackDelay: 40, //delay of 40 frames before the attack starts
-            _attackDuration: 20, //15 frames within which the attack is active
-            _attackEnd: 10, //and 10 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
+            _attackDuration: 20, //20 frames within which the attack is active
+            _attackEnd: 20, //and 10 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
             _hitsAirborne: false, //hits standing only.
             _hitsStanding: true,
             _hitsFloored: false,
@@ -211,17 +220,24 @@ public class AtkStyleWolf : AtkStyle {
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 10,
-            _onHitForwardBackward: -100f,
+            _onHitForwardBackward: -400f,
             _onHitRightLeft: 50f);
 
         //set the attack's properties on charge hit
         currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
 
         //set the attack's properties on guard
+        if (charStat != null) {
+            tempDamage.damageAmount = 40f + (0.1f * charStat.STR) + (0.4f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 40f + 1.5f * stat.Level;
+        }
+        tempDamage.damageType = Attack.typeOfDamage.SPdamage;
         currentAttack.onGuard = new Attack.hitProperties(
             _SPcost: 30f,
             _causesGuardStun: 5,
-            _onHitForwardBackward: -500f,
+            _onHitForwardBackward: -700f,
             _onHitRightLeft: 50f);
 
         //set the attack's properties on charge guard
@@ -263,7 +279,7 @@ public class AtkStyleWolf : AtkStyle {
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
         //movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
-        StartCoroutine(movement.motor.timedBurst(0.2f, 400f, 50f, 0f, 0f, 0, 0f)); //this move moves you a smidge forward
+        StartCoroutine(movement.motor.timedBurst(0.5f, 700f, 50f, 0f, 0f, 0, 0f)); //this move moves you a fair bit forward
 
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 20; //always remember to reset the idle counter
     }
@@ -282,10 +298,10 @@ public class AtkStyleWolf : AtkStyle {
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "lSwipe",
-            _HitboxAnimation: "lftPawMatch", //just uses the default animation that matches the hitbox to the right hand bone
+            _HitboxAnimation: "swipe", //uses the swipe hitbox animation
             _attackDelay: 40, //delay of 40 frames before the attack starts
-            _attackDuration: 20, //15 frames within which the attack is active
-            _attackEnd: 10, //and 10 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
+            _attackDuration: 20, //20 frames within which the attack is active
+            _attackEnd: 35, //and 35 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
             _hitsAirborne: false, //hits standing only.
             _hitsStanding: true,
             _hitsFloored: false,
@@ -302,46 +318,55 @@ public class AtkStyleWolf : AtkStyle {
 
         //set the attack's properties on hit (all unset properties are defaults)
         if (charStat != null) {
-            tempDamage.damageAmount = 15f + (0.1f * charStat.STR) + (0.4f * charStat.DEX);
+            tempDamage.damageAmount = 10f + (0.3f * charStat.STR) + (0.2f * charStat.DEX);
         }
         else {
-            tempDamage.damageAmount = 15f + 1.5f * stat.Level;
+            tempDamage.damageAmount = 10f + 1.4f * stat.Level;
         }
-        tempDamage.damageType = Attack.typeOfDamage.Piercing;
+        tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
-            _causesStun: 10,
-            _onHitForwardBackward: -100f,
-            _onHitRightLeft: 50f);
+            _causesStun: 35,
+            _onHitForwardBackward: -500f,
+            _onHitRightLeft: -1000f);
 
         //set the attack's properties on charge hit
         currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
 
         //set the attack's properties on guard
+        if (charStat != null) {
+            tempDamage.damageAmount = 30f + (0.3f * charStat.STR) + (0.2f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 30f + 1.4f * stat.Level;
+        }
+        tempDamage.damageType = Attack.typeOfDamage.SPdamage;
         currentAttack.onGuard = new Attack.hitProperties(
+            _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _SPcost: 30f,
-            _causesGuardStun: 5,
-            _onHitForwardBackward: -500f,
-            _onHitRightLeft: 50f);
+            _causesGuardStun: 10,
+            _onHitForwardBackward: -700f,
+            _onHitRightLeft: -700f);
 
         //set the attack's properties on charge guard
         currentAttack.onChargeGuard = currentAttack.onGuard; //this move doesn't charge so they're the same as on guard properties
 
         //set the attack's properties on vulnerable hit
         if (charStat != null) {
-            tempDamage.damageAmount = 10f + (0.1f * charStat.STR) + (0.4f * charStat.DEX);
+            tempDamage.damageAmount = 15f + (0.3f * charStat.STR) + (0.2f * charStat.DEX);
         }
         else {
-            tempDamage.damageAmount = 10f + 0.9f * stat.Level;
+            tempDamage.damageAmount = 15f + 1.4f * stat.Level;
         }
-        tempDamage.damageType = Attack.typeOfDamage.Piercing;
+        tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onVulnerableHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
-            _causesStun: 20,
-            _onHitForwardBackward: 200f,
-            _onHitRightLeft: 50f);
+            _causesStun: 40,
+            _causesFloored: 120,
+            _onHitForwardBackward: -1500f,
+            _onHitRightLeft: -1800f);
 
         //set the attack's properties on vulnerable charge hit
         currentAttack.onVulnerableChargeHit = currentAttack.onVulnerableHit; //this move doesn't charge
@@ -364,7 +389,7 @@ public class AtkStyleWolf : AtkStyle {
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
         //movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
-        StartCoroutine(movement.motor.timedBurst(0.2f, 400f, 50f, 0f, 0f, 0, 0f)); //this move moves you a smidge forward
+        StartCoroutine(movement.motor.timedBurst(0.1f, 100f, 700f, 0f, 0f, 0, 0f)); //this move moves you a smidge right
 
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 20; //always remember to reset the idle counter
     }
@@ -383,10 +408,10 @@ public class AtkStyleWolf : AtkStyle {
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "rSwipe",
-            _HitboxAnimation: "rgtPawMatch", //just uses the default animation that matches the hitbox to the right hand bone
+            _HitboxAnimation: "swipe", //uses the swipe hitbox animation
             _attackDelay: 40, //delay of 40 frames before the attack starts
-            _attackDuration: 20, //15 frames within which the attack is active
-            _attackEnd: 10, //and 10 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
+            _attackDuration: 20, //20 frames within which the attack is active
+            _attackEnd: 35, //and 35 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
             _hitsAirborne: false, //hits standing only.
             _hitsStanding: true,
             _hitsFloored: false,
@@ -403,46 +428,55 @@ public class AtkStyleWolf : AtkStyle {
 
         //set the attack's properties on hit (all unset properties are defaults)
         if (charStat != null) {
-            tempDamage.damageAmount = 15f + (0.1f * charStat.STR) + (0.4f * charStat.DEX);
+            tempDamage.damageAmount = 10f + (0.3f * charStat.STR) + (0.2f * charStat.DEX);
         }
         else {
-            tempDamage.damageAmount = 15f + 1.5f * stat.Level;
+            tempDamage.damageAmount = 10f + 1.4f * stat.Level;
         }
-        tempDamage.damageType = Attack.typeOfDamage.Piercing;
+        tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
-            _causesStun: 10,
-            _onHitForwardBackward: -100f,
-            _onHitRightLeft: 50f);
+            _causesStun: 35,
+            _onHitForwardBackward: -500f,
+            _onHitRightLeft: 1000f);
 
         //set the attack's properties on charge hit
         currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
 
         //set the attack's properties on guard
+        if (charStat != null) {
+            tempDamage.damageAmount = 30f + (0.3f * charStat.STR) + (0.2f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 30f + 1.4f * stat.Level;
+        }
+        tempDamage.damageType = Attack.typeOfDamage.SPdamage;
         currentAttack.onGuard = new Attack.hitProperties(
+            _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _SPcost: 30f,
-            _causesGuardStun: 5,
-            _onHitForwardBackward: -500f,
-            _onHitRightLeft: 50f);
+            _causesGuardStun: 10,
+            _onHitForwardBackward: -700f,
+            _onHitRightLeft: 700f);
 
         //set the attack's properties on charge guard
         currentAttack.onChargeGuard = currentAttack.onGuard; //this move doesn't charge so they're the same as on guard properties
 
         //set the attack's properties on vulnerable hit
         if (charStat != null) {
-            tempDamage.damageAmount = 10f + (0.1f * charStat.STR) + (0.4f * charStat.DEX);
+            tempDamage.damageAmount = 15f + (0.3f * charStat.STR) + (0.2f * charStat.DEX);
         }
         else {
-            tempDamage.damageAmount = 10f + 0.9f * stat.Level;
+            tempDamage.damageAmount = 15f + 1.4f * stat.Level;
         }
-        tempDamage.damageType = Attack.typeOfDamage.Piercing;
+        tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onVulnerableHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
-            _causesStun: 20,
-            _onHitForwardBackward: 200f,
-            _onHitRightLeft: 50f);
+            _causesStun: 40,
+            _causesFloored: 120,
+            _onHitForwardBackward: -1500f,
+            _onHitRightLeft: 1800f);
 
         //set the attack's properties on vulnerable charge hit
         currentAttack.onVulnerableChargeHit = currentAttack.onVulnerableHit; //this move doesn't charge
@@ -465,7 +499,7 @@ public class AtkStyleWolf : AtkStyle {
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
         //movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
-        StartCoroutine(movement.motor.timedBurst(0.2f, 400f, 50f, 0f, 0f, 0, 0f)); //this move moves you a smidge forward
+        StartCoroutine(movement.motor.timedBurst(0.6f, 100f, -700f, 0f, 0f, 0, 0f)); //this move moves you a smidge right
 
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 20; //always remember to reset the idle counter
     }
@@ -475,19 +509,21 @@ public class AtkStyleWolf : AtkStyle {
 
         //create the new attack as a child of this object
         currentAttack = Instantiate(attack).GetComponent<Attack>();
-        currentAttack.transform.position = transform.position;
-        currentAttack.transform.parent = transform;
+        //currentAttack.transform.position = jawBone.transform.position;
+        //currentAttack.transform.parent = jawBone.transform;
+        currentAttack.transform.position = chest.transform.position;
+        currentAttack.transform.parent = chest.transform;
 
         //set the attack data
-        currentAttack.data = new Attack.atkData(
+        currentAttack.data = new Attack.atkData( //100, 20, 60
             _attackOwnerStatus: status, //here's the status manager
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "pounce",
-            _HitboxAnimation: "fullBody", //just uses the default animation that matches the hitbox to the right hand bone
-            _attackDelay: 40, //delay of 40 frames before the attack starts
-            _attackDuration: 20, //15 frames within which the attack is active
-            _attackEnd: 10, //and 10 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
+            _HitboxAnimation: "fullBody", //use the hitbox animation for full-body attacks
+            _attackDelay: 100, //delay of 100 frames before the attack starts
+            _attackDuration: 30, //30 frames within which the attack is active
+            _attackEnd: 70, //and 70 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
             _hitsAirborne: false, //hits standing only.
             _hitsStanding: true,
             _hitsFloored: false,
@@ -504,46 +540,77 @@ public class AtkStyleWolf : AtkStyle {
 
         //set the attack's properties on hit (all unset properties are defaults)
         if (charStat != null) {
-            tempDamage.damageAmount = 15f + (0.1f * charStat.STR) + (0.4f * charStat.DEX);
+            tempDamage.damageAmount = 25f + (0.5f * charStat.STR) + (0.2f * charStat.DEX);
         }
         else {
-            tempDamage.damageAmount = 15f + 1.5f * stat.Level;
+            tempDamage.damageAmount = 25f + 3f * stat.Level;
         }
-        tempDamage.damageType = Attack.typeOfDamage.Piercing;
+        tempDamage.damageType = Attack.typeOfDamage.Impact;
         currentAttack.onHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
-            _causesStun: 10,
-            _onHitForwardBackward: -100f,
-            _onHitRightLeft: 50f);
+            _causesStun: 60,
+            _causesFloored: 180,
+            _onHitForwardBackward: -4000f,
+            _onHitRightLeft: 0f);
 
+        //add a smidge of slashing damage
+        if (charStat != null) {
+            tempDamage.damageAmount = 5f + (0.1f * charStat.STR) + (0.3f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 5f + 0.5f * stat.Level;
+        }
+        tempDamage.damageType = Attack.typeOfDamage.Slashing;
+        currentAttack.onHit.damageInstances.Add(tempDamage);
+        
         //set the attack's properties on charge hit
         currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
 
+
         //set the attack's properties on guard
+        if (charStat != null) {
+            tempDamage.damageAmount = 100f + (0.5f * charStat.STR) + (0.4f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 100f + 5f * stat.Level;
+        }
+        tempDamage.damageType = Attack.typeOfDamage.SPdamage;
         currentAttack.onGuard = new Attack.hitProperties(
-            _SPcost: 30f,
+            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+            _SPcost: 100f,
             _causesGuardStun: 5,
-            _onHitForwardBackward: -500f,
-            _onHitRightLeft: 50f);
+            _onHitForwardBackward: -1000f,
+            _onHitRightLeft: 0f);
 
         //set the attack's properties on charge guard
         currentAttack.onChargeGuard = currentAttack.onGuard; //this move doesn't charge so they're the same as on guard properties
 
         //set the attack's properties on vulnerable hit
         if (charStat != null) {
-            tempDamage.damageAmount = 10f + (0.1f * charStat.STR) + (0.4f * charStat.DEX);
+            tempDamage.damageAmount = 30f + (0.5f * charStat.STR) + (0.2f * charStat.DEX);
         }
         else {
-            tempDamage.damageAmount = 10f + 0.9f * stat.Level;
+            tempDamage.damageAmount = 30f + 3f * stat.Level;
         }
-        tempDamage.damageType = Attack.typeOfDamage.Piercing;
+        tempDamage.damageType = Attack.typeOfDamage.Impact;
         currentAttack.onVulnerableHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
-            _causesStun: 20,
-            _onHitForwardBackward: 200f,
+            _causesStun: 80,
+            _causesFloored: 180,
+            _onHitForwardBackward: -5000f,
             _onHitRightLeft: 50f);
+
+        //add a smidge of slashing damage
+        if (charStat != null) {
+            tempDamage.damageAmount = 10f + (0.2f * charStat.STR) + (0.4f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 10f + 1f * stat.Level;
+        }
+        tempDamage.damageType = Attack.typeOfDamage.Slashing;
+        currentAttack.onVulnerableHit.damageInstances.Add(tempDamage);
 
         //set the attack's properties on vulnerable charge hit
         currentAttack.onVulnerableChargeHit = currentAttack.onVulnerableHit; //this move doesn't charge
@@ -566,7 +633,7 @@ public class AtkStyleWolf : AtkStyle {
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
         //movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
-        StartCoroutine(movement.motor.timedBurst(0.2f, 400f, 50f, 0f, 0f, 0, 0f)); //this move moves you a smidge forward
+        StartCoroutine(movement.motor.timedBurst(2f, 5000f, 50f, 0f, 0f, 0, 0f)); //this move moves launches you forward
 
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 20; //always remember to reset the idle counter
     }

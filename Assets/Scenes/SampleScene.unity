@@ -2384,6 +2384,7 @@ MonoBehaviour:
   cube: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   sphere: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
   capsule: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+  hurtboxShown: 0
   currentAttack: {fileID: 0}
   instantiatedAttacks: []
   attack: {fileID: 1950977128210768, guid: 0f65944d7535a124b8f19bcba2a99514, type: 2}
@@ -2407,6 +2408,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9e46948e5a3f8442a84aeef7c4ee83a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  slashingTaken: 1
+  impactTaken: 1
+  piercingTaken: 1
+  fireTaken: 1
+  coldTaken: 1
+  causticTaken: 1
+  shockTaken: 1
+  astralTaken: 1
+  ruinousTaken: 1
+  magicTaken: 1
+  SPdamageTaken: 1
+  MPdamageTaken: 1
   damageNumber: {fileID: 1163370531694862, guid: d21669f8d6573944199392021bebb5ad,
     type: 2}
   currentDamageNumber: {fileID: 0}
@@ -5865,6 +5878,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9e46948e5a3f8442a84aeef7c4ee83a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  slashingTaken: 0
+  impactTaken: 0
+  piercingTaken: 0
+  fireTaken: 0
+  coldTaken: 0
+  causticTaken: 0
+  shockTaken: 0
+  astralTaken: 0
+  ruinousTaken: 0
+  magicTaken: 0
+  SPdamageTaken: 0
+  MPdamageTaken: 0
   damageNumber: {fileID: 0}
   currentDamageNumber: {fileID: 0}
   cam: {fileID: 0}
@@ -6301,9 +6326,10 @@ MonoBehaviour:
   charStat: {fileID: 1980608048}
   movement: {fileID: 1980608056}
   debug: 1
-  cube: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 3}
-  sphere: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 3}
-  capsule: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 3}
+  cube: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  sphere: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+  capsule: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+  hurtboxShown: 0
   currentAttack: {fileID: 0}
   instantiatedAttacks: []
   attack: {fileID: 1950977128210768, guid: 0f65944d7535a124b8f19bcba2a99514, type: 2}
@@ -6327,6 +6353,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9e46948e5a3f8442a84aeef7c4ee83a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  slashingTaken: 1
+  impactTaken: 1
+  piercingTaken: 1
+  fireTaken: 1
+  coldTaken: 1
+  causticTaken: 1
+  shockTaken: 1
+  astralTaken: 1
+  ruinousTaken: 1
+  magicTaken: 1
+  SPdamageTaken: 1
+  MPdamageTaken: 1
   damageNumber: {fileID: 1163370531694862, guid: d21669f8d6573944199392021bebb5ad,
     type: 2}
   currentDamageNumber: {fileID: 0}

@@ -25,12 +25,14 @@ public class Motor : MonoBehaviour {
     public IEnumerator timedBurst(float timeBeforeStart, float initialFB, float initialRL, float incrementFB, float incrementRL, int totalKeyframes, float keyframeInterval) {
         timeOut = false;
         yield return new WaitForSeconds(timeBeforeStart);
-        rb.velocity = new Vector3(0, 0, 0);
-        rb.AddForce(transform.forward * initialFB);
-        rb.AddForce(transform.right * initialRL);
-        yield return new WaitForSeconds(keyframeInterval);
-        if (totalKeyframes > 1 && timeOut == false) {
-            StartCoroutine(timedBurst(0f, initialFB + incrementFB, initialRL + incrementRL, incrementFB, incrementRL, totalKeyframes - 1, keyframeInterval));
+        if (timeOut == false) {
+            rb.velocity = new Vector3(0, 0, 0);
+            rb.AddForce(transform.forward * initialFB);
+            rb.AddForce(transform.right * initialRL);
+            yield return new WaitForSeconds(keyframeInterval);
+            if (totalKeyframes > 1) {
+                StartCoroutine(timedBurst(0f, initialFB + incrementFB, initialRL + incrementRL, incrementFB, incrementRL, totalKeyframes - 1, keyframeInterval));
+            }
         }
     }
 
