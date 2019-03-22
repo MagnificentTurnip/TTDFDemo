@@ -233,6 +233,7 @@ MonoBehaviour:
   behaviourCounter: 0
   goalStarted: 0
   goalComplete: 0
+  goalDelay: 0
   attackPref: 0
   castPref: 0
   bigPref: 0
@@ -287,7 +288,7 @@ MonoBehaviour:
   stat: {fileID: 72004845}
   charStat: {fileID: 0}
   movement: {fileID: 72004847}
-  debug: 1
+  debug: 0
   cube: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   sphere: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
   capsule: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
@@ -468,6 +469,10 @@ MonoBehaviour:
   damageNumber: {fileID: 1163370531694862, guid: d21669f8d6573944199392021bebb5ad,
     type: 2}
   currentDamageNumber: {fileID: 0}
+  currentLight: {fileID: 0}
+  hitLight: {fileID: 1675199803654886, guid: cecbb5a9692142442bbd3101c63aa563, type: 2}
+  guardLight: {fileID: 1055385463639536, guid: bf10e74d614ff1345bbf8e33ea22a6a4, type: 2}
+  parryLight: {fileID: 1287726203079228, guid: c337f7d4d773094489b323e031953843, type: 2}
   cam: {fileID: 1090068413}
   damageNumberCanvas: {fileID: 1159451400}
   currentAttack: {fileID: 0}
@@ -4369,7 +4374,7 @@ MonoBehaviour:
   stat: {fileID: 1677921477}
   charStat: {fileID: 1677921477}
   movement: {fileID: 1677921482}
-  debug: 1
+  debug: 0
   cube: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   sphere: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
   capsule: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
@@ -4412,6 +4417,10 @@ MonoBehaviour:
   damageNumber: {fileID: 1163370531694862, guid: d21669f8d6573944199392021bebb5ad,
     type: 2}
   currentDamageNumber: {fileID: 0}
+  currentLight: {fileID: 0}
+  hitLight: {fileID: 1675199803654886, guid: cecbb5a9692142442bbd3101c63aa563, type: 2}
+  guardLight: {fileID: 1055385463639536, guid: bf10e74d614ff1345bbf8e33ea22a6a4, type: 2}
+  parryLight: {fileID: 1287726203079228, guid: c337f7d4d773094489b323e031953843, type: 2}
   cam: {fileID: 1090068413}
   damageNumberCanvas: {fileID: 1159451400}
   currentAttack: {fileID: 0}

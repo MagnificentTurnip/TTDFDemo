@@ -121,7 +121,7 @@ public class StatusManager : MonoBehaviour {
 
         spellFlinchTrigger = true;
 
-        animator.Play("flinch");//and maybe play the flinch animation I guess not sure
+        animator.Play("flinch", -1, 0f);//and play the flinch animation
     }
 
     //STATE CHECKS
@@ -221,7 +221,7 @@ public class StatusManager : MonoBehaviour {
     }
 
     public bool canCast() {
-        if (isFloored() || isStunned() || isGuardStunned() || isParryStunned() || silenced > 0 || rollLock || attackLock || parryLock > 0 || parryFrames > 0 || castLock > 0) {
+        if (isFloored() || isStunned() || isGuardStunned() || isParryStunned() || silenced > 0 || rollLock || attackLock || parryLock > 0 || parryFrames > 0) {
             return false;
         }
         else {
@@ -341,6 +341,8 @@ public class StatusManager : MonoBehaviour {
         animator.SetBool("guardStunned", isGuardStunned());
         animator.SetBool("floored", isFloored());
         animator.SetBool("casting", casting);
+        animator.SetBool("paralyzed", paralyzed > 0);
+        //animator.SetFloat("paralyzeFloat", 0.8f);
 	}
 
     private void OnTriggerEnter(Collider other) {

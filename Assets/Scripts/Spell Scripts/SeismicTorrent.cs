@@ -31,7 +31,7 @@ public class SeismicTorrent : Spell {
             _GFXAnimation: "seismicTorrent",
             _HitboxAnimation: "something", //not sure if this is needed rn
             _attackDelay: 10, //attack begins quickly
-            _attackDuration: 60, //30 frames within which the attack is active
+            _attackDuration: 60, //60 frames within which the attack is active
             _attackEnd: 0, //when the attack ends it's done.
             _hitsAirborne: false, //hits standing and floored.
             _hitsStanding: true,

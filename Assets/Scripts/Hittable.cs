@@ -22,6 +22,11 @@ public class Hittable : MonoBehaviour {
     public GameObject damageNumber;
     public GameObject currentDamageNumber;
 
+    public Light currentLight;
+    public GameObject hitLight;
+    public GameObject guardLight;
+    public GameObject parryLight;
+
     public Camera cam;
     public Canvas damageNumberCanvas;
 
@@ -191,6 +196,9 @@ public class Hittable : MonoBehaviour {
                         status.parryLock = 0; //undo the parryLock
                         //and the attack has no effect
 
+                        currentLight = Instantiate(parryLight).GetComponent<Light>();
+                        currentLight.transform.position = col.ClosestPointOnBounds(transform.position);
+
                         if (currentAttack.data.contact == true) {
                             currentAttack.data.attackOwnerStatus.flinch();
                             if (status.parryFrames + 60 > currentAttack.data.attackOwnerStatus.parryStunned) {
@@ -207,6 +215,9 @@ public class Hittable : MonoBehaviour {
                         applyHitProperties(currentAttack.onGuard);
 
                         StartCoroutine(HitLag(currentAttack.data.attackOwnerStatus.animator, 0.1f, 0.1f)); //guard hitlag
+
+                        currentLight = Instantiate(guardLight).GetComponent<Light>();
+                        currentLight.transform.position = col.ClosestPointOnBounds(transform.position);
 
                         //awayForce = -awayForce * currentAttack.onGuard.onHitForwardBackward; //testing knockback, change this to onHitAwayToward when implemented
                         //motor.rb.AddForce(awayForce);
@@ -227,6 +238,11 @@ public class Hittable : MonoBehaviour {
 
                         StartCoroutine(HitLag(currentAttack.data.attackOwnerStatus.animator, 0.2f, 0.3f)); //Vulnerable Hitlag
 
+                        currentLight = Instantiate(hitLight).GetComponent<Light>();
+                        currentLight.transform.position = col.ClosestPointOnBounds(transform.position);
+                        currentLight.range = 1.5f;
+                        currentLight.intensity = 6;
+
                         //testforce = -testforce * currentAttack.onVulnerableHit.onHitForwardBackward; //testing knockback
                         //motor.rb.AddForce(testforce);
 
@@ -242,6 +258,9 @@ public class Hittable : MonoBehaviour {
                         applyHitProperties(currentAttack.onFlooredHit);
 
                         StartCoroutine(HitLag(currentAttack.data.attackOwnerStatus.animator, 0.4f, 0.15f)); //floored hitlag
+
+                        currentLight = Instantiate(hitLight).GetComponent<Light>();
+                        currentLight.transform.position = currentAttack.transform.position;
 
                         //testforce = -testforce * currentAttack.onFlooredHit.onHitForwardBackward; //testing knockback
                         //motor.rb.AddForce(testforce);
@@ -259,6 +278,9 @@ public class Hittable : MonoBehaviour {
 
                         StartCoroutine(HitLag(currentAttack.data.attackOwnerStatus.animator, 0.4f, 0.3f)); //airborne hitlag
 
+                        currentLight = Instantiate(hitLight).GetComponent<Light>();
+                        currentLight.transform.position = col.ClosestPointOnBounds(transform.position);
+
                         //testforce = -testforce * currentAttack.onAirborneHit.onHitForwardBackward; //testing knockback
                         //motor.rb.AddForce(testforce);
 
@@ -274,6 +296,9 @@ public class Hittable : MonoBehaviour {
                             applyHitProperties(currentAttack.onHit);
 
                             StartCoroutine(HitLag(currentAttack.data.attackOwnerStatus.animator, 0.2f, 0.15f)); //normal hitlag
+
+                            currentLight = Instantiate(hitLight).GetComponent<Light>();
+                            currentLight.transform.position = col.ClosestPointOnBounds(transform.position);
 
                             //testforce = -testforce * currentAttack.onHit.onHitForwardBackward; //testing knockback
                             //motor.rb.AddForce(testforce);
