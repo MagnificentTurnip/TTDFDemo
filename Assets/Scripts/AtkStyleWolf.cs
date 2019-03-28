@@ -49,7 +49,7 @@ public class AtkStyleWolf : AtkStyle {
     }
 
     public override void bParry() {
-        animator.Play("bParry");
+        animator.Play("bParry", 0, 0f);
         if (status.sheathed == false) {
             state = attackStates.bParry; //set the attack state;
             idleCounter = 60; //always remember to reset the idle counter
@@ -60,7 +60,7 @@ public class AtkStyleWolf : AtkStyle {
     }
 
     public override void fParry() {
-        animator.Play("fParry");
+        animator.Play("fParry", 0, 0f);
         if (status.sheathed == false) {
             state = attackStates.fParry; //set the attack state;
             idleCounter = 60; //always remember to reset the idle counter
@@ -81,12 +81,12 @@ public class AtkStyleWolf : AtkStyle {
         currentAttack.data = new Attack.atkData(
             _attackOwnerStatus: status, //here's the status manager
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
-            _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
+            _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>() as BoxCollider, //this attack uses a box collider
             _GFXAnimation: "quickBite",
             _HitboxAnimation: "bite", //uses the bite hitbox animation
-            _attackDelay: 7, //delay of 7 frames before the attack starts
-            _attackDuration: 11, //11 frames within which the attack is active
-            _attackEnd: 12, //and 12 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
+            _attackDelay: 10, //delay of 10 frames before the attack starts
+            _attackDuration: 12, //12 frames within which the attack is active
+            _attackEnd: 25, //and 25 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
             _hitsAirborne: false, //hits standing only.
             _hitsStanding: true,
             _hitsFloored: false,
@@ -168,7 +168,7 @@ public class AtkStyleWolf : AtkStyle {
 
         //play the animations
         currentAttack.data.HitboxAnimator.Play(currentAttack.data.HitboxAnimation);
-        animator.Play(currentAttack.data.GFXAnimation);
+        animator.Play(currentAttack.data.GFXAnimation, 0, 0f);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
         //movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
@@ -275,7 +275,7 @@ public class AtkStyleWolf : AtkStyle {
 
         //play the animations
         currentAttack.data.HitboxAnimator.Play(currentAttack.data.HitboxAnimation);
-        animator.Play(currentAttack.data.GFXAnimation);
+        animator.Play(currentAttack.data.GFXAnimation, 0, 0f);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
         //movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
@@ -385,7 +385,7 @@ public class AtkStyleWolf : AtkStyle {
 
         //play the animations
         currentAttack.data.HitboxAnimator.Play(currentAttack.data.HitboxAnimation);
-        animator.Play(currentAttack.data.GFXAnimation);
+        animator.Play(currentAttack.data.GFXAnimation, 0, 0f);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
         //movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
@@ -495,7 +495,7 @@ public class AtkStyleWolf : AtkStyle {
 
         //play the animations
         currentAttack.data.HitboxAnimator.Play(currentAttack.data.HitboxAnimation);
-        animator.Play(currentAttack.data.GFXAnimation);
+        animator.Play(currentAttack.data.GFXAnimation, 0, 0f);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
         //movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
@@ -629,7 +629,7 @@ public class AtkStyleWolf : AtkStyle {
 
         //play the animations
         currentAttack.data.HitboxAnimator.Play(currentAttack.data.HitboxAnimation);
-        animator.Play(currentAttack.data.GFXAnimation);
+        animator.Play(currentAttack.data.GFXAnimation, 0, 0f);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
         //movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it

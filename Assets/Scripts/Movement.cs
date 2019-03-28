@@ -40,6 +40,7 @@ public class Movement : MonoBehaviour {
         status.rollLock = true;
         status.rolling = true;
         status.floored = 0;
+        status.channelLock = 0;
         motor.instantBurst(fbSpeed, lrSpeed);
         StartCoroutine(endroll(evadeTime, evadeTime));
     }

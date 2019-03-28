@@ -36,7 +36,7 @@ public class SeismicTorrent : Spell {
             _hitsAirborne: false, //hits standing and floored.
             _hitsStanding: true,
             _hitsFloored: true,
-            _contact: true, //doesn't make contact.
+            _contact: false, //doesn't make contact.
             _unblockable: 3); //can't be blocked or parried.
 
         if (debug == true) {
@@ -89,7 +89,7 @@ public class SeismicTorrent : Spell {
         currentAttack.onVulnerableChargeHit = currentAttack.onVulnerableHit; //this move doesn't charge
 
         //set the attack's properties on floored hit
-        currentAttack.onFlooredHit = currentAttack.onHit; //this move doesn't even hit floored targets 
+        currentAttack.onFlooredHit = currentAttack.onHit; //this move hurts floored and standing targets alike
 
         //set the attack's properties on charged floored hit
         currentAttack.onFlooredChargeHit = currentAttack.onFlooredHit; //this move doesn't charge

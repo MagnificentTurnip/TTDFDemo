@@ -9,6 +9,8 @@ public class PlayerBridge : MonoBehaviour {
     public StatusManager status;
     public PlayerSpellBook spellBook;
 
+    public bool canGuardCancel;
+
     public enum buffer {
         nothing, spellcast, fparry, bparry, evade, sheathe,
         fwdA, fwdS, fwdD, fwdAS, fwdAD, fwdSD, fwdASD,
@@ -34,14 +36,29 @@ public class PlayerBridge : MonoBehaviour {
             status.guarding = true;
             status.guardLock = true;
             Style.forceGuarding(3);
-            Style.animator.SetBool("guarding", true);
         }
         else {
             status.guarding = false;
             status.guardLock = false;
-            Style.animator.SetBool("guarding", false);
         }
 
+        //Guard-Cancelling
+        canGuardCancel = true;
+        for (int i = 0; i < Style.instantiatedAttacks.Count; i++) {
+            if (Style.instantiatedAttacks[i].data.attackDelay <= 0) {
+                canGuardCancel = false;
+            }
+        }
+        if (status.isFloored() || status.isStunned() || status.isParryStunned() || status.rollLock || status.parryLock > 0 || status.parryFrames > 0 || status.casting || status.castLock > 0 || status.channelLock > 0) {
+            canGuardCancel = false; //basically all of canGuard but ignoring attackLock
+        }
+        if (canGuardCancel && playIn.guard) {
+            Style.destroyAllAttacks();
+            Style.movement.motor.timeOut = true;
+            status.guarding = true;
+            status.guardLock = true;
+            Style.forceGuarding(3);
+        }
 
         //parrying
         if (playIn.fParry && status.canParry()) {

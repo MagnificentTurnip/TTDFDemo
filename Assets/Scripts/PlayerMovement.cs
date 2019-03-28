@@ -40,19 +40,19 @@ public class PlayerMovement : Movement {
         status.sprinting = false; //same thing for sprinting
         if (playerInput.movement && status.canMove()) {
             if (status.guarding == true) { //player goes slow if guarding
-                if (status.paralyzed > 0) {
+                if (status.isParalyzed()) {
                     motor.SetSpeed(creepSpeed / 2);
                 }
                 else {
                     motor.SetSpeed(creepSpeed);
                 }
             }
-            else if (playerInput.sprint && status.paralyzed <= 0) { //player sprints to go fast
+            else if (playerInput.sprint && !status.isParalyzed()) { //player sprints to go fast
                 motor.SetSpeed(sprintSpeed);
                 status.sprinting = true;
             }
             else if (playerInput.cursorDistance < Screen.width * 0.05) { //player creeps if the cursor is really close to the player
-                if (status.paralyzed > 0) {
+                if (status.isParalyzed()) {
                     motor.SetSpeed(creepSpeed / 2);
                 }
                 else {
@@ -61,7 +61,7 @@ public class PlayerMovement : Movement {
                 status.sneaking = true; //turn sneaking on if sneaking
             }
             else if (playerInput.cursorDistance < Screen.width * 0.1) { //player walks if the cursor is fairly close to the player
-                if (status.paralyzed > 0) {
+                if (status.isParalyzed()) {
                     motor.SetSpeed(walkSpeed / 2);
                 }
                 else {
@@ -69,7 +69,7 @@ public class PlayerMovement : Movement {
                 }
             }
             else { //player jogs at further distances
-                if (status.paralyzed > 0) {
+                if (status.isParalyzed()) {
                     motor.SetSpeed(jogSpeed / 2);
                 } else {
                     motor.SetSpeed(jogSpeed);

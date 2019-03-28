@@ -12,7 +12,7 @@ public class StatusManager : MonoBehaviour {
     public bool toIdleLock; //the player needs to wait to return to idle to use movement
     public bool casting; //the player is about to cast a spell so they will have to stop or cast something to act
     public int castLock; //the player is in the process of casting a spell, so they can't do anything for a little while
-    public bool channelLock; //the player is in the middle of channeling a spell. They can move slowly and may not attack, guard or parry. Evading is possible but breaks the channel.
+    public int channelLock; //the player is in the middle of channeling a spell. They can move slowly and may not attack, guard or parry. Evading is possible but breaks the channel.
     //END OF SELF-LOCKOUTS
 
     //DEFENSIVE STATES
@@ -66,7 +66,7 @@ public class StatusManager : MonoBehaviour {
         toIdleLock = false;
         casting = false;
         castLock = 0;
-        channelLock = false;
+        channelLock = 0;
 
         parryFrames = 0;
         guarding = false;
@@ -96,6 +96,7 @@ public class StatusManager : MonoBehaviour {
 
     public void Incorporealise(int frames) {
         col.isTrigger = true;
+        col.attachedRigidbody.useGravity = false;
         incorporealFrames = frames;
     }
 
@@ -109,7 +110,7 @@ public class StatusManager : MonoBehaviour {
         toIdleLock = false;
         casting = false;
         castLock = 0;
-        channelLock = false;
+        channelLock = 0;
 
         atkStyle.forceIdle();
         atkStyle.destroyAllAttacks();
@@ -175,6 +176,13 @@ public class StatusManager : MonoBehaviour {
         return false;
     }
 
+    public bool isParalyzed() {
+        if (paralyzed > 0 || channelLock > 0) {
+            return true;
+        }
+        return false;
+    }
+
     public bool canMove() { //CAN MOVE
         if (isFloored() || isStunned() || isGrappled() || isGuardStunned() || isParryStunned() || parryLock > 0 || parryFrames > 0 || rolling || attackLock || casting || castLock > 0 || toIdleLock) {
             return false;
@@ -194,7 +202,7 @@ public class StatusManager : MonoBehaviour {
     }
 
     public bool canAttack() { //CAN ATTACK
-        if (isFloored() || isStunned() || isGuardStunned() || isParryStunned() || parryLock > 0 || parryFrames > 0 || rolling || attackLock || casting || castLock > 0) {
+        if (isFloored() || isStunned() || isGuardStunned() || isParryStunned() || parryLock > 0 || parryFrames > 0 || rolling || attackLock || casting || castLock > 0 || channelLock > 0) {
             return false;
         }
         else {
@@ -203,7 +211,7 @@ public class StatusManager : MonoBehaviour {
     }
 
     public bool canGuard() {
-        if (isFloored() || isStunned() || isParryStunned() || rollLock || attackLock || parryLock > 0 || parryFrames > 0 || casting || castLock > 0) {
+        if (isFloored() || isStunned() || isParryStunned() || rollLock || attackLock || parryLock > 0 || parryFrames > 0 || casting || castLock > 0 || channelLock > 0) {
             return false;
         }
         else {
@@ -212,7 +220,7 @@ public class StatusManager : MonoBehaviour {
     }
 
     public bool canParry() {
-        if (isFloored() || isStunned() || isGuardStunned() || rollLock || attackLock || parryLock > 0 || parryFrames > 0 || casting || castLock > 0) {
+        if (isFloored() || isStunned() || isGuardStunned() || rollLock || attackLock || parryLock > 0 || parryFrames > 0 || casting || castLock > 0 || channelLock > 0) {
             return false;
         }
         else {
@@ -296,6 +304,9 @@ public class StatusManager : MonoBehaviour {
         if (castLock > 0) {
             castLock -= 1;
         }
+        if (channelLock > 0) {
+            channelLock -= 1;
+        }
         if (floored > 0) {
             floored -= 1;
         }
@@ -330,6 +341,7 @@ public class StatusManager : MonoBehaviour {
             incorporealFrames -= 1;
         } else {
             col.isTrigger = false;
+            col.attachedRigidbody.useGravity = true;
         }
 
     }
@@ -340,14 +352,17 @@ public class StatusManager : MonoBehaviour {
         animator.SetBool("stunned", isStunned());
         animator.SetBool("guardStunned", isGuardStunned());
         animator.SetBool("floored", isFloored());
+        animator.SetBool("airborne", isAirborne());
         animator.SetBool("casting", casting);
         animator.SetBool("paralyzed", paralyzed > 0);
+        animator.SetBool("guarding", guarding);
         //animator.SetFloat("paralyzeFloat", 0.8f);
-	}
+    }
 
     private void OnTriggerEnter(Collider other) {
-        if (other.gameObject.tag.Contains("waltal")) {
+        if (other.gameObject.tag.Contains("WalTal")) {
             col.isTrigger = false;
+            col.attachedRigidbody.useGravity = true;
             incorporealFrames = 0;
         }
     }

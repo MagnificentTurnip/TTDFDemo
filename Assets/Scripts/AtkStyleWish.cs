@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class AtkStyleWish : AtkStyle {
 
-    public enum attackStates { drawing, idle, fEvade, bEvade, rEvade, lEvade, guarding, spellcast, fParry, bParry, bladework1, bladework2, bladework3, bladework4 }; 
+    public enum attackStates { drawing, idle, fEvade, bEvade, rEvade, lEvade, guarding, spellcast, fParry, bParry, bladework1, bladework2, bladework3, bladework4, overhead }; 
     public attackStates state;
 
     public GameObject rgtHndBone; //just a couple of relevant bones for the sake of making sonme simple animations easier
     public GameObject lftHndBone;
 
     public int wraithMode; //wish style has a powered-up state (which I may or may not have time to implement wahey)
+    public int bladeTracker; //wish style usually uses multiple different weapon types. 0 for regular blade, 1 for big blade, 2 for dual blades.
     public float evadespeed; //you may want attack-break evades to be faster or slower than regular ones
     public float evadetime;
 
@@ -22,15 +23,36 @@ public class AtkStyleWish : AtkStyle {
 	}
 
     public override void forceIdle() {
+        if (bladeTracker == 1) {
+            animator.Play("GreatBladeOff", 1, 0f);
+        }
+        if (bladeTracker == 2) {
+            animator.Play("SecBladeOff", 1, 0f);
+        }
+        bladeTracker = 0;
         state = attackStates.idle;
     }
 
     public override void forceGuarding(int counterIdle) {
+        if (bladeTracker == 1) {
+            animator.Play("GreatBladeOff", 1, 0f);
+        }
+        if (bladeTracker == 2) {
+            animator.Play("SecBladeOff", 1, 0f);
+        }
+        bladeTracker = 0;
         state = attackStates.guarding;
         idleCounter = counterIdle;
     }
 
     public override void forceSpellcast(int counterIdle) {
+        if (bladeTracker == 1) {
+            animator.Play("GreatBladeOff", 1, 0f);
+        }
+        if (bladeTracker == 2) {
+            animator.Play("SecBladeOff", 1, 0f);
+        }
+        bladeTracker = 0;
         state = attackStates.spellcast;
         idleCounter = counterIdle;
     }
@@ -45,6 +67,13 @@ public class AtkStyleWish : AtkStyle {
         }
 
         if (idleCounter <= 0 && state != attackStates.drawing) {
+            if (bladeTracker == 1) {
+                animator.Play("GreatBladeOff", 1, 0f);
+            }
+            if (bladeTracker == 2) {
+                animator.Play("SecBladeOff", 1, 0f);
+            }
+            bladeTracker = 0;
             idleCounter = 0;
             state = attackStates.idle;
             status.toIdleLock = false;
@@ -52,6 +81,13 @@ public class AtkStyleWish : AtkStyle {
     }
 
     public override void bParry() {
+        if (bladeTracker == 1) {
+            animator.Play("GreatBladeOff", 1, 0f);
+        }
+        if (bladeTracker == 2) {
+            animator.Play("SecBladeOff", 1, 0f);
+        }
+        bladeTracker = 0;
         movement.pointToTarget();
         animator.Play("bParry");
         if (status.sheathed == false) {
@@ -64,6 +100,13 @@ public class AtkStyleWish : AtkStyle {
     }
 
     public override void fParry() {
+        if (bladeTracker == 1) {
+            animator.Play("GreatBladeOff", 1, 0f);
+        }
+        if (bladeTracker == 2) {
+            animator.Play("SecBladeOff", 1, 0f);
+        }
+        bladeTracker = 0;
         movement.pointToTarget();
         animator.Play("fParry");
         if (status.sheathed == false) {
@@ -80,6 +123,13 @@ public class AtkStyleWish : AtkStyle {
     }
 
     public void evadeForward() {
+        if (bladeTracker == 1) {
+            animator.Play("GreatBladeOff", 1, 0f);
+        }
+        if (bladeTracker == 2) {
+            animator.Play("SecBladeOff", 1, 0f);
+        }
+        bladeTracker = 0;
         movement.evade(evadespeed, 0f, evadetime);
         animator.Play("fRoll");
         state = attackStates.fEvade; //set the attack state;
@@ -87,6 +137,13 @@ public class AtkStyleWish : AtkStyle {
     }
 
     public void evadeBack() {
+        if (bladeTracker == 1) {
+            animator.Play("GreatBladeOff", 1, 0f);
+        }
+        if (bladeTracker == 2) {
+            animator.Play("SecBladeOff", 1, 0f);
+        }
+        bladeTracker = 0;
         movement.evade(-evadespeed, 0f, evadetime);
         animator.Play("bRoll", -1, 0.3f);
         state = attackStates.bEvade; //set the attack state;
@@ -94,6 +151,13 @@ public class AtkStyleWish : AtkStyle {
     }
 
     public void evadeRight() {
+        if (bladeTracker == 1) {
+            animator.Play("GreatBladeOff", 1, 0f);
+        }
+        if (bladeTracker == 2) {
+            animator.Play("SecBladeOff", 1, 0f);
+        }
+        bladeTracker = 0;
         movement.evade(0f, evadespeed, evadetime);
         animator.Play("rRoll");
         state = attackStates.rEvade; //set the attack state;
@@ -101,6 +165,13 @@ public class AtkStyleWish : AtkStyle {
     }
 
     public void evadeLeft() {
+        if (bladeTracker == 1) {
+            animator.Play("GreatBladeOff", 1, 0f);
+        }
+        if (bladeTracker == 2) {
+            animator.Play("SecBladeOff", 1, 0f);
+        }
+        bladeTracker = 0;
         movement.evade(0f, -evadespeed, evadetime);
         animator.Play("lRoll");
         state = attackStates.lEvade; //set the attack state;
@@ -109,7 +180,7 @@ public class AtkStyleWish : AtkStyle {
 
     //IDEA FOR KNOCKBACK. Instead of just forwardback and leftright, include awaytowards force too. Awaytowards is the current implementation. forwardback and leftright are currentAttack.data.attackOwnerStatus.gameObject.transform.(forward or right) * force respectively.
 
-    public void standardBladework1() {
+    public void advancingBladework() {
         //create the new attack as a child of this object
         currentAttack = Instantiate(attack).GetComponent<Attack>();
         currentAttack.transform.position = rgtHndBone.transform.position;
@@ -120,10 +191,13 @@ public class AtkStyleWish : AtkStyle {
             _attackOwnerStatus: status, //here's the status manager
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
-            _GFXAnimation: "standardBladework1",
+            _GFXAnimation: "advancingBladework",
             _HitboxAnimation: "rgtHndMatch", //just uses the default animation that matches the hitbox to the right hand bone
+            _xScale: 0.34f, //match the size of the blade, more or less
+            _yScale: 0.34f,
+            _zScale: 1.23f,
             _attackDelay: 35, //delay of 35 frames before the attack starts
-            _attackDuration: 20, //20 frames within which the attack is active
+            _attackDuration: 17, //17 frames within which the attack is active
             _attackEnd: 5, //and 5 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
             _hitsAirborne: true, //hits airborne, standing and floored.
             _hitsStanding: true,
@@ -131,9 +205,17 @@ public class AtkStyleWish : AtkStyle {
             _contact: true, //makes contact.
             _unblockable: 0); //and isn't unblockable (this is the default, so it doesn't need to be here but I like keeping it here as an example if I want to change it)
 
-        if (debug == true){
-        currentAttack.gameObject.GetComponent<MeshFilter>().mesh = cube; //for testing the hitbox
+        if (debug == true) {
+            currentAttack.gameObject.GetComponent<MeshFilter>().mesh = cube; //for testing the hitbox
         }
+
+        if (wraithMode > 0) {
+            currentAttack.data.xScale += 0.02f;
+            currentAttack.data.yScale += 0.02f;
+            currentAttack.data.zScale += 0.3f;
+        }
+
+        currentAttack.transform.localScale = new Vector3(currentAttack.data.xScale, currentAttack.data.yScale, currentAttack.data.zScale);
 
         currentAttack.data.HitboxAnimator.runtimeAnimatorController = hitboxAnimatorController; //set the attack hitbox animator's animator controller to be the one for this attack style
         currentAttack.data.atkHitBox.isTrigger = true; //make the hitbox a trigger so that it doesn't have physics
@@ -151,7 +233,7 @@ public class AtkStyleWish : AtkStyle {
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 20,
-            _onHitForwardBackward: -600f, 
+            _onHitForwardBackward: -600f,
             _onHitRightLeft: 50f);
 
         //set the attack's properties on charge hit
@@ -159,9 +241,9 @@ public class AtkStyleWish : AtkStyle {
 
         //set the attack's properties on guard
         currentAttack.onGuard = new Attack.hitProperties(
-            _SPcost : 10f, 
-            _causesGuardStun: 20, 
-            _onHitForwardBackward: -650f, 
+            _SPcost: 10f,
+            _causesGuardStun: 20,
+            _onHitForwardBackward: -650f,
             _onHitRightLeft: 50f);
 
         //set the attack's properties on charge guard
@@ -231,6 +313,250 @@ public class AtkStyleWish : AtkStyle {
         movement.pointToTarget(); //this move takes perfect directional input, meaning you can even direct it outside of the space within which you can input the command for it
         StartCoroutine(movement.motor.timedBurst(0.3f, 3000f, 50f, 0f, 0f, 0, 0f)); //with this move, you jump forward
 
+
+        //THIS ATTACK HAS A SECOND ATTACK, TECHNICALLY BEFORE THE FIRST BUT IT ISN'T THE MAIN PORTION AND EXISTS MAINLY FOR PREVENTING GUARD-CANCELLATION ---------------------------
+
+        //create the new attack as a child of this object
+        currentAttack = Instantiate(attack).GetComponent<Attack>();
+        currentAttack.transform.position = rgtHndBone.transform.position;
+        currentAttack.transform.parent = rgtHndBone.transform;
+
+        //set the attack data
+        currentAttack.data = new Attack.atkData(
+            _attackOwnerStatus: status, //here's the status manager
+            _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
+            _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
+            _GFXAnimation: "advancingBladework",
+            _HitboxAnimation: "rgtHndMatch", //just uses the default animation that matches the hitbox to the right hand bone
+            _xScale: 0.34f, //match the size of the blade, more or less
+            _yScale: 0.34f,
+            _zScale: 1.23f,
+            _attackDelay: 14, //delay of 14 frames before the attack starts
+            _attackDuration: 21, //21 frames within which the attack is active
+            _attackEnd: 10, //and 10 frames at the end before the attack is considered complete even though it really doesn't matter in this case. attackCharge is left at the default of 0 as this attack doesn't charge.
+            _hitsAirborne: true, //hits airborne only.
+            _hitsStanding: false,
+            _hitsFloored: false,
+            _contact: true); //and makes contact.
+
+        if (debug == true) {
+            currentAttack.gameObject.GetComponent<MeshFilter>().mesh = cube; //for testing the hitbox
+        }
+
+        if (wraithMode > 0) {
+            currentAttack.data.xScale += 0.02f;
+            currentAttack.data.yScale += 0.02f;
+            currentAttack.data.zScale += 0.3f;
+        }
+
+        currentAttack.transform.localScale = new Vector3(currentAttack.data.xScale, currentAttack.data.yScale, currentAttack.data.zScale);
+
+        currentAttack.data.HitboxAnimator.runtimeAnimatorController = hitboxAnimatorController; //set the attack hitbox animator's animator controller to be the one for this attack style
+        currentAttack.data.atkHitBox.isTrigger = true; //make the hitbox a trigger so that it doesn't have physics
+        //the attack state has already been set
+
+        //set the attack's properties on hit (all unset properties are defaults)
+        if (charStat != null) {
+            tempDamage.damageAmount = 3f + (0.1f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 3f + 0.1f * stat.Level;
+        }
+        tempDamage.damageType = Attack.typeOfDamage.Piercing;
+        currentAttack.onHit = new Attack.hitProperties(
+            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+            _causesFlinch: true,
+            _causesStun: 5,
+            _onHitForwardBackward: -350f,
+            _onHitRightLeft: 0f);
+
+        //set the attack's properties on charge hit
+        currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
+
+        //set the attack's properties on guard
+        currentAttack.onGuard = new Attack.hitProperties(
+            _SPcost: 10f,
+            _causesGuardStun: 7,
+            _onHitForwardBackward: -150f,
+            _onHitRightLeft: 0f);
+
+        //set the attack's properties on charge guard
+        currentAttack.onChargeGuard = currentAttack.onGuard; //this move doesn't charge so they're the same as on guard properties
+
+        //set the attack's properties on vulnerable hit
+        currentAttack.onVulnerableHit = currentAttack.onHit; //no additional properties on vulnerable hit
+
+        //set the attack's properties on vulnerable charge hit
+        currentAttack.onVulnerableChargeHit = currentAttack.onVulnerableHit; //this move doesn't charge
+
+        //set the attack's properties on floored hit
+        currentAttack.onFlooredHit = currentAttack.onHit; //this move doesn't even hit floored targets
+
+        //set the attack's properties on charged floored hit
+        currentAttack.onFlooredChargeHit = currentAttack.onFlooredHit; //this move doesn't charge
+
+        //set the attack's properties on airborne hit
+        currentAttack.onAirborneHit = currentAttack.onHit; //This attack only hits airborne targets, so just copy onHit but onHit itself will never fire
+
+        //set the attack's properties on charged airborne hit
+        currentAttack.onAirborneChargeHit = currentAttack.onAirborneHit; //this move doesn't charge
+
+        //play the animations
+        currentAttack.data.HitboxAnimator.Play(currentAttack.data.HitboxAnimation);
+        //although the hitbox animation needs to be played for this new attack, the previous attack has already dealt with the gfx animation
+
+        instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
+        //movement.pointToTarget(); doesn't need to be called again as the previous 'attack' has already done that
+        //similarly, no additional movement needs to be performed
+
+
+        idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 20; //always remember to reset the idle counter
+
+
+    }
+
+    public void standardBladework1() {
+        //create the new attack as a child of this object
+        currentAttack = Instantiate(attack).GetComponent<Attack>();
+        currentAttack.transform.position = rgtHndBone.transform.position;
+        currentAttack.transform.parent = rgtHndBone.transform;
+
+        //set the attack data
+        currentAttack.data = new Attack.atkData(
+            _attackOwnerStatus: status, //here's the status manager
+            _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
+            _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
+            _GFXAnimation: "standardBladework1",
+            _HitboxAnimation: "rgtHndMatch", //just uses the default animation that matches the hitbox to the right hand bone
+            _xScale: 0.34f, //match the size of the blade, more or less
+            _yScale: 0.34f,
+            _zScale: 1.23f,
+            _attackDelay: 8, //delay of 35 frames before the attack starts
+            _attackDuration: 17, //20 frames within which the attack is active
+            _attackEnd: 5, //and 5 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
+            _hitsAirborne: true, //hits airborne, standing and floored.
+            _hitsStanding: true,
+            _hitsFloored: true,
+            _contact: true, //makes contact.
+            _unblockable: 0); //and isn't unblockable (this is the default, so it doesn't need to be here but I like keeping it here as an example if I want to change it)
+
+        if (debug == true){
+        currentAttack.gameObject.GetComponent<MeshFilter>().mesh = cube; //for testing the hitbox
+        }
+
+        if (wraithMode > 0) {
+            currentAttack.data.xScale += 0.02f;
+            currentAttack.data.yScale += 0.02f;
+            currentAttack.data.zScale += 0.3f;
+        }
+
+        currentAttack.transform.localScale = new Vector3(currentAttack.data.xScale, currentAttack.data.yScale, currentAttack.data.zScale);
+
+        currentAttack.data.HitboxAnimator.runtimeAnimatorController = hitboxAnimatorController; //set the attack hitbox animator's animator controller to be the one for this attack style
+        currentAttack.data.atkHitBox.isTrigger = true; //make the hitbox a trigger so that it doesn't have physics
+        state = attackStates.bladework1; //set the attack state;
+
+        //set the attack's properties on hit (all unset properties are defaults)
+        if (charStat != null) {
+            tempDamage.damageAmount = 8f + (0.25f * charStat.STR) + (0.25f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 8f + 0.8f * stat.Level;
+        }
+        tempDamage.damageType = Attack.typeOfDamage.Slashing;
+        currentAttack.onHit = new Attack.hitProperties(
+            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+            _causesFlinch: true,
+            _causesStun: 20,
+            _onHitForwardBackward: -300f, 
+            _onHitRightLeft: 50f);
+
+        //set the attack's properties on charge hit
+        currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
+
+        //set the attack's properties on guard
+        currentAttack.onGuard = new Attack.hitProperties(
+            _SPcost : 10f, 
+            _causesGuardStun: 20, 
+            _onHitForwardBackward: -450f, 
+            _onHitRightLeft: 50f);
+
+        //set the attack's properties on charge guard
+        currentAttack.onChargeGuard = currentAttack.onGuard; //this move doesn't charge so they're the same as on guard properties
+
+        //set the attack's properties on vulnerable hit
+        if (charStat != null) {
+            tempDamage.damageAmount = 12f + (0.25f * charStat.STR) + (0.25f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 12f + 1.2f * stat.Level;
+        }
+        tempDamage.damageType = Attack.typeOfDamage.Slashing;
+        currentAttack.onVulnerableHit = new Attack.hitProperties(
+            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+            _causesFlinch: true,
+            _causesStun: 50,
+            _onHitForwardBackward: -350f,
+            _onHitRightLeft: 50f);
+
+        //set the attack's properties on vulnerable charge hit
+        currentAttack.onVulnerableChargeHit = currentAttack.onVulnerableHit; //this move doesn't charge
+
+        //set the attack's properties on floored hit
+        if (charStat != null) {
+            tempDamage.damageAmount = 5f + (0.15f * charStat.STR) + (0.15f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 5f + 0.6f * stat.Level;
+        }
+        tempDamage.damageType = Attack.typeOfDamage.Slashing;
+        currentAttack.onFlooredHit = new Attack.hitProperties(
+            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+            _causesFlinch: true,
+            _causesStun: 15,
+            _onHitForwardBackward: -300f,
+            _onHitRightLeft: 50f);
+
+        //set the attack's properties on charged floored hit
+        currentAttack.onFlooredChargeHit = currentAttack.onFlooredHit; //this move doesn't charge
+
+        //set the attack's properties on airborne hit
+        if (charStat != null) {
+            tempDamage.damageAmount = 8f + (0.25f * charStat.STR) + (0.25f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 8f + 0.8f * stat.Level;
+        }
+        tempDamage.damageType = Attack.typeOfDamage.Slashing;
+        currentAttack.onAirborneHit = new Attack.hitProperties(
+            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+            _causesFlinch: true,
+            _causesStun: 50,
+            _causesFloored: 100,
+            _onHitForwardBackward: -300f,
+            _onHitRightLeft: 50f);
+
+        //add an extra bit of impact damage
+        if (charStat != null) {
+            tempDamage.damageAmount = 2f + (0.05f * charStat.STR);
+        }
+        else {
+            tempDamage.damageAmount = 2f + 0.1f * stat.Level;
+        }
+        tempDamage.damageType = Attack.typeOfDamage.Impact;
+        currentAttack.onAirborneHit.damageInstances.Add(tempDamage);
+
+        //set the attack's properties on charged airborne hit
+        currentAttack.onAirborneChargeHit = currentAttack.onAirborneHit; //this move doesn't charge
+
+        //play the animations
+        currentAttack.data.HitboxAnimator.Play(currentAttack.data.HitboxAnimation);
+        animator.Play(currentAttack.data.GFXAnimation, 0, 0f);
+
+        instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
+        movement.pointToTarget(); //this move takes perfect directional input, meaning you can even direct it outside of the space within which you can input the command for it
+        StartCoroutine(movement.motor.timedBurst(0.15f, 300f, 50f, 0f, 0f, 0, 0f)); //with this move you move forward a tiny bit
+
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 20; //always remember to reset the idle counter
     }
 
@@ -247,6 +573,9 @@ public class AtkStyleWish : AtkStyle {
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "standardBladework2",
             _HitboxAnimation: "rgtHndMatch", //just uses the default animation that matches the hitbox to the right hand bone
+            _xScale: 0.34f, //match the size of the blade, more or less
+            _yScale: 0.34f,
+            _zScale: 1.23f,
             _attackDelay: 5, //delay of 5 frames before the attack starts
             _attackDuration: 25, //25 frames within which the attack is active
             _attackEnd: 5, //and 5 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
@@ -258,6 +587,14 @@ public class AtkStyleWish : AtkStyle {
         if (debug == true){
         currentAttack.gameObject.GetComponent<MeshFilter>().mesh = cube; //for testing the hitbox
         }
+
+        if (wraithMode > 0) {
+            currentAttack.data.xScale += 0.02f;
+            currentAttack.data.yScale += 0.02f;
+            currentAttack.data.zScale += 0.3f;
+        }
+
+        currentAttack.transform.localScale = new Vector3(currentAttack.data.xScale, currentAttack.data.yScale, currentAttack.data.zScale);
 
         currentAttack.data.HitboxAnimator.runtimeAnimatorController = hitboxAnimatorController; //set the attack hitbox animator's animator controller to be the one for this attack style
         currentAttack.data.atkHitBox.isTrigger = true; //make the hitbox a trigger so that it doesn't have physics
@@ -332,6 +669,9 @@ public class AtkStyleWish : AtkStyle {
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "standardBladework3",
             _HitboxAnimation: "rgtHndMatch", //just uses the default animation that matches the hitbox to the right hand bone
+            _xScale: 0.34f, //match the size of the blade, more or less
+            _yScale: 0.34f,
+            _zScale: 1.23f,
             _attackDelay: 10, //delay of 10 frames before the attack starts
             _attackDuration: 18, //18 frames within which the attack is active
             _attackEnd: 10, //and 10 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
@@ -343,6 +683,14 @@ public class AtkStyleWish : AtkStyle {
         if (debug == true){
         currentAttack.gameObject.GetComponent<MeshFilter>().mesh = cube; //for testing the hitbox
         }
+
+        if (wraithMode > 0) {
+            currentAttack.data.xScale += 0.02f;
+            currentAttack.data.yScale += 0.02f;
+            currentAttack.data.zScale += 0.3f;
+        }
+
+        currentAttack.transform.localScale = new Vector3(currentAttack.data.xScale, currentAttack.data.yScale, currentAttack.data.zScale);
 
         currentAttack.data.HitboxAnimator.runtimeAnimatorController = hitboxAnimatorController; //set the attack hitbox animator's animator controller to be the one for this attack style
         currentAttack.data.atkHitBox.isTrigger = true; //make the hitbox a trigger so that it doesn't have physics
@@ -452,6 +800,9 @@ public class AtkStyleWish : AtkStyle {
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "standardBladework4",
             _HitboxAnimation: "rgtHndMatch", //just uses the default animation that matches the hitbox to the right hand bone
+            _xScale: 0.34f, //match the size of the blade, more or less
+            _yScale: 0.34f,
+            _zScale: 1.23f,
             _attackDelay: 5, //delay of 5 frames before the attack starts
             _attackDuration: 15, //15 frames within which the attack is active
             _attackEnd: 20, //and 15 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
@@ -463,6 +814,14 @@ public class AtkStyleWish : AtkStyle {
         if (debug == true){
         currentAttack.gameObject.GetComponent<MeshFilter>().mesh = cube; //for testing the hitbox
         }
+
+        if (wraithMode > 0) {
+            currentAttack.data.xScale += 0.02f;
+            currentAttack.data.yScale += 0.02f;
+            currentAttack.data.zScale += 0.3f;
+        }
+
+        currentAttack.transform.localScale = new Vector3(currentAttack.data.xScale, currentAttack.data.yScale, currentAttack.data.zScale);
 
         currentAttack.data.HitboxAnimator.runtimeAnimatorController = hitboxAnimatorController; //set the attack hitbox animator's animator controller to be the one for this attack style
         currentAttack.data.atkHitBox.isTrigger = true; //make the hitbox a trigger so that it doesn't have physics
@@ -577,9 +936,12 @@ public class AtkStyleWish : AtkStyle {
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "lightBladework1",
             _HitboxAnimation: "rgtHndMatch", //just uses the default animation that matches the hitbox to the right hand bone
-            _attackDelay: 10, //delay of 10 frames before the attack starts
+            _xScale: 0.34f, //match the size of the blade, more or less
+            _yScale: 0.34f,
+            _zScale: 1.23f,
+            _attackDelay: 7, //delay of 7 frames before the attack starts
             _attackDuration: 15, //15 frames within which the attack is active
-            _attackEnd: 30, //and 30 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
+            _attackEnd: 25, //and 25 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
             _hitsAirborne: false, //hits standing only.
             _hitsStanding: true,
             _hitsFloored: false,
@@ -588,6 +950,14 @@ public class AtkStyleWish : AtkStyle {
         if (debug == true) {
             currentAttack.gameObject.GetComponent<MeshFilter>().mesh = cube; //for testing the hitbox
         }
+
+        if (wraithMode > 0) {
+            currentAttack.data.xScale += 0.02f;
+            currentAttack.data.yScale += 0.02f;
+            currentAttack.data.zScale += 0.3f;
+        }
+
+        currentAttack.transform.localScale = new Vector3(currentAttack.data.xScale, currentAttack.data.yScale, currentAttack.data.zScale);
 
         currentAttack.data.HitboxAnimator.runtimeAnimatorController = hitboxAnimatorController; //set the attack hitbox animator's animator controller to be the one for this attack style
         currentAttack.data.atkHitBox.isTrigger = true; //make the hitbox a trigger so that it doesn't have physics
@@ -604,7 +974,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
-            _causesStun: 36,
+            _causesStun: 30,
             _onHitForwardBackward: -100f,
             _onHitRightLeft: 50f);
 
@@ -614,7 +984,7 @@ public class AtkStyleWish : AtkStyle {
         //set the attack's properties on guard
         currentAttack.onGuard = new Attack.hitProperties(
             _SPcost: 30f,
-            _causesGuardStun: 15,
+            _causesGuardStun: 10,
             _onHitForwardBackward: -500f,
             _onHitRightLeft: 50f);
 
@@ -633,7 +1003,7 @@ public class AtkStyleWish : AtkStyle {
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 40,
-            _onHitForwardBackward: 200f,
+            _onHitForwardBackward: 500f,
             _onHitRightLeft: 50f);
 
         //set the attack's properties on vulnerable charge hit
@@ -657,7 +1027,7 @@ public class AtkStyleWish : AtkStyle {
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
         movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
-        StartCoroutine(movement.motor.timedBurst(0.4f, 500f, -100f, -1500f, 100f, 2, 0.1f)); //with this move, you jump forward and abruptly stop
+        StartCoroutine(movement.motor.timedBurst(0.4f, 500f, -100f, -2000f, 100f, 2, 0.1f)); //with this move, you jump forward and abruptly stop
 
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 20; //always remember to reset the idle counter
     }
@@ -675,9 +1045,12 @@ public class AtkStyleWish : AtkStyle {
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "lightBladework2",
             _HitboxAnimation: "rgtHndMatch", //just uses the default animation that matches the hitbox to the right hand bone
+            _xScale: 0.34f, //match the size of the blade, more or less
+            _yScale: 0.34f,
+            _zScale: 1.23f,
             _attackDelay: 7, //delay of 7 frames before the attack starts
             _attackDuration: 13, //13 frames within which the attack is active
-            _attackEnd: 30, //and 30 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
+            _attackEnd: 25, //and 25 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
             _hitsAirborne: false, //hits standing only.
             _hitsStanding: true,
             _hitsFloored: false,
@@ -686,6 +1059,14 @@ public class AtkStyleWish : AtkStyle {
         if (debug == true) {
             currentAttack.gameObject.GetComponent<MeshFilter>().mesh = cube; //for testing the hitbox
         }
+
+        if (wraithMode > 0) {
+            currentAttack.data.xScale += 0.02f;
+            currentAttack.data.yScale += 0.02f;
+            currentAttack.data.zScale += 0.3f;
+        }
+
+        currentAttack.transform.localScale = new Vector3(currentAttack.data.xScale, currentAttack.data.yScale, currentAttack.data.zScale);
 
         currentAttack.data.HitboxAnimator.runtimeAnimatorController = hitboxAnimatorController; //set the attack hitbox animator's animator controller to be the one for this attack style
         currentAttack.data.atkHitBox.isTrigger = true; //make the hitbox a trigger so that it doesn't have physics
@@ -702,7 +1083,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
             _causesFlinch: true,
-            _causesStun: 33,
+            _causesStun: 30,
             _onHitForwardBackward: -100f,
             _onHitRightLeft: 50f);
 
@@ -755,7 +1136,7 @@ public class AtkStyleWish : AtkStyle {
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
         movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
-        StartCoroutine(movement.motor.timedBurst(0.3f, 500f, 100f, -1200f, -100f, 2, 0.15f)); //with this move, you jump forward and abruptly stop
+        StartCoroutine(movement.motor.timedBurst(0.3f, 500f, 100f, -2000f, -100f, 2, 0.15f)); //with this move, you jump forward and abruptly stop
 
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 20; //always remember to reset the idle counter
     }
@@ -773,6 +1154,9 @@ public class AtkStyleWish : AtkStyle {
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "lightBladework3",
             _HitboxAnimation: "rgtHndMatch", //just uses the default animation that matches the hitbox to the right hand bone
+            _xScale: 0.34f, //match the size of the blade, more or less
+            _yScale: 0.34f,
+            _zScale: 1.23f,
             _attackDelay: 7, //delay of 7 frames before the attack starts
             _attackDuration: 13, //13 frames within which the attack is active
             _attackEnd: 10, //and 10 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
@@ -784,6 +1168,14 @@ public class AtkStyleWish : AtkStyle {
         if (debug == true) {
             currentAttack.gameObject.GetComponent<MeshFilter>().mesh = cube; //for testing the hitbox
         }
+
+        if (wraithMode > 0) {
+            currentAttack.data.xScale += 0.02f;
+            currentAttack.data.yScale += 0.02f;
+            currentAttack.data.zScale += 0.3f;
+        }
+
+        currentAttack.transform.localScale = new Vector3(currentAttack.data.xScale, currentAttack.data.yScale, currentAttack.data.zScale);
 
         currentAttack.data.HitboxAnimator.runtimeAnimatorController = hitboxAnimatorController; //set the attack hitbox animator's animator controller to be the one for this attack style
         currentAttack.data.atkHitBox.isTrigger = true; //make the hitbox a trigger so that it doesn't have physics
@@ -858,6 +1250,9 @@ public class AtkStyleWish : AtkStyle {
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "lightBladework3",
             _HitboxAnimation: "rgtHndMatch", //just uses the default animation that matches the hitbox to the right hand bone
+            _xScale: 0.34f, //match the size of the blade, more or less
+            _yScale: 0.34f,
+            _zScale: 1.23f,
             _attackDelay: 32, //delay of 32 frames before the attack starts
             _attackDuration: 15, //15 frames within which the attack is active
             _attackEnd: 10, //and 10 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
@@ -869,6 +1264,14 @@ public class AtkStyleWish : AtkStyle {
         if (debug == true) {
             currentAttack.gameObject.GetComponent<MeshFilter>().mesh = cube; //for testing the hitbox
         }
+
+        if (wraithMode > 0) {
+            currentAttack.data.xScale += 0.02f;
+            currentAttack.data.yScale += 0.02f;
+            currentAttack.data.zScale += 0.3f;
+        }
+
+        currentAttack.transform.localScale = new Vector3(currentAttack.data.xScale, currentAttack.data.yScale, currentAttack.data.zScale);
 
         currentAttack.data.HitboxAnimator.runtimeAnimatorController = hitboxAnimatorController; //set the attack hitbox animator's animator controller to be the one for this attack style
         currentAttack.data.atkHitBox.isTrigger = true; //make the hitbox a trigger so that it doesn't have physics
@@ -944,6 +1347,9 @@ public class AtkStyleWish : AtkStyle {
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "lightBladework4",
             _HitboxAnimation: "rgtHndMatch", //just uses the default animation that matches the hitbox to the right hand bone
+            _xScale: 0.34f, //match the size of the blade, more or less
+            _yScale: 0.34f,
+            _zScale: 1.23f,
             _attackDelay: 10, //delay of 10 frames before the attack starts
             _attackDuration: 10, //10 frames within which the attack is active
             _attackEnd: 10, //and 10 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
@@ -955,6 +1361,14 @@ public class AtkStyleWish : AtkStyle {
         if (debug == true) {
             currentAttack.gameObject.GetComponent<MeshFilter>().mesh = cube; //for testing the hitbox
         }
+
+        if (wraithMode > 0) {
+            currentAttack.data.xScale += 0.02f;
+            currentAttack.data.yScale += 0.02f;
+            currentAttack.data.zScale += 0.3f;
+        }
+
+        currentAttack.transform.localScale = new Vector3(currentAttack.data.xScale, currentAttack.data.yScale, currentAttack.data.zScale);
 
         currentAttack.data.HitboxAnimator.runtimeAnimatorController = hitboxAnimatorController; //set the attack hitbox animator's animator controller to be the one for this attack style
         currentAttack.data.atkHitBox.isTrigger = true; //make the hitbox a trigger so that it doesn't have physics
@@ -1041,6 +1455,9 @@ public class AtkStyleWish : AtkStyle {
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "lightBladework4",
             _HitboxAnimation: "rgtHndMatch", //just uses the default animation that matches the hitbox to the right hand bone
+            _xScale: 0.34f, //match the size of the blade, more or less
+            _yScale: 0.34f,
+            _zScale: 1.23f,
             _attackDelay: 30, //delay of 30 frames before the attack starts
             _attackDuration: 10, //10 frames within which the attack is active
             _attackEnd: 35, //and 35 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
@@ -1052,6 +1469,14 @@ public class AtkStyleWish : AtkStyle {
         if (debug == true) {
             currentAttack.gameObject.GetComponent<MeshFilter>().mesh = cube; //for testing the hitbox
         }
+
+        if (wraithMode > 0) {
+            currentAttack.data.xScale += 0.02f;
+            currentAttack.data.yScale += 0.02f;
+            currentAttack.data.zScale += 0.3f;
+        }
+
+        currentAttack.transform.localScale = new Vector3(currentAttack.data.xScale, currentAttack.data.yScale, currentAttack.data.zScale);
 
         currentAttack.data.HitboxAnimator.runtimeAnimatorController = hitboxAnimatorController; //set the attack hitbox animator's animator controller to be the one for this attack style
         currentAttack.data.atkHitBox.isTrigger = true; //make the hitbox a trigger so that it doesn't have physics
@@ -1127,6 +1552,9 @@ public class AtkStyleWish : AtkStyle {
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "heavyBladework1",
             _HitboxAnimation: "rgtHndMatch", //just uses the default animation that matches the hitbox to the right hand bone
+            _xScale: 0.34f, //match the size of the blade, more or less
+            _yScale: 0.34f,
+            _zScale: 1.23f,
             _attackDelay: 25, //delay of 25 frames before the attack starts
             _attackDuration: 30, //30 frames within which the attack is active
             _attackEnd: 7, //and 7 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
@@ -1138,6 +1566,14 @@ public class AtkStyleWish : AtkStyle {
         if (debug == true) {
             currentAttack.gameObject.GetComponent<MeshFilter>().mesh = cube; //for testing the hitbox
         }
+
+        if (wraithMode > 0) {
+            currentAttack.data.xScale += 0.02f;
+            currentAttack.data.yScale += 0.02f;
+            currentAttack.data.zScale += 0.3f;
+        }
+
+        currentAttack.transform.localScale = new Vector3(currentAttack.data.xScale, currentAttack.data.yScale, currentAttack.data.zScale);
 
         currentAttack.data.HitboxAnimator.runtimeAnimatorController = hitboxAnimatorController; //set the attack hitbox animator's animator controller to be the one for this attack style
         currentAttack.data.atkHitBox.isTrigger = true; //make the hitbox a trigger so that it doesn't have physics
@@ -1238,6 +1674,9 @@ public class AtkStyleWish : AtkStyle {
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "heavyBladework2",
             _HitboxAnimation: "rgtHndMatch", //just uses the default animation that matches the hitbox to the right hand bone
+            _xScale: 0.34f, //match the size of the blade, more or less
+            _yScale: 0.34f,
+            _zScale: 1.23f,
             _attackDelay: 10, //delay of 20 frames before the attack starts
             _attackDuration: 15, //25 frames within which the attack is active
             _attackEnd: 10, //and 10 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
@@ -1249,6 +1688,14 @@ public class AtkStyleWish : AtkStyle {
         if (debug == true) {
             currentAttack.gameObject.GetComponent<MeshFilter>().mesh = cube; //for testing the hitbox
         }
+
+        if (wraithMode > 0) {
+            currentAttack.data.xScale += 0.02f;
+            currentAttack.data.yScale += 0.02f;
+            currentAttack.data.zScale += 0.3f;
+        }
+
+        currentAttack.transform.localScale = new Vector3(currentAttack.data.xScale, currentAttack.data.yScale, currentAttack.data.zScale);
 
         currentAttack.data.HitboxAnimator.runtimeAnimatorController = hitboxAnimatorController; //set the attack hitbox animator's animator controller to be the one for this attack style
         currentAttack.data.atkHitBox.isTrigger = true; //make the hitbox a trigger so that it doesn't have physics
@@ -1335,6 +1782,9 @@ public class AtkStyleWish : AtkStyle {
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "heavyBladework2",
             _HitboxAnimation: "rgtHndMatch", //just uses the default animation that matches the hitbox to the right hand bone
+            _xScale: 0.34f, //match the size of the blade, more or less
+            _yScale: 0.34f,
+            _zScale: 1.23f,
             _attackDelay: 45, //delay of 20 frames before the attack starts
             _attackDuration: 20, //25 frames within which the attack is active
             _attackEnd: 15, //and 10 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
@@ -1346,6 +1796,14 @@ public class AtkStyleWish : AtkStyle {
         if (debug == true) {
             currentAttack.gameObject.GetComponent<MeshFilter>().mesh = cube; //for testing the hitbox
         }
+
+        if (wraithMode > 0) {
+            currentAttack.data.xScale += 0.02f;
+            currentAttack.data.yScale += 0.02f;
+            currentAttack.data.zScale += 0.3f;
+        }
+
+        currentAttack.transform.localScale = new Vector3(currentAttack.data.xScale, currentAttack.data.yScale, currentAttack.data.zScale);
 
         currentAttack.data.HitboxAnimator.runtimeAnimatorController = hitboxAnimatorController; //set the attack hitbox animator's animator controller to be the one for this attack style
         currentAttack.data.atkHitBox.isTrigger = true; //make the hitbox a trigger so that it doesn't have physics
@@ -1429,6 +1887,9 @@ public class AtkStyleWish : AtkStyle {
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "heavyBladework3",
             _HitboxAnimation: "rgtHndMatch", //just uses the default animation that matches the hitbox to the right hand bone
+            _xScale: 0.34f, //match the size of the blade, more or less
+            _yScale: 0.34f,
+            _zScale: 1.23f,
             _attackDelay: 22, //delay of 22 frames before the attack starts
             _attackDuration: 25, //25 frames within which the attack is active
             _attackEnd: 15, //and 15 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
@@ -1440,6 +1901,14 @@ public class AtkStyleWish : AtkStyle {
         if (debug == true) {
             currentAttack.gameObject.GetComponent<MeshFilter>().mesh = cube; //for testing the hitbox
         }
+
+        if (wraithMode > 0) {
+            currentAttack.data.xScale += 0.02f;
+            currentAttack.data.yScale += 0.02f;
+            currentAttack.data.zScale += 0.3f;
+        }
+
+        currentAttack.transform.localScale = new Vector3(currentAttack.data.xScale, currentAttack.data.yScale, currentAttack.data.zScale);
 
         currentAttack.data.HitboxAnimator.runtimeAnimatorController = hitboxAnimatorController; //set the attack hitbox animator's animator controller to be the one for this attack style
         currentAttack.data.atkHitBox.isTrigger = true; //make the hitbox a trigger so that it doesn't have physics
@@ -1542,6 +2011,9 @@ public class AtkStyleWish : AtkStyle {
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "heavyBladework4",
             _HitboxAnimation: "rgtHndMatch", //just uses the default animation that matches the hitbox to the right hand bone
+            _xScale: 0.34f, //match the size of the blade, more or less
+            _yScale: 0.34f,
+            _zScale: 1.23f,
             _attackDelay: 5, //delay of 20 frames before the attack starts
             _attackDuration: 20, //25 frames within which the attack is active
             _attackEnd: 10, //and 10 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
@@ -1553,6 +2025,14 @@ public class AtkStyleWish : AtkStyle {
         if (debug == true) {
             currentAttack.gameObject.GetComponent<MeshFilter>().mesh = cube; //for testing the hitbox
         }
+
+        if (wraithMode > 0) {
+            currentAttack.data.xScale += 0.02f;
+            currentAttack.data.yScale += 0.02f;
+            currentAttack.data.zScale += 0.3f;
+        }
+
+        currentAttack.transform.localScale = new Vector3(currentAttack.data.xScale, currentAttack.data.yScale, currentAttack.data.zScale);
 
         currentAttack.data.HitboxAnimator.runtimeAnimatorController = hitboxAnimatorController; //set the attack hitbox animator's animator controller to be the one for this attack style
         currentAttack.data.atkHitBox.isTrigger = true; //make the hitbox a trigger so that it doesn't have physics
@@ -1653,7 +2133,7 @@ public class AtkStyleWish : AtkStyle {
 
         //play the animations
         currentAttack.data.HitboxAnimator.Play(currentAttack.data.HitboxAnimation);
-        animator.Play(currentAttack.data.GFXAnimation);
+        animator.Play(currentAttack.data.GFXAnimation, 0, 0f);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
         movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
@@ -1674,6 +2154,9 @@ public class AtkStyleWish : AtkStyle {
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "heavyBladework4",
             _HitboxAnimation: "rgtHndMatch", //just uses the default animation that matches the hitbox to the right hand bone
+            _xScale: 0.34f, //match the size of the blade, more or less
+            _yScale: 0.34f,
+            _zScale: 1.23f,
             _attackDelay: 38, //delay of 38 frames before the attack starts
             _attackDuration: 25, //25 frames within which the attack is active
             _attackEnd: 20, //and 20 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
@@ -1685,6 +2168,14 @@ public class AtkStyleWish : AtkStyle {
         if (debug == true) {
             currentAttack.gameObject.GetComponent<MeshFilter>().mesh = cube; //for testing the hitbox
         }
+
+        if (wraithMode > 0) {
+            currentAttack.data.xScale += 0.02f;
+            currentAttack.data.yScale += 0.02f;
+            currentAttack.data.zScale += 0.3f;
+        }
+
+        currentAttack.transform.localScale = new Vector3(currentAttack.data.xScale, currentAttack.data.yScale, currentAttack.data.zScale);
 
         currentAttack.data.HitboxAnimator.runtimeAnimatorController = hitboxAnimatorController; //set the attack hitbox animator's animator controller to be the one for this attack style
         currentAttack.data.atkHitBox.isTrigger = true; //make the hitbox a trigger so that it doesn't have physics
@@ -1794,6 +2285,194 @@ public class AtkStyleWish : AtkStyle {
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
         //movement.pointToTarget(); doesn't need to be called again as the previous 'attack' has already done that
         //similarly, no additional movement needs to be performed
+
+        idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 20; //always remember to reset the idle counter
+    }
+
+    public void overhead() {
+        //create the new attack as a child of this object
+        currentAttack = Instantiate(attack).GetComponent<Attack>();
+        currentAttack.transform.position = rgtHndBone.transform.position;
+        currentAttack.transform.parent = rgtHndBone.transform;
+
+        //set the attack data
+        currentAttack.data = new Attack.atkData(
+            _attackOwnerStatus: status, //here's the status manager
+            _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
+            _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
+            _GFXAnimation: "overhead",
+            _HitboxAnimation: "rgtHndMatch", //just uses the default animation that matches the hitbox to the right hand bone
+            _xScale: 0.4f, //match the size of the blade, more or less
+            _yScale: 0.4f,
+            _zScale: 1.5f,
+            _attackDelay: 35, //delay of 35 frames before the attack starts
+            _attackDuration: 22, //22 frames within which the attack is active
+            _attackEnd: 20, //and 20 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
+            _hitsAirborne: true, //hits all.
+            _hitsStanding: true,
+            _hitsFloored: true,
+            _contact: true, //makes contact.
+            _unblockable: 1); //and cannot be guarded (but can be parried)
+
+        if (debug == true) {
+            currentAttack.gameObject.GetComponent<MeshFilter>().mesh = cube; //for testing the hitbox
+        }
+
+        if (wraithMode > 0) {
+            currentAttack.data.xScale += 0.02f;
+            currentAttack.data.yScale += 0.02f;
+            currentAttack.data.zScale += 0.3f;
+        }
+
+        currentAttack.transform.localScale = new Vector3(currentAttack.data.xScale, currentAttack.data.yScale, currentAttack.data.zScale);
+
+        currentAttack.data.HitboxAnimator.runtimeAnimatorController = hitboxAnimatorController; //set the attack hitbox animator's animator controller to be the one for this attack style
+        currentAttack.data.atkHitBox.isTrigger = true; //make the hitbox a trigger so that it doesn't have physics
+        state = attackStates.overhead; //set the attack state;
+
+        //set the attack's properties on hit (all unset properties are defaults)
+        if (charStat != null) {
+            tempDamage.damageAmount = 14f + (0.5f * charStat.STR) + (0.05f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 14f + 1.2f * stat.Level;
+        }
+        tempDamage.damageType = Attack.typeOfDamage.Slashing;
+        currentAttack.onHit = new Attack.hitProperties(
+            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+            _causesFlinch: true,
+            _causesStun: 50,
+            _causesFloored: 120,
+            _onHitForwardBackward: -3000f,
+            _onHitRightLeft: 500f);
+
+        //additional magic damage
+        if (charStat != null) {
+            tempDamage.damageAmount = 4f + (0.05f * charStat.STR) + (0.2f * charStat.WIL);
+        }
+        else {
+            tempDamage.damageAmount = 4f + 0.2f * stat.Level;
+        }
+        tempDamage.damageType = Attack.typeOfDamage.Magic;
+        currentAttack.onHit.damageInstances.Add(tempDamage);
+
+        //set the attack's properties on charge hit
+        currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
+
+        //set the attack's properties on guard
+        currentAttack.onGuard = new Attack.hitProperties(
+            _SPcost: 10f,
+            _causesGuardStun: 30,
+            _onHitForwardBackward: -2000f,
+            _onHitRightLeft: 400f);
+
+        //set the attack's properties on charge guard
+        currentAttack.onChargeGuard = currentAttack.onGuard; //this move doesn't charge so they're the same as on guard properties
+
+        //set the attack's properties on vulnerable hit
+        if (charStat != null) {
+            tempDamage.damageAmount = 18f + (0.5f * charStat.STR) + (0.05f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 18f + 1.2f * stat.Level;
+        }
+        tempDamage.damageType = Attack.typeOfDamage.Slashing;
+        currentAttack.onVulnerableHit = new Attack.hitProperties(
+            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+            _causesFlinch: true,
+            _causesStun: 70,
+            _causesFloored: 140,
+            _onHitForwardBackward: -400f,
+            _onHitRightLeft: 100f);
+
+        //additional magic damage
+        if (charStat != null) {
+            tempDamage.damageAmount = 8f + (0.05f * charStat.STR) + (0.3f * charStat.WIL);
+        }
+        else {
+            tempDamage.damageAmount = 8f + 0.3f * stat.Level;
+        }
+        tempDamage.damageType = Attack.typeOfDamage.Magic;
+        currentAttack.onVulnerableHit.damageInstances.Add(tempDamage);
+
+        //set the attack's properties on vulnerable charge hit
+        currentAttack.onVulnerableChargeHit = currentAttack.onVulnerableHit; //this move doesn't charge
+
+        //set the attack's properties on floored hit
+        currentAttack.onFlooredHit = currentAttack.onHit; //this move doesn't hit floored targets so just give it something to have
+
+        //set the attack's properties on floored hit
+        if (charStat != null) {
+            tempDamage.damageAmount = 15f + (0.5f * charStat.STR) + (0.05f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 15f + 1.2f * stat.Level;
+        }
+        tempDamage.damageType = Attack.typeOfDamage.Slashing;
+        currentAttack.onFlooredHit = new Attack.hitProperties(
+            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+            _causesFlinch: true,
+            _causesStun: 30,
+            _causesFloored: 120,
+            _onHitForwardBackward: -400f,
+            _onHitRightLeft: 50f);
+
+        //additional magic damage
+        if (charStat != null) {
+            tempDamage.damageAmount = 5f + (0.05f * charStat.STR) + (0.2f * charStat.WIL);
+        }
+        else {
+            tempDamage.damageAmount = 5f + 0.2f * stat.Level;
+        }
+        tempDamage.damageType = Attack.typeOfDamage.Magic;
+        currentAttack.onFlooredHit.damageInstances.Add(tempDamage);
+
+        //set the attack's properties on airborne hit
+        if (charStat != null) {
+            tempDamage.damageAmount = 15f + (0.5f * charStat.STR) + (0.05f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 15f + 1.2f * stat.Level;
+        }
+        tempDamage.damageType = Attack.typeOfDamage.Slashing;
+        currentAttack.onAirborneHit = new Attack.hitProperties(
+            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+            _causesFlinch: true,
+            _causesStun: 50,
+            _causesFloored: 120,
+            _onHitForwardBackward: -500f,
+            _onHitRightLeft: 200f);
+
+        //additional magic damage
+        if (charStat != null) {
+            tempDamage.damageAmount = 3f + (0.05f * charStat.STR) + (0.2f * charStat.WIL);
+        }
+        else {
+            tempDamage.damageAmount = 3f + 0.2f * stat.Level;
+        }
+        tempDamage.damageType = Attack.typeOfDamage.Magic;
+        currentAttack.onAirborneHit.damageInstances.Add(tempDamage);
+
+        //add an extra bit of impact damage
+        if (charStat != null) {
+            tempDamage.damageAmount = 3f + (0.05f * charStat.STR);
+        }
+        else {
+            tempDamage.damageAmount = 3f + 0.1f * stat.Level;
+        }
+        tempDamage.damageType = Attack.typeOfDamage.Impact;
+        currentAttack.onAirborneHit.damageInstances.Add(tempDamage);
+
+        //set the attack's properties on charged airborne hit
+        currentAttack.onAirborneChargeHit = currentAttack.onAirborneHit; //this move doesn't charge
+
+        //play the animations
+        currentAttack.data.HitboxAnimator.Play(currentAttack.data.HitboxAnimation);
+        animator.Play(currentAttack.data.GFXAnimation, 0, 0f);
+
+        instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
+        movement.pointToTarget(); //this move takes perfect directional input, meaning you can even direct it outside of the space within which you can input the command for it
+        StartCoroutine(movement.motor.timedBurst(0.1f, -100f, -30f, 50f, 10f, 16, 0.05f)); //with this move, you move forward slowly over the course of a little while
 
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 20; //always remember to reset the idle counter
     }

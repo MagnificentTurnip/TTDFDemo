@@ -30,6 +30,8 @@ public class Hittable : MonoBehaviour {
     public Camera cam;
     public Canvas damageNumberCanvas;
 
+    public bool actuallyHits;
+
     public Attack currentAttack;
     public Motor motor;
     public StatusManager status;
@@ -115,11 +117,13 @@ public class Hittable : MonoBehaviour {
                         break;
                     case Attack.typeOfDamage.SPdamage:
                         currentDamageNumber.GetComponent<TextMeshProUGUI>().text = (Mathf.CeilToInt(stat.SP) - Mathf.CeilToInt(stat.SP - properties.damageInstances[i].damageAmount * SPdamageTaken)).ToString();
+                        currentDamageNumber.GetComponent<TextMeshProUGUI>().color = new Color(170, 255, 70);
                         stat.SP -= properties.damageInstances[i].damageAmount * SPdamageTaken;
                         break;
                     case Attack.typeOfDamage.MPdamage:
                         currentDamageNumber.GetComponent<TextMeshProUGUI>().text = (Mathf.CeilToInt(stat.MP) - Mathf.CeilToInt(stat.MP - properties.damageInstances[i].damageAmount * MPdamageTaken)).ToString();
                         stat.MP -= properties.damageInstances[i].damageAmount * MPdamageTaken;
+                        currentDamageNumber.GetComponent<TextMeshProUGUI>().color = new Color(70, 70, 255);
                         break;
                 }
                 
@@ -184,14 +188,29 @@ public class Hittable : MonoBehaviour {
                     }
                 }
 
-                if (currentAttack.same <= 0) { //if something has been hit and it wasn't something that was hit before
+                actuallyHits = false;
+                if (status.invulnerable <= 0) {
+                    if (status.isAirborne()) {
+                        if (currentAttack.data.hitsAirborne) {
+                            actuallyHits = true;
+                        }
+                    } else if (status.isFloored()) {
+                        if (currentAttack.data.hitsFloored) {
+                            actuallyHits = true;
+                        }
+                    } else if (currentAttack.data.hitsStanding) {
+                        actuallyHits = true;
+                    }
+                }
+
+                if (currentAttack.same <= 0 && actuallyHits) { //if something has been hit and it wasn't something that was hit before
                     currentAttack.thingsHit.Add(this.gameObject);
 
                     //calculate the angle this unit needs to turn to be facing the attacker
                     towardAttackerAngle = Mathf.DeltaAngle(transform.localEulerAngles.y, Mathf.Atan2(currentAttack.data.attackOwnerStatus.transform.position.x - transform.position.x, currentAttack.data.attackOwnerStatus.transform.position.z - transform.position.z) * Mathf.Rad2Deg);
 
-                    if (status.parryFrames > 0 && currentAttack.data.unblockable != 2 && currentAttack.data.unblockable != 3 && towardAttackerAngle >= -90 && towardAttackerAngle <= 90) {
-                        //parry the attack if this unit is parrying, the attack can be parried, and this unit doesn't have its back facing the attacker
+                    if (status.parryFrames > 0 && currentAttack.data.unblockable != 2 && currentAttack.data.unblockable != 3 && towardAttackerAngle >= -90 && towardAttackerAngle <= 90 && Vector3.Distance(currentAttack.transform.position, transform.position) > 0.2f) {
+                        //parry the attack if this unit is parrying, the attack can be parried, this unit doesn't have its back facing the attacker, and the attack isn't basically directly on top of the unit
 
                         status.parryLock = 0; //undo the parryLock
                         //and the attack has no effect
@@ -208,8 +227,8 @@ public class Hittable : MonoBehaviour {
                     }
 
 
-                    else if ((status.guarding || status.isGuardStunned()) && status.invulnerable <= 0 && currentAttack.data.unblockable != 1 && currentAttack.data.unblockable != 3 && towardAttackerAngle >= -90 && towardAttackerAngle <= 90) {
-                        //guard the attack if this unit is guarding and not invulnerable, the attack can be guarded, and this unit doesn't have its back facing the attacker
+                    else if ((status.guarding || status.isGuardStunned()) && currentAttack.data.unblockable != 1 && currentAttack.data.unblockable != 3 && towardAttackerAngle >= -90 && towardAttackerAngle <= 90 && Vector3.Distance(currentAttack.transform.position, transform.position) > 0.2f) {
+                        //guard the attack if this unit is guarding, the attack can be guarded,  this unit doesn't have its back facing the attacker, and the attack isn't basically directly on top of the unit
 
                         print("Guard"); //testing
                         applyHitProperties(currentAttack.onGuard);
@@ -226,7 +245,45 @@ public class Hittable : MonoBehaviour {
                         motor.rb.AddForce(currentAttack.data.attackOwnerStatus.gameObject.transform.right * -currentAttack.onGuard.onHitRightLeft);
 
                     }
-                    else if (status.isVulnerable() && status.invulnerable <= 0) {
+                    else if (status.isFloored()) {
+                        //apply attack
+
+                        print("FlooredHit"); //testing
+
+                        applyHitProperties(currentAttack.onFlooredHit);
+
+                        StartCoroutine(HitLag(currentAttack.data.attackOwnerStatus.animator, 0.4f, 0.15f)); //floored hitlag
+
+                        currentLight = Instantiate(hitLight).GetComponent<Light>();
+                        currentLight.transform.position = currentAttack.transform.position;
+
+                        //testforce = -testforce * currentAttack.onFlooredHit.onHitForwardBackward; //testing knockback
+                        //motor.rb.AddForce(testforce);
+
+                        motor.rb.AddForce(currentAttack.data.attackOwnerStatus.gameObject.transform.forward * -currentAttack.onFlooredHit.onHitForwardBackward);
+                        motor.rb.AddForce(currentAttack.data.attackOwnerStatus.gameObject.transform.right * -currentAttack.onFlooredHit.onHitRightLeft);
+
+                    }
+                    else if (status.isAirborne()) {
+                        //apply attack
+
+                        print("AirborneHit"); //testing
+
+                        applyHitProperties(currentAttack.onAirborneHit);
+
+                        StartCoroutine(HitLag(currentAttack.data.attackOwnerStatus.animator, 0.4f, 0.3f)); //airborne hitlag
+
+                        currentLight = Instantiate(hitLight).GetComponent<Light>();
+                        currentLight.transform.position = col.ClosestPointOnBounds(transform.position);
+
+                        //testforce = -testforce * currentAttack.onAirborneHit.onHitForwardBackward; //testing knockback
+                        //motor.rb.AddForce(testforce);
+
+                        motor.rb.AddForce(currentAttack.data.attackOwnerStatus.gameObject.transform.forward * -currentAttack.onAirborneHit.onHitForwardBackward);
+                        motor.rb.AddForce(currentAttack.data.attackOwnerStatus.gameObject.transform.right * -currentAttack.onAirborneHit.onHitRightLeft);
+
+                    }
+                    else if (status.isVulnerable()) {
                         //apply attack
 
                         print("VulnerableHit"); //testing
@@ -250,47 +307,8 @@ public class Hittable : MonoBehaviour {
                         motor.rb.AddForce(currentAttack.data.attackOwnerStatus.gameObject.transform.right * -currentAttack.onVulnerableHit.onHitRightLeft);
 
                     }
-                    else if (status.isFloored() && status.invulnerable <= 0) {
-                        //apply attack
-
-                        print("FlooredHit"); //testing
-
-                        applyHitProperties(currentAttack.onFlooredHit);
-
-                        StartCoroutine(HitLag(currentAttack.data.attackOwnerStatus.animator, 0.4f, 0.15f)); //floored hitlag
-
-                        currentLight = Instantiate(hitLight).GetComponent<Light>();
-                        currentLight.transform.position = currentAttack.transform.position;
-
-                        //testforce = -testforce * currentAttack.onFlooredHit.onHitForwardBackward; //testing knockback
-                        //motor.rb.AddForce(testforce);
-
-                        motor.rb.AddForce(currentAttack.data.attackOwnerStatus.gameObject.transform.forward * -currentAttack.onFlooredHit.onHitForwardBackward);
-                        motor.rb.AddForce(currentAttack.data.attackOwnerStatus.gameObject.transform.right * -currentAttack.onFlooredHit.onHitRightLeft);
-
-                    }
-                    else if (status.isAirborne() && status.invulnerable <= 0) {
-                        //apply attack
-
-                        print("AirborneHit"); //testing
-
-                        applyHitProperties(currentAttack.onAirborneHit);
-
-                        StartCoroutine(HitLag(currentAttack.data.attackOwnerStatus.animator, 0.4f, 0.3f)); //airborne hitlag
-
-                        currentLight = Instantiate(hitLight).GetComponent<Light>();
-                        currentLight.transform.position = col.ClosestPointOnBounds(transform.position);
-
-                        //testforce = -testforce * currentAttack.onAirborneHit.onHitForwardBackward; //testing knockback
-                        //motor.rb.AddForce(testforce);
-
-                        motor.rb.AddForce(currentAttack.data.attackOwnerStatus.gameObject.transform.forward * -currentAttack.onAirborneHit.onHitForwardBackward);
-                        motor.rb.AddForce(currentAttack.data.attackOwnerStatus.gameObject.transform.right * -currentAttack.onAirborneHit.onHitRightLeft);
-
-                    }
                     else {
                         //apply attack
-                        if (status.invulnerable <= 0) {
                             print("Hit"); //testing
 
                             applyHitProperties(currentAttack.onHit);
@@ -305,7 +323,6 @@ public class Hittable : MonoBehaviour {
 
                             motor.rb.AddForce(currentAttack.data.attackOwnerStatus.gameObject.transform.forward * -currentAttack.onHit.onHitForwardBackward);
                             motor.rb.AddForce(currentAttack.data.attackOwnerStatus.gameObject.transform.right * -currentAttack.onHit.onHitRightLeft);
-                        }
 
                     }
                 } //else do nothing

@@ -9,6 +9,8 @@ public class Spell : AtkStyle {
     public int cost; //the spell's cost in MP
     public int channelTime; //the time spent channelling the spell after it is cast - can be 0, and often is.
     public int duration; //the duration of the spell itself (transferred effects can have longer durations) - after this timer runs to 0 the spell object is destroyed
+    public GameObject target; //the target for the spell, if applicable
+    public bool mouseTarget; //some spells follow the mouse when used by the player and a target when used by other agents
     // public List<Effect> effects; //a spell may well have effects but doesn't a fair amount of the time. I think this can be added to each spell that has effects, but just in case this is here as a reminder.
     //if it does have this, remember that destroySpell() needs to be overriden with the destruction of the effects stored in the list and the clearing of it
 

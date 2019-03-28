@@ -47,7 +47,7 @@ public class PlayerSpellBook : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (playIn.spellcast && style.status.canCast() && style.status.castLock <= 0 && !style.status.casting && reclickCounter <= 0) { 
+        if (playIn.spellcast && style.status.canCast() && style.status.castLock <= 0 && !style.status.casting && style.status.channelLock <= 0 && reclickCounter <= 0) { 
             currentSpellCode = "";
             displaySpellCode = "";
             reclickCounter = 15; //can't exit spellcasting for 15 frames 
@@ -93,17 +93,18 @@ public class PlayerSpellBook : MonoBehaviour {
             }
 
             //check to see if it's one of the funky spells that aren't cast with lmb and have the honour of being hardcoded into the spellbook
-            if (playIn.evade && style.status.canCast() && style.status.castLock <= 0 && currentSpellCode == "") {
+            if (playIn.evade && style.status.canCast() && style.status.castLock <= 0 && style.status.channelLock <= 0 && currentSpellCode == "") {
                 //perform the magical evade
                 style.movement.evade(style.movement.rollSpeed, 0f, style.movement.rollTime);
-                style.animator.Play("fRoll");
+                style.animator.Play("magicEvade", 2, 0f);
+                //transform.Translate(0, 0.6f, 0);
                 style.status.invulnerable = 30;
                 style.status.Incorporealise(30);
                 style.status.castLock = 30;
                 style.stat.MP -= 30;
             }
 
-            if (playIn.movement && style.status.canCast() && style.status.castLock <= 0) {
+            if (playIn.movement && style.status.canCast() && style.status.castLock <= 0 && style.status.channelLock <= 0) {
                 //check to see if the current spellCode matches that of any of the player's known spells.
                 for (int i = 0; i < spellsKnown.Count; i++) {
                     if (currentSpellCode == spellsKnown[i].GetComponent<Spell>().spellCode) {
@@ -120,6 +121,7 @@ public class PlayerSpellBook : MonoBehaviour {
                             if (!repeatSpell) {
                                 currentSpell = Instantiate(spellsKnown[i]).GetComponent<Spell>();
                                 currentSpell.debug = true; //testing mode
+                                currentSpell.mouseTarget = true;
                                 currentSpell.status = style.status;
                                 currentSpell.charStat = style.charStat;
                                 currentSpell.movement = style.movement;
@@ -129,6 +131,7 @@ public class PlayerSpellBook : MonoBehaviour {
                                 currentSpell.ready = 0;
                                 currentSpell.Start();
                                 style.status.castLock = currentSpell.castTime;
+                                style.status.channelLock = currentSpell.castTime + currentSpell.channelTime;
                                 style.stat.MP -= currentSpell.cost;
                                 currentSpellCode = "";
                                 displaySpellCode = "";
@@ -152,6 +155,7 @@ public class PlayerSpellBook : MonoBehaviour {
                         if (!repeatSpell) {
                             currentSpell = Instantiate(spellsKnown[i]).GetComponent<Spell>();
                             currentSpell.debug = true; //testing mode
+                            currentSpell.mouseTarget = true;
                             currentSpell.status = style.status;
                             currentSpell.charStat = style.charStat;
                             currentSpell.movement = style.movement;
@@ -161,6 +165,7 @@ public class PlayerSpellBook : MonoBehaviour {
                             currentSpell.ready = 0;
                             currentSpell.Start();
                             style.status.castLock = currentSpell.castTime;
+                            style.status.channelLock = currentSpell.castTime + currentSpell.channelTime;
                             style.stat.MP -= currentSpell.cost;
                             currentSpellCode = "";
                             displaySpellCode = "";
