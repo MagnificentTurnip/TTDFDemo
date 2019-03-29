@@ -94,6 +94,7 @@ public class AtkStyleWish : AtkStyle {
             state = attackStates.bParry; //set the attack state;
             idleCounter = 60; //always remember to reset the idle counter
         }
+        stat.MP -= 20;
         status.parryLock = 60;
         status.parryFrames = 15;
         movement.motor.instantBurst(-100f, 50f);
@@ -113,6 +114,7 @@ public class AtkStyleWish : AtkStyle {
             state = attackStates.fParry; //set the attack state;
             idleCounter = 60; //always remember to reset the idle counter
         }
+        stat.MP -= 20;
         status.parryLock = 60;
         status.parryFrames = 15;
         movement.motor.instantBurst(700f, -100f);

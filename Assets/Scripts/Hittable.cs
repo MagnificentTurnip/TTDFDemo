@@ -69,11 +69,16 @@ public class Hittable : MonoBehaviour {
         if (properties.damageInstances != null) {
             for (int i = 0; i < properties.damageInstances.Count; i++) { //loop through damage instances to apply them
                 currentDamageNumber = Instantiate(damageNumber);
+                /*
                 currentDamageNumber.GetComponent<RectTransform>().position = cam.WorldToScreenPoint(transform.position);
                 currentDamageNumber.GetComponent<RectTransform>().SetParent(damageNumberCanvas.transform);
                 currentDamageNumber.GetComponent<RectTransform>().Translate(Random.Range(-40, 40), Random.Range(-40, 40), 0);
+                */
+                currentDamageNumber.transform.position = cam.WorldToScreenPoint(transform.position);
+                currentDamageNumber.transform.SetParent(damageNumberCanvas.transform);
+                currentDamageNumber.transform.Translate(Random.Range(-40, 40), Random.Range(-40, 40), 0);
 
-                
+
                 switch (properties.damageInstances[i].damageType) {
                     case Attack.typeOfDamage.Slashing:
                         currentDamageNumber.GetComponent<TextMeshProUGUI>().text = (Mathf.CeilToInt(stat.HP) - Mathf.CeilToInt(stat.HP - properties.damageInstances[i].damageAmount * slashingTaken)).ToString();

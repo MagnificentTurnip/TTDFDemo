@@ -90,7 +90,7 @@ public class PlayerBridgeWish : PlayerBridge { //bridges between player input an
                             style.lightBladework1();
                             style.bladeTracker = 0;
                         }
-                        if (status.sprinting && (cmdOut == buffer.fwdD || lck == buffer.fwdD)) {
+                        if (status.sprinting && (cmdOut == buffer.fwdD || lck == buffer.fwdD || cmdOut == buffer.fwdAD || lck == buffer.fwdAD)) {
                             style.overhead();
                             if (style.bladeTracker == 0) {
                                 style.animator.Play("GreatBladeOn", 1, 0f);

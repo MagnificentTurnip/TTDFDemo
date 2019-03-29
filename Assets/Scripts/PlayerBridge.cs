@@ -33,6 +33,9 @@ public class PlayerBridge : MonoBehaviour {
     public void handleDefences() { //be sure to call this in Update in any PlayerBridge
         //Guarding
         if ((playIn.guard && status.canGuard()) || status.isGuardStunned()) {
+            if (playIn.guard && status.canGuard()) {
+                Style.movement.pointToTarget();
+            }
             status.guarding = true;
             status.guardLock = true;
             Style.forceGuarding(3);

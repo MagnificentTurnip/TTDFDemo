@@ -20,6 +20,10 @@ public class StatusManager : MonoBehaviour {
     public bool guarding;
     //END OF DEFENSIVE STATES
 
+    //meshrenderers of objects to visualise the defensive states
+    public MeshRenderer guardBubble;
+    public MeshRenderer parryBubble;
+
     //MISCELLANEOUS STATES
     public bool moving;
     public bool sprinting;
@@ -357,6 +361,16 @@ public class StatusManager : MonoBehaviour {
         animator.SetBool("paralyzed", paralyzed > 0);
         animator.SetBool("guarding", guarding);
         //animator.SetFloat("paralyzeFloat", 0.8f);
+        
+        //animating defensive bubble properties
+        if ((guarding || isGuardStunned()) && guardBubble != null) {
+            guardBubble.material.color = new Color(guardBubble.material.color.r, guardBubble.material.color.g, guardBubble.material.color.b, 0.4f + (0.01f * guardStunned));
+        } else {
+            guardBubble.material.color = new Color(guardBubble.material.color.r, guardBubble.material.color.g, guardBubble.material.color.b, 0f);
+        }
+        if (parryBubble != null) {
+            parryBubble.material.color = new Color(parryBubble.material.color.r, parryBubble.material.color.g, parryBubble.material.color.b, 0.1f * parryFrames);
+        }
     }
 
     private void OnTriggerEnter(Collider other) {

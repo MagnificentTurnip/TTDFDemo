@@ -10,6 +10,7 @@ public class Thunderstroke : Spell {
 
     Vector3 savedPosition;
 
+    public GameObject shadow;
     
 	// Use this for initialization
 	public override void Start () {
@@ -207,6 +208,8 @@ public class Thunderstroke : Spell {
 
     // FixedUpdate is called once per physics frame
     public override void FixedUpdate() {
+        shadow.transform.localScale = new Vector3(shadow.transform.localScale.x * 0.99f, shadow.transform.localScale.y, shadow.transform.localScale.z * 0.99f);
+
         base.FixedUpdate();
         if (ready == 2) { 
             if (channelTime > 10 && status.channelLock > 0) {
