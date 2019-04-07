@@ -182,7 +182,8 @@ MonoBehaviour:
   instantiatedAttacks: []
   attack: {fileID: 1950977128210768, guid: 0f65944d7535a124b8f19bcba2a99514, type: 2}
   animator: {fileID: 0}
-  hitboxAnimatorController: {fileID: 0}
+  hitboxAnimatorController: {fileID: 9100000, guid: 7f896de0f9a4ba34883465e674966389,
+    type: 2}
   spellCode: 3113
   castTime: 0
   cost: 100

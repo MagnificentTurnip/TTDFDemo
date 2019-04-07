@@ -16,7 +16,7 @@ public class Motor : MonoBehaviour {
         rb.AddForce(transform.forward * speed * Time.fixedDeltaTime);
     }
 
-    public void instantBurst(float forwardBack, float rightLeft) { //
+    public void instantBurst(float forwardBack, float rightLeft) {
         rb.velocity = new Vector3(0, 0, 0);
         rb.AddForce(transform.forward * forwardBack);
         rb.AddForce(transform.right * rightLeft);
@@ -30,8 +30,10 @@ public class Motor : MonoBehaviour {
             rb.AddForce(transform.forward * initialFB);
             rb.AddForce(transform.right * initialRL);
             yield return new WaitForSeconds(keyframeInterval);
-            if (totalKeyframes > 1) {
-                StartCoroutine(timedBurst(0f, initialFB + incrementFB, initialRL + incrementRL, incrementFB, incrementRL, totalKeyframes - 1, keyframeInterval));
+            if (timeOut == false) {
+                if (totalKeyframes > 1) {
+                    StartCoroutine(timedBurst(0f, initialFB + incrementFB, initialRL + incrementRL, incrementFB, incrementRL, totalKeyframes - 1, keyframeInterval));
+                }
             }
         }
     }

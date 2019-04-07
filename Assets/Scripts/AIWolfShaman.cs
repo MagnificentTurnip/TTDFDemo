@@ -94,7 +94,7 @@ public class AIWolfShaman : MonoBehaviour {
     }
 
     public void StopCasting() {
-        for (int i = 0; i < runningSpells.Count; i++) {
+        for (int i = runningSpells.Count - 1; i >= 0; i--) {
             if (runningSpells[i] != null) {
                 if (runningSpells[i].GetComponent<Spell>().castTime > 0) {
                     toDestroy = runningSpells[i];
@@ -684,7 +684,7 @@ public class AIWolfShaman : MonoBehaviour {
                 case goalStates.big:
                     if (big) { 
                         goalComplete = true; //becoming big happens instantaneously so the goal is completed
-                        goalDelay = 30;
+                        goalDelay = 100;
                     }
                     break;
                 case goalStates.approach: 
@@ -744,6 +744,14 @@ public class AIWolfShaman : MonoBehaviour {
             }
 
 
+        }
+
+        if (big) {
+            guardBubbleS.material.color = new Color(guardBubbleS.material.color.r, guardBubbleS.material.color.g, guardBubbleS.material.color.b, 0f);
+            parryBubbleS.material.color = new Color(parryBubbleS.material.color.r, parryBubbleS.material.color.g, parryBubbleS.material.color.b, 0f);
+        } else {
+            guardBubbleL.material.color = new Color(guardBubbleL.material.color.r, guardBubbleL.material.color.g, guardBubbleL.material.color.b, 0f);
+            parryBubbleL.material.color = new Color(parryBubbleL.material.color.r, parryBubbleL.material.color.g, parryBubbleL.material.color.b, 0f);
         }
 
         if ((!style.status.canMove())) {

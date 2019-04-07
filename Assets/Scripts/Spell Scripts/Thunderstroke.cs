@@ -36,7 +36,8 @@ public class Thunderstroke : Spell {
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<CapsuleCollider>(), //this attack uses a capsule collider
             _GFXAnimation: "thunderstroke",
-            _HitboxAnimation: "something", //not sure if this is needed rn
+            _HitboxAnimation: "defaultCapsule",
+            _yScale: 20f,
             _attackDelay: 140, //attack takes a while to strike
             _attackDuration: 8, //8 frames within which the attack is active
             _attackEnd: 0, //when the attack ends it's done.
@@ -45,6 +46,8 @@ public class Thunderstroke : Spell {
             _hitsFloored: true,
             _contact: false, //doesn't make contact.
             _unblockable: 3); //can't be blocked or parried.
+
+        currentAttack.transform.localScale = new Vector3(currentAttack.data.xScale, currentAttack.data.yScale, currentAttack.data.zScale);
 
         if (debug == true) {
             currentAttack.gameObject.GetComponent<MeshFilter>().mesh = capsule; //for testing the hitbox
@@ -96,8 +99,8 @@ public class Thunderstroke : Spell {
         //set the attack's properties on charged airborne hit
         currentAttack.onAirborneChargeHit = currentAttack.onAirborneHit; //this move doesn't charge
 
-        //play the animations - or don't, because the object itself should be able to do all the work
-        //currentAttack.data.HitboxAnimator.Play(currentAttack.data.HitboxAnimation);
+        //play the animations - or don't
+        currentAttack.data.HitboxAnimator.Play(currentAttack.data.HitboxAnimation);
         //animator.Play(currentAttack.data.GFXAnimation);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
@@ -117,7 +120,10 @@ public class Thunderstroke : Spell {
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<SphereCollider>(), //this attack uses a sphere collider
             _GFXAnimation: "thunderstroke", //same animation; no need for a second one
-            _HitboxAnimation: "something", //not sure if this is needed rn
+            _HitboxAnimation: "defaultSphere", //not sure if this is needed rn
+            _xScale: 5f,
+            _yScale: 2f,
+            _zScale: 5f,
             _attackDelay: 140, //attack takes a while to strike
             _attackDuration: 15, //15 frames within which the attack is active
             _attackEnd: 0, //when the attack ends it's done.
@@ -127,8 +133,10 @@ public class Thunderstroke : Spell {
             _contact: false, //doesn't make contact.
             _unblockable: 1); //can only be parried.
 
+        currentAttack.transform.localScale = new Vector3(currentAttack.data.xScale, currentAttack.data.yScale, currentAttack.data.zScale);
+
         if (debug == true) {
-            currentAttack.gameObject.GetComponent<MeshFilter>().mesh = cube; //for testing the hitbox
+            currentAttack.gameObject.GetComponent<MeshFilter>().mesh = sphere; //for testing the hitbox
         }
 
         currentAttack.data.HitboxAnimator.runtimeAnimatorController = hitboxAnimatorController; //set the attack hitbox animator's animator controller to be the one for this attack style (spell)
@@ -176,8 +184,8 @@ public class Thunderstroke : Spell {
         //set the attack's properties on charged airborne hit
         currentAttack.onAirborneChargeHit = currentAttack.onAirborneHit; //this move doesn't charge
 
-        //play the animations - or don't, because the object itself should be able to do all the work
-        //currentAttack.data.HitboxAnimator.Play(currentAttack.data.HitboxAnimation);
+        //play the animations - or don't
+        currentAttack.data.HitboxAnimator.Play(currentAttack.data.HitboxAnimation);
         //animator.Play(currentAttack.data.GFXAnimation);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked

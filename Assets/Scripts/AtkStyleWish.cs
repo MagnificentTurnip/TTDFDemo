@@ -313,7 +313,8 @@ public class AtkStyleWish : AtkStyle {
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
         movement.pointToTarget(); //this move takes perfect directional input, meaning you can even direct it outside of the space within which you can input the command for it
-        StartCoroutine(movement.motor.timedBurst(0.3f, 3000f, 50f, 0f, 0f, 0, 0f)); //with this move, you jump forward
+        
+        StartCoroutine(movement.motor.timedBurst(0f, 0f, 0f, 3000f, 50f, 2, 0.3f)); //with this move, you jump forward
 
 
         //THIS ATTACK HAS A SECOND ATTACK, TECHNICALLY BEFORE THE FIRST BUT IT ISN'T THE MAIN PORTION AND EXISTS MAINLY FOR PREVENTING GUARD-CANCELLATION ---------------------------
@@ -333,6 +334,7 @@ public class AtkStyleWish : AtkStyle {
             _xScale: 0.34f, //match the size of the blade, more or less
             _yScale: 0.34f,
             _zScale: 1.23f,
+            _SPcost: 50f,
             _attackDelay: 14, //delay of 14 frames before the attack starts
             _attackDuration: 21, //21 frames within which the attack is active
             _attackEnd: 10, //and 10 frames at the end before the attack is considered complete even though it really doesn't matter in this case. attackCharge is left at the default of 0 as this attack doesn't charge.
@@ -557,6 +559,7 @@ public class AtkStyleWish : AtkStyle {
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
         movement.pointToTarget(); //this move takes perfect directional input, meaning you can even direct it outside of the space within which you can input the command for it
+        
         StartCoroutine(movement.motor.timedBurst(0.15f, 300f, 50f, 0f, 0f, 0, 0f)); //with this move you move forward a tiny bit
 
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 20; //always remember to reset the idle counter
@@ -2307,6 +2310,7 @@ public class AtkStyleWish : AtkStyle {
             _xScale: 0.4f, //match the size of the blade, more or less
             _yScale: 0.4f,
             _zScale: 1.5f,
+            _MPcost: 15f,
             _attackDelay: 35, //delay of 35 frames before the attack starts
             _attackDuration: 22, //22 frames within which the attack is active
             _attackEnd: 20, //and 20 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.

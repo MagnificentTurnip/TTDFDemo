@@ -29,7 +29,10 @@ public class SeismicTorrent : Spell {
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "seismicTorrent",
-            _HitboxAnimation: "something", //not sure if this is needed rn
+            _HitboxAnimation: "defaultCube",
+            _xScale: 2f,
+            _yScale: 1f,
+            _zScale: 1f,
             _attackDelay: 10, //attack begins quickly
             _attackDuration: 60, //60 frames within which the attack is active
             _attackEnd: 0, //when the attack ends it's done.
@@ -38,6 +41,8 @@ public class SeismicTorrent : Spell {
             _hitsFloored: true,
             _contact: false, //doesn't make contact.
             _unblockable: 3); //can't be blocked or parried.
+
+        currentAttack.transform.localScale = new Vector3(currentAttack.data.xScale, currentAttack.data.yScale, currentAttack.data.zScale);
 
         if (debug == true) {
             currentAttack.gameObject.GetComponent<MeshFilter>().mesh = cube; //for testing the hitbox
@@ -100,8 +105,8 @@ public class SeismicTorrent : Spell {
         //set the attack's properties on charged airborne hit
         currentAttack.onAirborneChargeHit = currentAttack.onAirborneHit; //this move doesn't charge
 
-        //play the animations - or don't, because the object itself should be able to do all the work
-        //currentAttack.data.HitboxAnimator.Play(currentAttack.data.HitboxAnimation);
+        //play the animations - or don't
+        currentAttack.data.HitboxAnimator.Play(currentAttack.data.HitboxAnimation);
         //animator.Play(currentAttack.data.GFXAnimation);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked

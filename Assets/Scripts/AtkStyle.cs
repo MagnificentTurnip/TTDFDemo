@@ -118,9 +118,10 @@ public class AtkStyle : MonoBehaviour {
     public void destroyAllAttacks() {
         for (int i = 0; i < instantiatedAttacks.Count; i++) {
             toDestroy = instantiatedAttacks[i];
-            instantiatedAttacks.Remove(instantiatedAttacks[i]);
+            //instantiatedAttacks.Remove(instantiatedAttacks[i]);
             Destroy(toDestroy.gameObject);
         }
+        instantiatedAttacks.Clear();
     }
 
     public void showHurtBox() {

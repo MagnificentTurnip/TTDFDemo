@@ -206,7 +206,7 @@ public class StatusManager : MonoBehaviour {
     }
 
     public bool canAttack() { //CAN ATTACK
-        if (isFloored() || isStunned() || isGuardStunned() || isParryStunned() || parryLock > 0 || parryFrames > 0 || rolling || attackLock || casting || castLock > 0 || channelLock > 0) {
+        if (isFloored() || isStunned() || isGuardStunned() || isParryStunned() || guarding || parryLock > 0 || parryFrames > 0 || rolling || attackLock || casting || castLock > 0 || channelLock > 0) {
             return false;
         }
         else {

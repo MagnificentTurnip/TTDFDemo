@@ -56,21 +56,22 @@ public class PlayerBridge : MonoBehaviour {
             canGuardCancel = false; //basically all of canGuard but ignoring attackLock
         }
         if (canGuardCancel && playIn.guard) {
-            Style.destroyAllAttacks();
             Style.movement.motor.timeOut = true;
+            Style.destroyAllAttacks();
             status.guarding = true;
             status.guardLock = true;
-            Style.forceGuarding(3);
+            Style.forceGuarding(10);
         }
 
         //parrying
-        if (playIn.fParry && status.canParry()) {
+        if (playIn.fParry && status.canParry() && !PauseMenu.paused) {
             Style.fParry();
         }
 
-        if (playIn.bParry && status.canParry()) {
+        if (playIn.bParry && status.canParry() && !PauseMenu.paused) {
             Style.bParry();
-        }
+        }       
+
     }
 
     public void cmdBuffer() { //a buffer for attack-based moves so that multi-button inputs aren't overridden by single-button inputs. Call in FIXED UPDATE, and set cmdCounter equal to cmdTime in Start() or the inspector.

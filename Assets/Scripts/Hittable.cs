@@ -238,6 +238,10 @@ public class Hittable : MonoBehaviour {
                         print("Guard"); //testing
                         applyHitProperties(currentAttack.onGuard);
 
+                        if (currentAttack.data.attackOwnerStatus.gameObject.GetComponent<AtkStyle>()) {
+                            currentAttack.data.attackOwnerStatus.gameObject.GetComponent<AtkStyle>().stat.SP -= currentAttack.onGuard.SPcost;
+                        }
+
                         StartCoroutine(HitLag(currentAttack.data.attackOwnerStatus.animator, 0.1f, 0.1f)); //guard hitlag
 
                         currentLight = Instantiate(guardLight).GetComponent<Light>();
