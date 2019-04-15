@@ -7,8 +7,10 @@ public class SeismicTorrent : Spell {
 	// Use this for initialization
 	public override void Start () {
         base.Start();
+        spellName = "Seismic Torrent";
         spellCode = "234";
-        castTime = 30;
+        castTime = 25;
+        postCastTime = 15;
         channelTime = 0;
         duration = 60;
         cost = 40;
@@ -25,7 +27,7 @@ public class SeismicTorrent : Spell {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
-            _attackOwnerStatus: status, //here's the status manager
+            _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "seismicTorrent",

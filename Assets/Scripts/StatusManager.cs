@@ -5,19 +5,22 @@ using UnityEngine;
 public class StatusManager : MonoBehaviour {
 
     //SELF-LOCKOUTS
-    public bool rollLock; //the player is rolling, so they cannot act - though they can (should be able to) buffer attacks.
-    public bool guardLock; //the player is guarding
-    public int parryLock; //the player has just attempted to parry so they cannot use regular movement
-    public bool attackLock; //the player is attacking so they cannot use regular movement
-    public bool toIdleLock; //the player needs to wait to return to idle to use movement
-    public bool casting; //the player is about to cast a spell so they will have to stop or cast something to act
-    public int castLock; //the player is in the process of casting a spell, so they can't do anything for a little while
-    public int channelLock; //the player is in the middle of channeling a spell. They can move slowly and may not attack, guard or parry. Evading is possible but breaks the channel.
+    public bool rollLock; //the unit is rolling, so they cannot act - though they can (should be able to) buffer attacks.
+    public bool guardLock; //the unit is guarding
+    public int parryLock; //the unit has just attempted to parry so they cannot use regular movement
+    public bool attackLock; //the unit is attacking so they cannot use regular movement
+    public bool toIdleLock; //the unit needs to wait to return to idle to use movement
+    public bool casting; //the unit is about to cast a spell so they will have to stop or cast something to act
+    public int castLock; //the unit is in the process of casting a spell, so they can't do anything for a little while
+    public int channelLock; //the unit is in the middle of channeling a spell. They can move slowly and may not attack, guard or parry. Evading is possible but breaks the channel.
+    public bool delayParryLock; //whether parrying has been stopped within the delay before it becomes active (see Parry())
     //END OF SELF-LOCKOUTS
 
     //DEFENSIVE STATES
-    public int parryFrames;
-    public bool guarding;
+    public int parryFrames; //the amount of frames the unit is parrying for
+    public int parryStunFrames; //the amount of frames of parryStun the unit will cause to an attacker upon successful parry
+    public bool guarding; //whether or not the unit is guarding
+    public bool magicGuard; //whether the unit's guard is magical (has some properties of parrying)
     //END OF DEFENSIVE STATES
 
     //meshrenderers of objects to visualise the defensive states
@@ -51,6 +54,10 @@ public class StatusManager : MonoBehaviour {
                          //**Alternatively, limited-time inescapable grapples are simply a matter of also applying Stun for however long the grapple is inescapable***
     //END OF CONDITIONS
 
+    //these are kind of conditions, but not really. They don't show up on sliders, at least.
+    public bool slain; //bool for tracking if the unit has contracted the Death
+    public bool unconscious; //bool for tracking if the unit has Death Lite™
+
     public List<Effect> effects; //a list of effects that are currently active on this entity
 
     public AtkStyle atkStyle; //Reference to atkStyle for the sake of flinching (needs to return entity to idle)
@@ -71,8 +78,10 @@ public class StatusManager : MonoBehaviour {
         casting = false;
         castLock = 0;
         channelLock = 0;
+        delayParryLock = true;
 
         parryFrames = 0;
+        parryStunFrames = 0;
         guarding = false;
 
         moving = false;
@@ -113,8 +122,12 @@ public class StatusManager : MonoBehaviour {
         attackLock = false;
         toIdleLock = false;
         casting = false;
+        delayParryLock = true;
         castLock = 0;
         channelLock = 0;
+        parryFrames = 0;
+        parryStunFrames = 0;
+        unconscious = false;
 
         atkStyle.forceIdle();
         atkStyle.destroyAllAttacks();
@@ -129,6 +142,17 @@ public class StatusManager : MonoBehaviour {
         animator.Play("flinch", -1, 0f);//and play the flinch animation
     }
 
+    public IEnumerator Parry(float timeBeforeStart, int _parryFrames, int _parryLock, int _parryStunFrames) { //ensures standard logic for parrying
+        delayParryLock = false;
+        parryLock = _parryLock;
+        yield return new WaitForSeconds(timeBeforeStart);
+        if (!delayParryLock) {
+            parryStunFrames = _parryStunFrames;
+            parryFrames = _parryFrames;
+            delayParryLock = true;
+        }
+    }
+
     //STATE CHECKS
 
     public bool isAirborne() { //GUARD STUNNED
@@ -139,14 +163,14 @@ public class StatusManager : MonoBehaviour {
     }
 
     public bool isFloored() { //FLOORED
-        if (floored > 0 && !isAirborne()) { //you do not count as floored while airborne, though the condition will persist after airborne finishes
+        if ((floored > 0 || unconscious || slain) && !isAirborne()) { //you do not count as floored while airborne, though the condition will persist after airborne finishes
             return true;
         }
         return false;
     }
 
     public bool isStunned() { //STUNNED
-        if (stunned > 0) {
+        if (stunned > 0 || unconscious || slain) {
             return true;
         }
         return false;
@@ -215,7 +239,7 @@ public class StatusManager : MonoBehaviour {
     }
 
     public bool canGuard() {
-        if (isFloored() || isStunned() || isParryStunned() || rollLock || attackLock || parryLock > 0 || parryFrames > 0 || casting || castLock > 0 || channelLock > 0) {
+        if (isFloored() || isStunned() || isParryStunned() || rollLock || attackLock || parryLock > 0 || casting || castLock > 0 || channelLock > 0) {
             return false;
         }
         else {
@@ -224,7 +248,7 @@ public class StatusManager : MonoBehaviour {
     }
 
     public bool canParry() {
-        if (isFloored() || isStunned() || isGuardStunned() || rollLock || attackLock || parryLock > 0 || parryFrames > 0 || casting || castLock > 0 || channelLock > 0) {
+        if (isFloored() || isStunned() || isGuardStunned() || rollLock || attackLock || parryLock > 0 || parryFrames > 0 || casting || castLock > 0 || channelLock > 0 || !delayParryLock) {
             return false;
         }
         else {
@@ -233,7 +257,7 @@ public class StatusManager : MonoBehaviour {
     }
 
     public bool canCast() {
-        if (isFloored() || isStunned() || isGuardStunned() || isParryStunned() || silenced > 0 || rollLock || attackLock || parryLock > 0 || parryFrames > 0) {
+        if (isFloored() || isStunned() || guarding || isGuardStunned() || isParryStunned() || silenced > 0 || rollLock || attackLock || parryLock > 0 || parryFrames > 0) {
             return false;
         }
         else {
@@ -360,8 +384,10 @@ public class StatusManager : MonoBehaviour {
         animator.SetBool("casting", casting);
         animator.SetBool("paralyzed", paralyzed > 0);
         animator.SetBool("guarding", guarding);
+        animator.SetBool("slain", slain);
+        animator.SetBool("unconscious", unconscious);
         //animator.SetFloat("paralyzeFloat", 0.8f);
-        
+
         //animating defensive bubble properties
         if ((guarding || isGuardStunned()) && guardBubble != null) {
             guardBubble.material.color = new Color(guardBubble.material.color.r, guardBubble.material.color.g, guardBubble.material.color.b, 0.4f + (0.01f * guardStunned));
@@ -370,6 +396,10 @@ public class StatusManager : MonoBehaviour {
         }
         if (parryBubble != null) {
             parryBubble.material.color = new Color(parryBubble.material.color.r, parryBubble.material.color.g, parryBubble.material.color.b, 0.1f * parryFrames);
+        }
+        if (magicGuard && parryBubble != null && guardBubble!= null) {
+            guardBubble.material.color = new Color(guardBubble.material.color.r, guardBubble.material.color.g, guardBubble.material.color.b, 0.2f + (0.01f * guardStunned));
+            parryBubble.material.color = new Color(parryBubble.material.color.r, parryBubble.material.color.g, parryBubble.material.color.b, 0.3f * parryFrames);
         }
     }
 

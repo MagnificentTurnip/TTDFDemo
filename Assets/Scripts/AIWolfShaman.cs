@@ -5,8 +5,8 @@ using UnityEngine.AI;
 
 public class AIWolfShaman : MonoBehaviour {
 
-    public enum goalStates {attack, cast, big, approach, retreat, evade, guard, parry}; //states for the wolf's current goal
-    public enum behaviourStates {defensive, offensive, mixed, defeated, pacified}; //states for the wolf's current behaviour
+    public enum goalStates {attack, cast, big, approach, retreat, evade, guard, parry, nothing}; //states for the wolf's current goal
+    public enum behaviourStates {preBattle, defensive, offensive, mixed, defeated, pacified}; //states for the wolf's current behaviour
     public goalStates goal; 
     public behaviourStates behaviour;
     public float decider; //a variable that holds a random value that decides which option to cohose
@@ -40,6 +40,7 @@ public class AIWolfShaman : MonoBehaviour {
     public float rSwipePref;
     public float pouncePref;
 
+    public AIMovement movementAI;
     public AtkStyleWolf style; //the attack style
     public CCResistHittable ccres; //the hittable script for this unit
     public NavMeshAgent navMesh; //the navmeshagent for this unit
@@ -52,6 +53,11 @@ public class AIWolfShaman : MonoBehaviour {
 
     public float bigStopDistance; //stopping distances for both big and small forms
     public float smallStopDistance;
+
+    public float evadeSpeed;
+    public float retreatDist;
+
+    public GameObject stump;
 
     public GameObject target; //the curent target of the wolf, along with its status and statsheet
     private StatusManager targetStatus;
@@ -66,13 +72,20 @@ public class AIWolfShaman : MonoBehaviour {
     //spellcasting things
     public List<GameObject> spellsKnown;
     public List<GameObject> runningSpells;
+    public Spell runningSpellScript;
     public Spell currentSpell;
     public int chosenSpellNumber;
-    public string currentSpellCode;
+    public string currentSpellName;
     public GameObject toDestroy;
     public bool repeatSpell; //bool that checks for a repeated spell - no copies of the same spell existing at a time, thanks
 
+    public GameObject healingSanctuary; //a bonus spell
+    public bool castSanctuary;
+
     public int pointTargetFrames; //when above zero, this will tick down - for every frame it is above zero, the wolf will point toward its target
+    public int attackFrames; //frames to count down to an attack;
+    public int evadeFrames; //frames to count down to an evade;
+    public int guardFrames; //frames for guarding
 
     public BoxCollider hitBox; //the hitbox of the wolf
     public GameObject bigWolfGFX; //and the objects holding its graphical representation for both big and small forms
@@ -89,6 +102,7 @@ public class AIWolfShaman : MonoBehaviour {
 
     public void SelectTarget(GameObject newTarget) {
         target = newTarget;
+        movementAI.target = target;
         targetStatus = target.GetComponent<StatusManager>();
         targetStat = target.GetComponent<StatSheet>();
     }
@@ -109,6 +123,7 @@ public class AIWolfShaman : MonoBehaviour {
         navMesh.speed = maxSpeed;
         navMesh.radius = 10;
         big = true;
+        evadeSpeed = 3000;
         style.status.guardBubble = guardBubbleL;
         style.status.parryBubble = parryBubbleL;
         style.rgtPawBone = rgtPawBoneL;
@@ -135,6 +150,7 @@ public class AIWolfShaman : MonoBehaviour {
         navMesh.speed = maxSpeed;
         navMesh.radius = 5;
         big = false;
+        evadeSpeed = 2000;
         style.status.guardBubble = guardBubbleS;
         style.status.parryBubble = parryBubbleS;
         style.rgtPawBone = rgtPawBoneS;
@@ -145,7 +161,7 @@ public class AIWolfShaman : MonoBehaviour {
         style.stat.Level = 2;
         hitBox.center = new Vector3(0, 1.2f, 0);
         hitBox.size = new Vector3(1, 2.4f, 3.2f);
-        ccres.flinchLimit = 1;
+        ccres.flinchLimit = 0;
         ccres.slashingTaken = 1f;
         ccres.impactTaken = 1f;
         ccres.piercingTaken = 1f;
@@ -173,9 +189,10 @@ public class AIWolfShaman : MonoBehaviour {
             case goalStates.retreat:
                 retreatPref -= 40;
                 approachPref -= 30;
+                evadePref -= 40; //evading is also kind of retreating
                 break;
             case goalStates.evade:
-                evadePref -= 20;
+                evadePref -= 40;
                 break;
             case goalStates.guard:
                 guardPref -= 40;
@@ -227,6 +244,11 @@ public class AIWolfShaman : MonoBehaviour {
             castPref += 30;
         }
 
+        //and just don't retreat at all if beyond the maximum retreating distance
+        if (Vector3.Distance(transform.position, target.transform.position) >= 28) {
+            retreatPref = 0;
+        }
+
         //alter preference based on state of the player (opponent)
         if (targetStatus.isVulnerable()) {
             attackPref += 30;
@@ -244,7 +266,7 @@ public class AIWolfShaman : MonoBehaviour {
         bigPref *= 0.5f;
         approachPref *= 0.9f;
         retreatPref *= 0.9f;
-        evadePref *= 0.8f;
+        evadePref *= 0.7f;
         guardPref *= 0.6f;
         parryPref *= 0.2f; //parrying is just really rare
 
@@ -336,8 +358,8 @@ public class AIWolfShaman : MonoBehaviour {
 
         //size-based preference - the wolf doesn't like swipes so much when she isn't big but prefers them when she is
         if (!big) {
-            lSwipePref -= 50;
-            rSwipePref -= 50;
+            lSwipePref -= 70;
+            rSwipePref -= 70;
         } else {
             lSwipePref += 30;
             rSwipePref += 30;
@@ -477,14 +499,18 @@ public class AIWolfShaman : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+        movementAI.target = target;
         targetStatus = target.GetComponent<StatusManager>();
         targetStat = target.GetComponent<StatSheet>();
 
-        goal = goalStates.cast;
-        behaviour = behaviourStates.mixed;
+        goal = goalStates.nothing;
+        behaviour = behaviourStates.preBattle;
         goalComplete = false;
         goalStarted = false;
-        navMesh.isStopped = true;
+        if (navMesh.enabled) {
+            navMesh.isStopped = true;
+        }
+        navMesh.enabled = false;
     }
 	
 	// Update is called once per frame
@@ -501,28 +527,155 @@ public class AIWolfShaman : MonoBehaviour {
 
         //print(goal);
 
+        if (style.status.slain || style.status.unconscious) {
+            BecomeSmall();
+            pointTargetFrames = 0;
+            attackFrames = 0;
+            evadeFrames = 0;
+            guardFrames = 0; 
+            if (navMesh.enabled) {
+                navMesh.isStopped = true;
+            }
+            navMesh.enabled = false;
+            goal = goalStates.nothing;
+        }
+
+        if (big && style.stat.MP < 10) {
+            BecomeSmall();
+        }
+
         if (goalDelay > 0) {
             goalDelay--;
         }
 
         if (pointTargetFrames > 0) {
             pointTargetFrames--;
-            transform.LookAt(target.transform);
+            movementAI.pointTowardTarget(45);
+        }
+
+        if (attackFrames > 0) {
+            attackFrames--;
+            if (navMesh.enabled) {
+                navMesh.isStopped = true;
+            }
+            navMesh.enabled = false;
+            if (movementAI.toTargetAngle < 10f && movementAI.toTargetAngle > -10f && attackFrames > 2) {
+                attackFrames = 2;
+            }
+        }
+
+        if (evadeFrames > 0 && style.status.canMove()) {
+            evadeFrames--;
+            if (navMesh.enabled) {
+                navMesh.isStopped = true;
+            }
+            navMesh.enabled = false;
+        }
+
+        if (guardFrames > 0) {
+            guardFrames--;
+            if (navMesh.enabled) {
+                navMesh.isStopped = true;
+            }
+            navMesh.enabled = false;
         }
 
         behaviourCounter--;
         goalCounter--;
 
-        if (behaviour == behaviourStates.defeated) {
+        if (big) {
+            bigAnimator.SetBool("curious", false);
+        }
+        smallAnimator.SetBool("curious", false);
+
+        if (behaviour == behaviourStates.defeated && !(style.status.slain || style.status.unconscious)) {
+            if (big) {
+                BecomeSmall();
+            }
+            style.status.guarding = false;
             navMesh.speed = maxSpeed * 0.2f;
             ChangeGoal(goalStates.retreat);
+            navMesh.enabled = true;
+            navMesh.isStopped = false;
             goalComplete = false;
             goalStarted = false;
-            //if far away and sheathed and not casting then pacified ticks down
-            //if very close or unsheathed or casting then ticks up
+            if (Vector3.Distance(transform.position, target.transform.position) > 20 && targetStatus.sheathed && !targetStatus.casting) {
+                pacifiedCounter--;
+                ChangeGoal(goalStates.nothing);
+                if (big) {
+                    bigAnimator.SetBool("curious", true);
+                }
+                smallAnimator.SetBool("curious", true);
+                if (navMesh.enabled) {
+                    navMesh.isStopped = true;
+                }
+                navMesh.enabled = false;
+                movementAI.pointTowardTarget(4);
+            }
+            if ((Vector3.Distance(transform.position, target.transform.position) < 5 || !targetStatus.sheathed || targetStatus.casting) && pacifiedCounter < 600) {
+                pacifiedCounter++;
+            }
+            if (pacifiedCounter <= 0) {
+                ChangeBehaviour(behaviourStates.pacified);
+            }
         }
 
-        if (style.status.isFloored()) {
+        if (behaviour == behaviourStates.pacified && !(style.status.slain || style.status.unconscious)) {
+            if (big) {
+                BecomeSmall();
+            }
+            gameObject.tag = "TgtAlyBosIns";
+            style.status.guarding = false;
+            //navMesh.speed = maxSpeed * 0.2f;
+            target = stump;
+            movementAI.target = target;
+            if (!castSanctuary) {
+                currentSpell = Instantiate(healingSanctuary).GetComponent<Spell>();
+                currentSpell.duration = 14400; //the Shamanwolf's healing sanctuary is longer, lasting 4 minutes
+                currentSpell.mouseTarget = false;
+                currentSpell.target = target;
+                currentSpell.status = style.status;
+                currentSpell.stat = style.stat;
+                currentSpell.movement = style.movement;
+                currentSpell.animator = style.animator;
+                currentSpell.transform.position = transform.position;
+                currentSpell.transform.rotation = transform.rotation;
+                currentSpell.active = true;
+                currentSpell.ready = 0;
+                currentSpell.Start();
+                currentSpell.castTime += currentSpell.spellCode.Length * 15;
+                currentSpell.duration = 14400; //the Shamanwolf's healing sanctuary is longer, lasting 4 minutes
+                style.status.castLock = currentSpell.castTime + currentSpell.postCastTime;
+                style.status.channelLock = currentSpell.castTime + currentSpell.postCastTime + currentSpell.channelTime;
+                runningSpells.Add(currentSpell.gameObject);
+                style.forceSpellcast(currentSpell.castTime + currentSpell.postCastTime + 5); //set the spellcast state for a while
+                castSanctuary = true;
+            } else {
+                if (Vector3.Distance(transform.position, target.transform.position) > 6) {
+                    navMesh.enabled = true;
+                    navMesh.isStopped = false;
+                    goal = goalStates.approach;
+                    goalComplete = false;
+                    goalStarted = false;
+                }
+                else {
+                    if (navMesh.enabled) {
+                        navMesh.isStopped = true;
+                    }
+                    navMesh.enabled = false;
+                    goal = goalStates.nothing;
+                    if (big) {
+                        bigAnimator.SetBool("pacified", true);
+                    }
+                    smallAnimator.SetBool("pacified", true);
+                    //have a bit of a lie down
+                }
+            }
+        } else {
+            castSanctuary = false;
+        }
+
+        if (style.status.isFloored() && !(style.status.slain || style.status.unconscious)) {
             ChangeGoal(goalStates.evade);
             goalStarted = false;
             goalDelay = Random.Range(0, 120);
@@ -540,16 +693,27 @@ public class AIWolfShaman : MonoBehaviour {
             ChangeBehaviour(behaviourStates.defeated);
         }
         
+        if (behaviour == behaviourStates.preBattle && (Vector3.Distance(transform.position, target.transform.position) < 32 || style.stat.HP < style.stat.MaxHP)) {
+            ChangeBehaviour();
+            ChangeGoal();
+        }
+        
+        if (targetStatus.unconscious || targetStatus.slain) {
+            ChangeBehaviour(behaviourStates.pacified);
+        }
 
-        if (behaviour != behaviourStates.defeated && behaviour != behaviourStates.pacified) {
+        if (behaviour != behaviourStates.defeated && behaviour != behaviourStates.pacified && behaviour != behaviourStates.preBattle && !(style.status.slain || style.status.unconscious)) {
             if (behaviourCounter <= 0) { //behaviour changes every 30 seconds
                 CalculateBehaviourPref();
                 ChangeBehaviour();
                 behaviourCounter = 1800;
             }
 
-            if (goalCounter <= 0 || goalComplete) { //goals change every 10 seconds or every time a goal is completed
-                navMesh.isStopped = true;
+            if ((goalCounter <= 0 || goalComplete) && goalDelay <= 0) { //goals change every 10 seconds or every time a goal is completed
+                if (navMesh.enabled) {
+                    navMesh.isStopped = true;
+                }
+                navMesh.enabled = false;
                 CalculateGoalPref();
                 ChangeGoal();
                 goalCounter = 600;
@@ -561,17 +725,19 @@ public class AIWolfShaman : MonoBehaviour {
         if ((!goalStarted) && goalDelay <= 0) {
             switch (goal) {
                 case goalStates.attack:
-                    if (style.status.canAttack()) {
-                        transform.LookAt(target.transform, Vector3.up); //face the target
-                        transform.localEulerAngles = new Vector3(0, transform.eulerAngles.y, 0); //lock rotation on x and z
-                        CalculateAttackPref();
-                        Attack();
-                        goalStarted = true;
+                    if (style.status.canMove()) {
+                        if (big) {
+                            bigAnimator.Play("turn", 0, 0f);
+                        }
+                        smallAnimator.Play("turn", 0, 0f);
                     }
+                    attackFrames = 40;
+                    goalStarted = true;
                     break;
                 case goalStates.cast:
                     if (style.status.canCast()) { 
-                        goalStarted = true; 
+                        goalStarted = true;
+                        goalDelay = 40;
                     }
                     break;
                 case goalStates.big:
@@ -579,10 +745,12 @@ public class AIWolfShaman : MonoBehaviour {
                         goalStarted = true;
                         BecomeBig();
                         bigCounter = Random.Range(10*60, 30*60); //become big for anywhere between 10 and 30 seconds
+                        goalDelay = 120;
                     }
                     break;
                 case goalStates.approach:
                     if (style.status.canMove()) {
+                        navMesh.enabled = true;
                         navMesh.isStopped = false;
                         navMesh.SetDestination(target.transform.position);
                         navMesh.SetDestination(new Vector3(navMesh.destination.x, 0, navMesh.destination.z)); //get rid of y
@@ -591,37 +759,31 @@ public class AIWolfShaman : MonoBehaviour {
                     break;
                 case goalStates.retreat:
                     if (style.status.canMove()) {
+                        navMesh.enabled = true;
                         navMesh.isStopped = false;
-                        navMesh.SetDestination(transform.position + Vector3.Normalize(transform.position - target.transform.position) * 25);
+                        retreatDist = Random.Range(Vector3.Distance(transform.position, target.transform.position), 28f);
+                        navMesh.SetDestination(transform.position + Vector3.Normalize(transform.position - target.transform.position) * retreatDist);
                         navMesh.SetDestination(new Vector3(navMesh.destination.x, 0, navMesh.destination.z)); //get rid of y
                         goalStarted = true;
                     }
                     break;
                 case goalStates.evade:
-                    if (style.status.canRoll()) {
-                        transform.LookAt(target.transform, Vector3.up); //face the target
-                        transform.localEulerAngles = new Vector3(0, transform.eulerAngles.y + Random.Range(30, 330), 0); //lock rotation on x and z and add turn around a lot
-                        style.movement.evade(2000, 0, 0.5f);
+                    if (style.status.canMove()) {
                         if (big) {
-                            bigAnimator.Play("jump", 0, 0f);
+                            bigAnimator.Play("turn", 0, 0f);
                         }
-                        smallAnimator.Play("jump", 0, 0f);
-                        goalStarted = true;
+                        smallAnimator.Play("turn", 0, 0f);
                     }
+                    evadeFrames = 15;
+                    goalStarted = true;
                     break;
                 case goalStates.guard:
-                    if (style.status.canGuard()) {
-                        transform.LookAt(target.transform, Vector3.up); //face the target
-                        transform.localEulerAngles = new Vector3(0, transform.eulerAngles.y, 0); //lock rotation on x and z
-                        style.status.guardStunned = Random.Range(60, 150); //guard for between 1 and 2.5 seconds
-                        goalStarted = true;
-                        goalDelay = 60;
-                    }
+                    guardFrames = Random.Range(60, 180); //guard for between 1 and 2.5 seconds
+                    goalStarted = true;
                     break;
                 case goalStates.parry:
                     if (style.status.canParry()) {
-                        transform.LookAt(target.transform, Vector3.up); //face the target
-                        transform.localEulerAngles = new Vector3(0, transform.eulerAngles.y, 0); //lock rotation on x and z
+                        movementAI.pointTowardTarget(60);
                         decider = Random.Range(0, 2);
                         if (decider > 1) {
                             style.fParry();
@@ -633,11 +795,24 @@ public class AIWolfShaman : MonoBehaviour {
                     }
                     break;
             }
-        } else {
+        }
+
+        if (goalStarted && !goalComplete) {
             switch (goal) {
                 case goalStates.attack:
-                    if (style.status.canAttack()) {
-                        goalComplete = true; //once the boss can attack, the goal is complete
+                    if (attackFrames > 1) {
+                        movementAI.pointTowardTarget(12);
+                    }
+                    else {
+                        if (attackFrames > 0) {
+                            if (style.status.canAttack()) {
+                                CalculateAttackPref();
+                                Attack();
+                            }
+                        }
+                        if (style.instantiatedAttacks.Count <= 0) {
+                            goalComplete = true; //once the boss has attacked, the goal is complete
+                        }
                     }
                     break;
                 case goalStates.cast:
@@ -645,35 +820,33 @@ public class AIWolfShaman : MonoBehaviour {
                     if (style.status.canCast() && style.status.castLock <= 0 && !style.status.casting) {
                         style.status.casting = true;
                     }
-                    if (style.status.casting) {
+                    if (style.status.casting && style.status.channelLock <= 0) {
                         style.forceSpellcast(1);
-                        currentSpellCode = spellsKnown[chosenSpellNumber].GetComponent<Spell>().spellCode;
+                        currentSpellName = spellsKnown[chosenSpellNumber].GetComponent<Spell>().spellName;
                         repeatSpell = false;
                         for (int i2 = 0; i2 < runningSpells.Count; i2++) {
-                            if (currentSpellCode == runningSpells[i2].GetComponent<Spell>().spellCode) {
+                            if (currentSpellName == runningSpells[i2].GetComponent<Spell>().spellName) {
                                 repeatSpell = true;
                             }
                         }
                         if (!repeatSpell) {
                             currentSpell = Instantiate(spellsKnown[chosenSpellNumber]).GetComponent<Spell>();
-                            currentSpell.debug = true; //testing mode
                             currentSpell.mouseTarget = false;
                             currentSpell.target = target;
                             currentSpell.status = style.status;
                             currentSpell.stat = style.stat;
                             currentSpell.movement = style.movement;
+                            currentSpell.animator = style.animator;
                             currentSpell.transform.position = transform.position;
                             currentSpell.transform.rotation = transform.rotation;
                             currentSpell.active = true;
                             currentSpell.ready = 0;
                             currentSpell.Start();
-                            currentSpell.castTime += currentSpellCode.Length * 15;
-                            style.status.castLock = currentSpell.castTime;
-                            style.status.channelLock = currentSpell.castTime + currentSpell.channelTime;
-                            style.stat.MP -= currentSpell.cost;
-                            currentSpellCode = "";
+                            currentSpell.castTime += currentSpell.spellCode.Length * 15;
+                            style.status.castLock = currentSpell.castTime + currentSpell.postCastTime;
+                            style.status.channelLock = currentSpell.castTime + currentSpell.postCastTime + currentSpell.channelTime;
                             runningSpells.Add(currentSpell.gameObject);
-                            style.forceSpellcast(currentSpell.castTime + 5); //set the spellcast state for a while
+                            style.forceSpellcast(currentSpell.castTime + currentSpell.postCastTime + 5); //set the spellcast state for a while
                         }
                     }
                     if (style.status.castLock > 0) {
@@ -684,58 +857,104 @@ public class AIWolfShaman : MonoBehaviour {
                 case goalStates.big:
                     if (big) { 
                         goalComplete = true; //becoming big happens instantaneously so the goal is completed
-                        goalDelay = 100;
                     }
                     break;
                 case goalStates.approach: 
                     if (style.status.canMove()) {
+                        navMesh.enabled = true;
                         navMesh.isStopped = false;
                     } else {
-                        navMesh.isStopped = true;
+                        if (navMesh.enabled) {
+                            navMesh.isStopped = true;
+                        }
+                        navMesh.enabled = false;
                     }
                     if ((big && Vector3.Distance(transform.position, target.transform.position) < 8) || (!big && Vector3.Distance(transform.position, target.transform.position) < 4) || Vector3.Distance(transform.position, navMesh.destination) < 4) {
-                        navMesh.isStopped = true;
+                        if (navMesh.enabled) {
+                            navMesh.isStopped = true;
+                        }
+                        navMesh.enabled = false;
                         goalComplete = true; //if the target is more-or-less reached, goal complete
-                    } else if (goalCounter < 180 || navMesh.isPathStale) { //this goal can potentially be recognised as a failure, in which case try to salvage
+                    } else if (goalCounter < 180 || navMesh.isPathStale/* || navMesh.pathStatus != NavMeshPathStatus.PathComplete*/) { //this goal can potentially be recognised as a failure, in which case try to salvage
                         print("abortApproach");
-                        navMesh.isStopped = true;
+                        if (navMesh.enabled) {
+                            navMesh.isStopped = true;
+                        }
+                        navMesh.enabled = false;
                         goalStarted = false;
                         CalculateGoalPref();
+                        approachPref = 0; //welp, messed up last time
+                        retreatPref = 10; //prolly don't want to retreat that much
                         ChangeGoal();
+                        goalCounter = 600;
                     }
                     break;
                 case goalStates.retreat:
                     if (style.status.canMove()) {
+                        navMesh.enabled = true;
                         navMesh.isStopped = false;
                     }
                     else {
-                        navMesh.isStopped = true;
+                        if (navMesh.enabled) {
+                            navMesh.isStopped = true;
+                        }
+                        navMesh.enabled = false;
                     }
                     if (Vector3.Distance(transform.position, target.transform.position) > 25 || Vector3.Distance(transform.position, navMesh.destination) < 4) {
                         print("distReached");
-                        navMesh.isStopped = true;
+                        if (navMesh.enabled) {
+                            navMesh.isStopped = true;
+                        }
+                        navMesh.enabled = false;
                         goalComplete = true; //similar to approach but the wolf has to be far away
-                    } else if (goalCounter < 150 || navMesh.isPathStale) { //this goal can potentially be recognised as a failure, in which case try to salvage
+                    } else if (goalCounter < 150 || navMesh.isPathStale || navMesh.pathStatus != NavMeshPathStatus.PathComplete) { //this goal can potentially be recognised as a failure, in which case try to salvage
                         print("abortRetreat");
-                        navMesh.isStopped = true;
+                        if (navMesh.enabled) {
+                            navMesh.isStopped = true;
+                        }
+                        navMesh.enabled = false;
                         CalculateGoalPref();
                         if (!big) {
                             bigPref += 50; //big chance of going big if not big
                         }
                         castPref = 1; //very low chance of casting
-                        approachPref = 0; //why approach when you can't even get away?
-                        guardPref += 20;//prefer guard and evade
-                        evadePref += 20;
+                        approachPref = 10; //why approach when you can't even get away?
+                        retreatPref = 10; //why retreat when you already know you can't? Might have just messed up on distance so fair
+                        guardPref += 20;//prefer guard
+                        evadePref = 10; //low chance of evading since that's often backwards
                         ChangeGoal();
+                        goalCounter = 600;
                         goalStarted = false;
                     }
                     break;
                 case goalStates.evade:
-                    goalComplete = true; //evade happens instantaneously so it autocompletes
+                    if (evadeFrames > 0 && style.status.canMove()) {
+                        movementAI.pointAwayFromTarget(Random.Range(3, 5));
+                    } else {
+                        if (style.status.canRoll()) {
+                            style.movement.evade(evadeSpeed, 0, 0.5f);
+                            if (big) {
+                                bigAnimator.Play("jump", 0, 0f);
+                            }
+                            smallAnimator.Play("jump", 0, 0f);
+                            goalDelay = 45;
+                            goalComplete = true; //evade complete
+                        }
+                    }
                     break;
                 case goalStates.guard:
-                    if (!style.status.isGuardStunned()) { //this AI makes guard work off of guardStunned so it'll be active for a fixed amount of time
+                    if (guardFrames <= 0) { 
                         goalComplete = true;
+                        style.status.guarding = false;
+                    } else {
+                        if (style.status.canGuard()) {
+                            style.status.guarding = true;
+                            if (!style.status.isGuardStunned()) {
+                                movementAI.pointTowardTarget(3);
+                            }
+                        } else {
+                            style.status.guarding = false;
+                        }
                     }
                     break;
                 case goalStates.parry:
@@ -744,6 +963,10 @@ public class AIWolfShaman : MonoBehaviour {
             }
 
 
+        }
+
+        if (!style.status.canGuard()) {
+            style.status.guarding = false;
         }
 
         if (big) {
@@ -755,7 +978,10 @@ public class AIWolfShaman : MonoBehaviour {
         }
 
         if ((!style.status.canMove())) {
-            navMesh.isStopped = true;
+            if (navMesh.enabled) {
+                navMesh.isStopped = true;
+            }
+            navMesh.enabled = false;
         }
 
         if (style.status.casting || style.status.channelLock > 0) {
@@ -763,8 +989,11 @@ public class AIWolfShaman : MonoBehaviour {
                 bigAnimator.SetBool("trueCasting", true);
             }
             smallAnimator.SetBool("trueCasting", true);
-            navMesh.isStopped = true;
-            transform.LookAt(target.transform); //point to the target while casting
+            if (navMesh.enabled) {
+                navMesh.isStopped = true;
+            }
+            navMesh.enabled = false;
+            movementAI.pointTowardTarget(30); //point to the target while casting
         } else {
             if (big) {
                 bigAnimator.SetBool("trueCasting", false);
@@ -778,23 +1007,31 @@ public class AIWolfShaman : MonoBehaviour {
 
 
         for (int i = 0; i < runningSpells.Count; i++) {
-            runningSpells[i].GetComponent<Spell>().castTime--;
-            if (runningSpells[i].GetComponent<Spell>().castTime <= 0 && runningSpells[i].GetComponent<Spell>().ready == 0) {
-                runningSpells[i].GetComponent<Spell>().ready = 1;
+            runningSpellScript = runningSpells[i].GetComponent<Spell>();
+            runningSpellScript.castTime--;
+            if (runningSpellScript.castTime <= 0 && runningSpellScript.ready == 0) {
+                runningSpellScript.ready = 1;
+                if (!runningSpellScript.costDeducted) {
+                    style.stat.MP -= runningSpellScript.cost;
+                    runningSpellScript.costDeducted = true;
+                }
             }
-            if (runningSpells[i].GetComponent<Spell>().castTime <= 0 && runningSpells[i].GetComponent<Spell>().channelTime > 0) {
-                runningSpells[i].GetComponent<Spell>().channelTime--;
+            if (runningSpellScript.castTime <= 0 && runningSpellScript.postCastTime > 0) {
+                runningSpellScript.postCastTime--;
             }
-            if (runningSpells[i].GetComponent<Spell>().castTime <= 0 && runningSpells[i].GetComponent<Spell>().channelTime <= 0) {
-                runningSpells[i].GetComponent<Spell>().duration--;
+            if (runningSpellScript.castTime <= 0 && runningSpellScript.postCastTime <= 0 && runningSpellScript.channelTime > 0) {
+                runningSpellScript.channelTime--;
             }
-            if (runningSpells[i].GetComponent<Spell>().duration <= 0) {
+            if (runningSpellScript.castTime <= 0 && runningSpellScript.postCastTime <= 0 && runningSpellScript.channelTime <= 0) {
+                runningSpellScript.duration--;
+            }
+            if (runningSpellScript.duration <= 0) {
                 toDestroy = runningSpells[i];
                 runningSpells.Remove(runningSpells[i]);
                 toDestroy.GetComponent<Spell>().destroySpell();
             }
-            else if (runningSpells[i].GetComponent<Spell>().ready == 1) {
-                runningSpells[i].GetComponent<Spell>().CastSpell();
+            else if (runningSpellScript.ready == 1) {
+                runningSpellScript.CastSpell();
             }
         }
 

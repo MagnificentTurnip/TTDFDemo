@@ -95,8 +95,7 @@ public class AtkStyleWish : AtkStyle {
             idleCounter = 60; //always remember to reset the idle counter
         }
         stat.MP -= 20;
-        status.parryLock = 60;
-        status.parryFrames = 15;
+        StartCoroutine(status.Parry(0f, 20, 60, 40));
         movement.motor.instantBurst(-100f, 50f);
     }
 
@@ -115,8 +114,7 @@ public class AtkStyleWish : AtkStyle {
             idleCounter = 60; //always remember to reset the idle counter
         }
         stat.MP -= 20;
-        status.parryLock = 60;
-        status.parryFrames = 15;
+        StartCoroutine(status.Parry(0.1f, 10, 60, 70));
         movement.motor.instantBurst(700f, -100f);
     }
 
@@ -190,7 +188,7 @@ public class AtkStyleWish : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
-            _attackOwnerStatus: status, //here's the status manager
+            _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "advancingBladework",
@@ -309,7 +307,7 @@ public class AtkStyleWish : AtkStyle {
 
         //play the animations
         currentAttack.data.HitboxAnimator.Play(currentAttack.data.HitboxAnimation);
-        animator.Play(currentAttack.data.GFXAnimation);
+        animator.Play(currentAttack.data.GFXAnimation, 0, 0f);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
         movement.pointToTarget(); //this move takes perfect directional input, meaning you can even direct it outside of the space within which you can input the command for it
@@ -326,7 +324,7 @@ public class AtkStyleWish : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
-            _attackOwnerStatus: status, //here's the status manager
+            _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "advancingBladework",
@@ -400,7 +398,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onFlooredChargeHit = currentAttack.onFlooredHit; //this move doesn't charge
 
         //set the attack's properties on airborne hit
-        currentAttack.onAirborneHit = currentAttack.onHit; //This attack only hits airborne targets, so just copy onHit but onHit itself will never fire
+        currentAttack.onAirborneHit = currentAttack.onHit; //This attack only hits airborne targets, so just copy onHit but onHit itself will rarely if ever fire
 
         //set the attack's properties on charged airborne hit
         currentAttack.onAirborneChargeHit = currentAttack.onAirborneHit; //this move doesn't charge
@@ -427,7 +425,7 @@ public class AtkStyleWish : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
-            _attackOwnerStatus: status, //here's the status manager
+            _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "standardBladework1",
@@ -573,7 +571,7 @@ public class AtkStyleWish : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
-            _attackOwnerStatus: status, //here's the status manager
+            _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "standardBladework2",
@@ -652,7 +650,7 @@ public class AtkStyleWish : AtkStyle {
 
         //play the animations
         currentAttack.data.HitboxAnimator.Play(currentAttack.data.HitboxAnimation);
-        animator.Play(currentAttack.data.GFXAnimation);
+        animator.Play(currentAttack.data.GFXAnimation, 0, 0f);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
         movement.pointTowardTarget(20f); //this move doesn't follow the cursor extremely well but it's a wide attack so it doesn't need to that much
@@ -669,7 +667,7 @@ public class AtkStyleWish : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
-            _attackOwnerStatus: status, //here's the status manager
+            _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "standardBladework3",
@@ -783,7 +781,7 @@ public class AtkStyleWish : AtkStyle {
 
         //play the animations
         currentAttack.data.HitboxAnimator.Play(currentAttack.data.HitboxAnimation);
-        animator.Play(currentAttack.data.GFXAnimation);
+        animator.Play(currentAttack.data.GFXAnimation, 0, 0f);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
         movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
@@ -800,7 +798,7 @@ public class AtkStyleWish : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
-            _attackOwnerStatus: status, //here's the status manager
+            _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "standardBladework4",
@@ -810,7 +808,7 @@ public class AtkStyleWish : AtkStyle {
             _zScale: 1.23f,
             _attackDelay: 5, //delay of 5 frames before the attack starts
             _attackDuration: 15, //15 frames within which the attack is active
-            _attackEnd: 20, //and 15 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
+            _attackEnd: 15, //and 15 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
             _hitsAirborne: true, //hits airborne, standing and floored.
             _hitsStanding: true,
             _hitsFloored: true,
@@ -919,7 +917,7 @@ public class AtkStyleWish : AtkStyle {
 
         //play the animations
         currentAttack.data.HitboxAnimator.Play(currentAttack.data.HitboxAnimation);
-        animator.Play(currentAttack.data.GFXAnimation);
+        animator.Play(currentAttack.data.GFXAnimation, 0, 0f);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
         movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
@@ -936,7 +934,7 @@ public class AtkStyleWish : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
-            _attackOwnerStatus: status, //here's the status manager
+            _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "lightBladework1",
@@ -1028,7 +1026,7 @@ public class AtkStyleWish : AtkStyle {
 
         //play the animations
         currentAttack.data.HitboxAnimator.Play(currentAttack.data.HitboxAnimation);
-        animator.Play(currentAttack.data.GFXAnimation);
+        animator.Play(currentAttack.data.GFXAnimation, 0, 0f);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
         movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
@@ -1045,7 +1043,7 @@ public class AtkStyleWish : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
-            _attackOwnerStatus: status, //here's the status manager
+            _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "lightBladework2",
@@ -1137,7 +1135,7 @@ public class AtkStyleWish : AtkStyle {
 
         //play the animations
         currentAttack.data.HitboxAnimator.Play(currentAttack.data.HitboxAnimation);
-        animator.Play(currentAttack.data.GFXAnimation);
+        animator.Play(currentAttack.data.GFXAnimation, 0, 0f);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
         movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
@@ -1154,7 +1152,7 @@ public class AtkStyleWish : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
-            _attackOwnerStatus: status, //here's the status manager
+            _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "lightBladework3",
@@ -1234,7 +1232,7 @@ public class AtkStyleWish : AtkStyle {
 
         //play the animations
         currentAttack.data.HitboxAnimator.Play(currentAttack.data.HitboxAnimation);
-        animator.Play(currentAttack.data.GFXAnimation);
+        animator.Play(currentAttack.data.GFXAnimation, 0, 0f);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
         movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
@@ -1250,7 +1248,7 @@ public class AtkStyleWish : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
-            _attackOwnerStatus: status, //here's the status manager
+            _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "lightBladework3",
@@ -1347,7 +1345,7 @@ public class AtkStyleWish : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
-            _attackOwnerStatus: status, //here's the status manager
+            _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "lightBladework4",
@@ -1439,7 +1437,7 @@ public class AtkStyleWish : AtkStyle {
 
         //play the animations
         currentAttack.data.HitboxAnimator.Play(currentAttack.data.HitboxAnimation);
-        animator.Play(currentAttack.data.GFXAnimation);
+        animator.Play(currentAttack.data.GFXAnimation, 0, 0f);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
         movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
@@ -1455,7 +1453,7 @@ public class AtkStyleWish : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
-            _attackOwnerStatus: status, //here's the status manager
+            _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "lightBladework4",
@@ -1552,7 +1550,7 @@ public class AtkStyleWish : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
-            _attackOwnerStatus: status, //here's the status manager
+            _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "heavyBladework1",
@@ -1657,7 +1655,7 @@ public class AtkStyleWish : AtkStyle {
 
         //play the animations
         currentAttack.data.HitboxAnimator.Play(currentAttack.data.HitboxAnimation);
-        animator.Play(currentAttack.data.GFXAnimation);
+        animator.Play(currentAttack.data.GFXAnimation, 0, 0f);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
         movement.pointToTarget(); //this move takes perfect directional input, meaning you can even direct it outside of the space within which you can input the command for it
@@ -1674,7 +1672,7 @@ public class AtkStyleWish : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
-            _attackOwnerStatus: status, //here's the status manager
+            _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "heavyBladework2",
@@ -1766,7 +1764,7 @@ public class AtkStyleWish : AtkStyle {
 
         //play the animations
         currentAttack.data.HitboxAnimator.Play(currentAttack.data.HitboxAnimation);
-        animator.Play(currentAttack.data.GFXAnimation);
+        animator.Play(currentAttack.data.GFXAnimation, 0, 0f);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
         movement.pointTowardTarget(15f); //this move allows only 15 degrees of rotational adjustment
@@ -1782,7 +1780,7 @@ public class AtkStyleWish : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
-            _attackOwnerStatus: status, //here's the status manager
+            _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "heavyBladework2",
@@ -1887,7 +1885,7 @@ public class AtkStyleWish : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
-            _attackOwnerStatus: status, //here's the status manager
+            _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "heavyBladework3",
@@ -1994,7 +1992,7 @@ public class AtkStyleWish : AtkStyle {
 
         //play the animations
         currentAttack.data.HitboxAnimator.Play(currentAttack.data.HitboxAnimation);
-        animator.Play(currentAttack.data.GFXAnimation);
+        animator.Play(currentAttack.data.GFXAnimation, 0, 0f);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
         movement.pointTowardTarget(25f); //this move allows 25 degrees of directional adjustment
@@ -2011,7 +2009,7 @@ public class AtkStyleWish : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
-            _attackOwnerStatus: status, //here's the status manager
+            _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "heavyBladework4",
@@ -2154,7 +2152,7 @@ public class AtkStyleWish : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
-            _attackOwnerStatus: status, //here's the status manager
+            _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "heavyBladework4",
@@ -2302,7 +2300,7 @@ public class AtkStyleWish : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
-            _attackOwnerStatus: status, //here's the status manager
+            _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "overhead",
@@ -2318,7 +2316,7 @@ public class AtkStyleWish : AtkStyle {
             _hitsStanding: true,
             _hitsFloored: true,
             _contact: true, //makes contact.
-            _unblockable: 1); //and cannot be guarded (but can be parried)
+            _unblockable: 1); //and cannot be guarded (but can be parried or magically guarded)
 
         if (debug == true) {
             currentAttack.gameObject.GetComponent<MeshFilter>().mesh = cube; //for testing the hitbox
@@ -2367,7 +2365,7 @@ public class AtkStyleWish : AtkStyle {
 
         //set the attack's properties on guard
         currentAttack.onGuard = new Attack.hitProperties(
-            _SPcost: 10f,
+            _SPcost: 100f,
             _causesGuardStun: 30,
             _onHitForwardBackward: -2000f,
             _onHitRightLeft: 400f);
@@ -2501,5 +2499,6 @@ public class AtkStyleWish : AtkStyle {
         //call the attack progression and return to idle functions that have been overridden in this class
         attackProgression(); 
         returnToIdle();
+        nonSpellAtkStyle();
     }
 }

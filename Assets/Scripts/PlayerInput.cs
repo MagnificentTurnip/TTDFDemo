@@ -7,24 +7,31 @@ public class PlayerInput : MonoBehaviour {
     Vector3 mousePos; //a vector for the current position of the mouse on screen
     Vector3 objectPos; //a vector for the current position of the object on screen
     public Camera cam; //going to need to put the main camera in here, because for some reason unity currently hates using Camera.main
-    public float toMouseAngle; 
+    public float toMouseAngle;
+
+    Ray ray;
+    RaycastHit hit;
+    public GameObject currentTarget;
+    public int targetRefresh1; //2 target refreshes, the first falls off very shortly after mousing off
+    public int targetRefresh2; //the other stays a while longer
+    //targetRefresh1 is to be used for actual targetting of things, targetRefresh2 should be used mostly if not entirely for UI
 
     public float cursorDistance;
     public float mouseDifAngle;
 
     //the strings for the axes that control which controls actually effect certain game states
-    public string movementControl;
-    public string spellcastControl;
-    public string fParryControl;
-    public string bParryControl;
-    public string guardControl;
-    public string sprintControl;
-    public string evadeControl;
-    public string sheatheControl;
-    public string button1Control;
-    public string button2Control;
-    public string button3Control;
-    public string button4Control;
+    public List<string> movementControl = new List<string>();
+    public List<string> spellcastControl = new List<string>();
+    public List<string> fParryControl = new List<string>();
+    public List<string> bParryControl = new List<string>();
+    public List<string> guardControl = new List<string>();
+    public List<string> sprintControl = new List<string>();
+    public List<string> evadeControl = new List<string>();
+    public List<string> sheatheControl = new List<string>();
+    public List<string> button1Control = new List<string>();
+    public List<string> button2Control = new List<string>();
+    public List<string> button3Control = new List<string>();
+    public List<string> button4Control = new List<string>();
 
     public bool parryMode; //if true, then parry uses the scrollwheel input. Otherwise, it uses the axes under fParryControl and bParryControl.
 
@@ -115,6 +122,8 @@ public class PlayerInput : MonoBehaviour {
         pointLeft = false;
         pointBack = false;
 
+        targetRefresh1 = 0;
+
         fwdA = new KeyCombo(new string[] { "fwd", "a" }, this.gameObject);
         fwdS = new KeyCombo(new string[] { "fwd", "s" }, this.gameObject);
         fwdD = new KeyCombo(new string[] { "fwd", "d" }, this.gameObject);
@@ -182,17 +191,30 @@ public class PlayerInput : MonoBehaviour {
             //print("bak");
         }
 
-
-        if (Input.GetAxis(movementControl) > 0f) { //movement controls
-            movement = true;
-        } else {
-            movement = false;
+        //targeting system
+        ray = cam.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out hit, 100, ~(1 << LayerMask.NameToLayer("Terrain") | 1 << LayerMask.NameToLayer("Walls") | 1 << LayerMask.NameToLayer("Spells")))) { //Physics.Raycast(ray, out hit, 100, 1 << LayerMask.NameToLayer("Terrain"))
+            if (hit.collider.gameObject.tag.Contains("Tgt")) {
+                currentTarget = hit.collider.gameObject;
+                targetRefresh1 = 8;
+                targetRefresh2 = 600;
+            }
         }
 
-        if (Input.GetAxis(spellcastControl) > 0f) { //spellcast controls
-            spellcast = true;
-        } else {
-            spellcast = false;
+        //REGISTERING INPUT VVVV
+
+        movement = false;
+        for (int i = 0; i < movementControl.Count; i++) {
+            if (Input.GetAxis(movementControl[i]) > 0f) {
+                movement = true;
+            }
+        }
+
+        spellcast = false;
+        for (int i = 0; i < spellcastControl.Count; i++) {
+            if (Input.GetAxis(spellcastControl[i]) > 0f) {
+                spellcast = true;
+            }
         }
 
         if (parryMode) { //parrying controls (many, many controls)
@@ -207,75 +229,85 @@ public class PlayerInput : MonoBehaviour {
                 bParry = false;
             }
         } else {
-            if (Input.GetAxis(fParryControl) > 0f) {
-                fParry = true;
+            fParry = false;
+            for (int i = 0; i < fParryControl.Count; i++) {
+                if (Input.GetAxis(fParryControl[i]) > 0f) {
+                    fParry = true;
+                }
             }
-            else {
-                fParry = false;
-            }
-            if (Input.GetAxis(bParryControl) > 0f) {
-                bParry = true;
-            }
-            else {
-                bParry = false;
+            bParry = false;
+            for (int i = 0; i < bParryControl.Count; i++) {
+                if (Input.GetAxis(bParryControl[i]) > 0f) {
+                    bParry = true;
+                }
             }
         }
 
-        if (Input.GetAxis(guardControl) > 0f) { //guard controls
-            guard = true;
-        }
-        else {
-            guard = false;
-        }
-
-        if (Input.GetAxis(sprintControl) > 0f) { //sprint controls
-            sprint = true;
-        }
-        else {
-            sprint = false;
+        guard = false;
+        for (int i = 0; i < guardControl.Count; i++) {
+            if (Input.GetAxis(guardControl[i]) > 0f) {
+                guard = true;
+            }
         }
 
-        if (Input.GetAxis(evadeControl) > 0f) { //evasion controls
-            evade = true;
-        }
-        else {
-            evade = false;
-        }
-
-        if (Input.GetAxis(sheatheControl) > 0f) { //evasion controls
-            sheathe = true;
-        }
-        else {
-            sheathe = false;
+        sprint = false;
+        for (int i = 0; i < sprintControl.Count; i++) {
+            if (Input.GetAxis(sprintControl[i]) > 0f) {
+                sprint = true;
+            }
         }
 
-        if (Input.GetAxis(button1Control) > 0f) { //button 1 controls
-            button1 = true;
-        }
-        else {
-            button1 = false;
-        }
-
-        if (Input.GetAxis(button2Control) > 0f) { //button 2 controls
-            button2 = true;
-        }
-        else {
-            button2 = false;
+        evade = false;
+        for (int i = 0; i < evadeControl.Count; i++) {
+            if (Input.GetAxis(evadeControl[i]) > 0f) {
+                evade = true;
+            }
         }
 
-        if (Input.GetAxis(button3Control) > 0f) { //button 3 controls
-            button3 = true;
-        }
-        else {
-            button3 = false;
-        }
-
-        if (Input.GetAxis(button4Control) > 0f) { //button 4 controls
-            button4 = true;
-        }
-        else {
-            button4 = false;
+        sheathe = false;
+        for (int i = 0; i < sheatheControl.Count; i++) {
+            if (Input.GetAxis(sheatheControl[i]) > 0f) {
+                sheathe = true;
+            }
         }
 
+        button1 = false;
+        for (int i = 0; i < button1Control.Count; i++) {
+            if (Input.GetAxis(button1Control[i]) > 0f) {
+                button1 = true;
+            }
+        }
+
+        button2 = false;
+        for (int i = 0; i < button2Control.Count; i++) {
+            if (Input.GetAxis(button2Control[i]) > 0f) {
+                button2 = true;
+            }
+        }
+
+        button3 = false;
+        for (int i = 0; i < button3Control.Count; i++) {
+            if (Input.GetAxis(button3Control[i]) > 0f) {
+                button3 = true;
+            }
+        }
+
+        button4 = false;
+        for (int i = 0; i < button4Control.Count; i++) {
+            if (Input.GetAxis(button4Control[i]) > 0f) {
+                button4 = true;
+            }
+        }
+    }
+
+    private void FixedUpdate() {
+        if (targetRefresh1 > 0) { 
+            targetRefresh1--;
+        } else {
+            currentTarget = null;
+        }
+        if (targetRefresh2 > 0) { 
+            targetRefresh2--;
+        }
     }
 }

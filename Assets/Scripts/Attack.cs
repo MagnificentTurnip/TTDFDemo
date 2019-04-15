@@ -14,7 +14,7 @@ public class Attack : MonoBehaviour {
 
     public struct atkData {
         //the status manager of whoever instantiated this attack
-        public StatusManager attackOwnerStatus;
+        public AtkStyle attackOwnerStyle;
 
         //the animator for the hitbox
         public Animator HitboxAnimator;
@@ -54,7 +54,7 @@ public class Attack : MonoBehaviour {
         */
 
         public atkData( //constructor
-            StatusManager _attackOwnerStatus = null,
+            AtkStyle _attackOwnerStyle = null,
             Animator _HitboxAnimator = null,
             Collider _atkHitBox = null, 
             string _GFXAnimation = "defaultAnimation", 
@@ -74,7 +74,7 @@ public class Attack : MonoBehaviour {
             bool _hitsAirborne = false,
             bool _contact = true,
             int _unblockable = 0) {
-            attackOwnerStatus = _attackOwnerStatus;
+            attackOwnerStyle = _attackOwnerStyle;
             HitboxAnimator = _HitboxAnimator;
             atkHitBox = _atkHitBox;
             GFXAnimation = _GFXAnimation;

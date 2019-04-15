@@ -4,9 +4,12 @@ using UnityEngine;
 
 public class Spell : AtkStyle {
 
+    public string spellName; //the actual name of the spell
     public string spellCode; //the inputted spell code required to cast the spell
     public int castTime; //the time it takes to cast the spell after the spell code has been input
+    public int postCastTime; //the time spent in castlock after the spell is cast before moving on to channeling, if any
     public int cost; //the spell's cost in MP
+    public bool costDeducted; //bool that checks whether the cost of a spell has already been applied;
     public int channelTime; //the time spent channelling the spell after it is cast - can be 0, and often is.
     public int duration; //the duration of the spell itself (transferred effects can have longer durations) - after this timer runs to 0 the spell object is destroyed
     public GameObject target; //the target for the spell, if applicable

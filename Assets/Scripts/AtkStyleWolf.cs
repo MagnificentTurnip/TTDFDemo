@@ -55,8 +55,7 @@ public class AtkStyleWolf : AtkStyle {
             idleCounter = 60; //always remember to reset the idle counter
         }
         stat.MP -= 20;
-        status.parryLock = 60;
-        status.parryFrames = 15;
+        StartCoroutine(status.Parry(0.3f, 15, 60, 60));
         movement.motor.instantBurst(-700f, 100f);
     }
 
@@ -67,8 +66,7 @@ public class AtkStyleWolf : AtkStyle {
             idleCounter = 60; //always remember to reset the idle counter
         }
         stat.MP -= 20;
-        status.parryLock = 60;
-        status.parryFrames = 15;
+        StartCoroutine(status.Parry(0.3f, 15, 60, 60));
         movement.motor.instantBurst(700f, -100f);
     }
 
@@ -81,7 +79,7 @@ public class AtkStyleWolf : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
-            _attackOwnerStatus: status, //here's the status manager
+            _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>() as BoxCollider, //this attack uses a box collider
             _GFXAnimation: "quickBite",
@@ -188,7 +186,7 @@ public class AtkStyleWolf : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
-            _attackOwnerStatus: status, //here's the status manager
+            _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "forwardBite",
@@ -296,7 +294,7 @@ public class AtkStyleWolf : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
-            _attackOwnerStatus: status, //here's the status manager
+            _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "lSwipe",
@@ -406,7 +404,7 @@ public class AtkStyleWolf : AtkStyle {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
-            _attackOwnerStatus: status, //here's the status manager
+            _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "rSwipe",
@@ -517,8 +515,8 @@ public class AtkStyleWolf : AtkStyle {
         currentAttack.transform.parent = chest.transform;
 
         //set the attack data
-        currentAttack.data = new Attack.atkData( //100, 20, 60
-            _attackOwnerStatus: status, //here's the status manager
+        currentAttack.data = new Attack.atkData(
+            _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "pounce",
@@ -635,7 +633,7 @@ public class AtkStyleWolf : AtkStyle {
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
         //movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
-        StartCoroutine(movement.motor.timedBurst(2f, 5000f, 50f, 0f, 0f, 0, 0f)); //this move moves launches you forward
+        StartCoroutine(movement.motor.timedBurst(2f, 5500f, 0f, -4100f, 0f, 2, 0.45f)); //this move moves launches you forward
 
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 20; //always remember to reset the idle counter
     }
@@ -658,6 +656,7 @@ public class AtkStyleWolf : AtkStyle {
         //call the attack progression and return to idle functions that have been overridden in this class
         attackProgression();
         returnToIdle();
+        nonSpellAtkStyle();
     }
 
 }

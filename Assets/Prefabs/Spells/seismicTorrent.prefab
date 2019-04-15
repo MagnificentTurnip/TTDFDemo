@@ -20,7 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4379573423618016}
   - component: {fileID: 114268696340072004}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: seismicTorrent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34,7 +34,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1965772703564268}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 62.590096, y: -66.06511, z: 47.557144}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -56,6 +56,7 @@ MonoBehaviour:
   stat: {fileID: 0}
   charStat: {fileID: 0}
   movement: {fileID: 0}
+  hitlag: 0
   debug: 1
   cube: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   sphere: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
@@ -67,9 +68,12 @@ MonoBehaviour:
   animator: {fileID: 0}
   hitboxAnimatorController: {fileID: 9100000, guid: 7f896de0f9a4ba34883465e674966389,
     type: 2}
+  spellName: Seismic Torrent
   spellCode: 234
-  castTime: 30
+  castTime: 25
+  postCastTime: 15
   cost: 40
+  costDeducted: 0
   channelTime: 0
   duration: 65
   target: {fileID: 0}

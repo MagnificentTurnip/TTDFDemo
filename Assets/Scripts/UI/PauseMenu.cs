@@ -4,39 +4,64 @@ using UnityEngine;
 
 public class PauseMenu : MonoBehaviour {
 
+    public static bool menuPaused = false;
+    public static bool miniMenuPaused = false;
     public static bool paused = false;
     public GameObject pauseMenu;
+    public GameObject miniPauseMenu;
 
-    public void resumeGame()
+    public void MenuResumeGame()
     {
+        menuPaused = false;
         pauseMenu.SetActive(false);
-        Time.timeScale = 1f;
-        paused = false;
+        Resume();
     }
 
-    public void pauseGame()
+    public void MenuPauseGame()
     {
+        menuPaused = true;
         pauseMenu.SetActive(true);
+        Pause();
+    }
+
+    public void MiniResumeGame() {
+        miniMenuPaused = false;
+        miniPauseMenu.SetActive(false);
+        Resume();
+    }
+
+    public void MiniPauseGame() {
+        miniMenuPaused = true;
+        miniPauseMenu.SetActive(true);
+        Pause();
+    }
+
+    public void Pause() {
         Time.timeScale = 0f;
         paused = true;
     }
 
-    public void settingsMenu()
+    public void Resume() {
+        Time.timeScale = 1f;
+        paused = false;
+    }
+
+    public void SettingsMenu()
     {
         Debug.Log("This is where I'd put the settings menu. IF I HAD ONE.");
     }
 
-    public void quitAreYouSure()
+    public void QuitAreYouSure()
     {
         Debug.Log("Are you sure? Well you can't answer, you donut.");
     }
 
-    public void quitGame()
+    public void QuitGame()
     {
 
     }
 
-    public void noQuit()
+    public void NoQuit()
     {
 
     }
@@ -46,12 +71,12 @@ public class PauseMenu : MonoBehaviour {
 	void Update () {
 		if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (paused)
+            if (menuPaused)
             {
-                resumeGame();
+                MenuResumeGame();
             } else
             {
-                pauseGame();
+                MenuPauseGame();
             }
 
         }

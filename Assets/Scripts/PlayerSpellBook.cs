@@ -6,6 +6,7 @@ public class PlayerSpellBook : MonoBehaviour {
 
     public List<GameObject> spellsKnown;
     public List<GameObject> runningSpells;
+    public Spell runningSpellScript;
     public Spell currentSpell;
     public AtkStyle style;
     public PlayerInput playIn;
@@ -61,22 +62,22 @@ public class PlayerSpellBook : MonoBehaviour {
             //Spell input management - needs to be only on press to prevent large strings of the same command on a single tap of the button/key
             if (playIn.button1 && b1release) {
                 currentSpellCode = currentSpellCode + "1"; //add the button's code to the spellCode
-                displaySpellCode = displaySpellCode + playIn.button1Control;
+                displaySpellCode = displaySpellCode + playIn.button1Control[0];
                 b1release = false;
             }
             if (playIn.button2 && b2release) {
                 currentSpellCode = currentSpellCode + "2"; //add the button's code to the spellCode
-                displaySpellCode = displaySpellCode + playIn.button2Control;
+                displaySpellCode = displaySpellCode + playIn.button2Control[0];
                 b2release = false;
             }
             if (playIn.button3 && b3release) {
                 currentSpellCode = currentSpellCode + "3"; //add the button's code to the spellCode
-                displaySpellCode = displaySpellCode + playIn.button3Control;
+                displaySpellCode = displaySpellCode + playIn.button3Control[0];
                 b3release = false;
             }
             if (playIn.button4 && b4release) {
                 currentSpellCode = currentSpellCode + "4"; //add the button's code to the spellCode
-                displaySpellCode = displaySpellCode + playIn.button4Control;
+                displaySpellCode = displaySpellCode + playIn.button4Control[0];
                 b4release = false;
             }
             if (!playIn.button1) {
@@ -97,11 +98,16 @@ public class PlayerSpellBook : MonoBehaviour {
                 //perform the magical evade
                 style.movement.evade(style.movement.rollSpeed, 0f, style.movement.rollTime);
                 style.animator.Play("magicEvade", 2, 0f);
-                //transform.Translate(0, 0.6f, 0);
                 style.status.invulnerable = 30;
                 style.status.Incorporealise(30);
                 style.status.castLock = 30;
                 style.stat.MP -= 30;
+            }
+            if (playIn.guard && style.status.canCast() && style.status.castLock <= 0 && style.status.channelLock <= 0 && currentSpellCode == "") {
+                //perform the magical guard
+                style.status.casting = false;
+                style.status.guarding = true;
+                style.status.magicGuard = true;
             }
 
             if (playIn.movement && style.status.canCast() && style.status.castLock <= 0 && style.status.channelLock <= 0) {
@@ -114,29 +120,30 @@ public class PlayerSpellBook : MonoBehaviour {
                         else {
                             repeatSpell = false;
                             for (int i2 = 0; i2 < runningSpells.Count; i2++) {
-                                if (currentSpellCode == runningSpells[i2].GetComponent<Spell>().spellCode) {
+                                if (spellsKnown[i].GetComponent<Spell>().spellName == runningSpells[i2].GetComponent<Spell>().spellName) {
                                     repeatSpell = true;
                                 }
                             }
                             if (!repeatSpell) {
                                 currentSpell = Instantiate(spellsKnown[i]).GetComponent<Spell>();
-                                currentSpell.debug = true; //testing mode
+                                //currentSpell.debug = true; //testing mode
                                 currentSpell.mouseTarget = true;
+                                currentSpell.target = playIn.currentTarget;
                                 currentSpell.status = style.status;
                                 currentSpell.charStat = style.charStat;
                                 currentSpell.movement = style.movement;
+                                currentSpell.animator = style.animator;
                                 currentSpell.transform.position = transform.position;
                                 currentSpell.transform.rotation = transform.rotation;
                                 currentSpell.active = true;
                                 currentSpell.ready = 0;
                                 currentSpell.Start();
-                                style.status.castLock = currentSpell.castTime;
-                                style.status.channelLock = currentSpell.castTime + currentSpell.channelTime;
-                                style.stat.MP -= currentSpell.cost;
+                                style.status.castLock = currentSpell.castTime + currentSpell.postCastTime;
+                                style.status.channelLock = currentSpell.castTime + +currentSpell.postCastTime + currentSpell.channelTime;
                                 currentSpellCode = "";
                                 displaySpellCode = "";
                                 runningSpells.Add(currentSpell.gameObject);
-                                style.forceSpellcast(currentSpell.castTime + 5); //set the spellcast state for a while
+                                style.forceSpellcast(currentSpell.castTime + currentSpell.postCastTime + 5); //set the spellcast state for a while
                             }
                         }
                     }
@@ -148,7 +155,7 @@ public class PlayerSpellBook : MonoBehaviour {
                     if (currentSpellCode == spellsKnown[i].GetComponent<Spell>().spellCode) {
                         repeatSpell = false;
                         for (int i2 = 0; i2 < runningSpells.Count; i2++) {
-                            if (currentSpellCode == runningSpells[i2].GetComponent<Spell>().spellCode) {
+                            if (spellsKnown[i].GetComponent<Spell>().spellName == runningSpells[i2].GetComponent<Spell>().spellName) {
                                 repeatSpell = true;
                             }
                         }
@@ -156,6 +163,7 @@ public class PlayerSpellBook : MonoBehaviour {
                             currentSpell = Instantiate(spellsKnown[i]).GetComponent<Spell>();
                             currentSpell.debug = true; //testing mode
                             currentSpell.mouseTarget = true;
+                            currentSpell.target = playIn.currentTarget;
                             currentSpell.status = style.status;
                             currentSpell.charStat = style.charStat;
                             currentSpell.movement = style.movement;
@@ -164,13 +172,12 @@ public class PlayerSpellBook : MonoBehaviour {
                             currentSpell.active = true;
                             currentSpell.ready = 0;
                             currentSpell.Start();
-                            style.status.castLock = currentSpell.castTime;
-                            style.status.channelLock = currentSpell.castTime + currentSpell.channelTime;
-                            style.stat.MP -= currentSpell.cost;
+                            style.status.castLock = currentSpell.castTime + currentSpell.postCastTime;
+                            style.status.channelLock = currentSpell.castTime + +currentSpell.postCastTime + currentSpell.channelTime;
                             currentSpellCode = "";
                             displaySpellCode = "";
                             runningSpells.Add(currentSpell.gameObject);
-                            style.forceSpellcast(currentSpell.castTime + 5); //set the spellcast state for a while
+                            style.forceSpellcast(currentSpell.castTime + currentSpell.postCastTime + 5); //set the spellcast state for a while
                         }
                     }
                 }
@@ -213,24 +220,40 @@ public class PlayerSpellBook : MonoBehaviour {
             }
         }
         for (int i = 0; i < runningSpells.Count; i++) {
-            runningSpells[i].GetComponent<Spell>().castTime--;
-            if (runningSpells[i].GetComponent<Spell>().castTime <= 0 && runningSpells[i].GetComponent<Spell>().ready == 0) {
-                runningSpells[i].GetComponent<Spell>().ready = 1;
+            runningSpellScript = runningSpells[i].GetComponent<Spell>();
+            runningSpellScript.castTime--;
+            if (runningSpellScript.castTime <= 0 && runningSpellScript.ready == 0) {
+                runningSpellScript.ready = 1;
+                if (!runningSpellScript.costDeducted) {
+                    style.stat.MP -= runningSpellScript.cost;
+                    runningSpellScript.costDeducted = true;
+                }
             }
-            if (runningSpells[i].GetComponent<Spell>().castTime <= 0 && runningSpells[i].GetComponent<Spell>().channelTime > 0) {
-                runningSpells[i].GetComponent<Spell>().channelTime--;
+            if (runningSpellScript.castTime <= 0 && runningSpellScript.postCastTime > 0) {
+                runningSpellScript.postCastTime--;
             }
-            if (runningSpells[i].GetComponent<Spell>().castTime <= 0 && runningSpells[i].GetComponent<Spell>().channelTime <= 0) {
-                runningSpells[i].GetComponent<Spell>().duration--;
+            if (runningSpellScript.castTime <= 0 && runningSpellScript.postCastTime <= 0 && runningSpellScript.channelTime > 0) {
+                runningSpellScript.channelTime--;
             }
-            if (runningSpells[i].GetComponent<Spell>().duration <= 0) {
+            if (runningSpellScript.castTime <= 0 && runningSpellScript.postCastTime <= 0 && runningSpellScript.channelTime <= 0) {
+                runningSpellScript.duration--;
+            }
+            if (runningSpellScript.duration <= 0) {
                 toDestroy = runningSpells[i];
                 runningSpells.Remove(runningSpells[i]);
                 toDestroy.GetComponent<Spell>().destroySpell();
             }
-             else if (runningSpells[i].GetComponent<Spell>().ready == 1) {
-                runningSpells[i].GetComponent<Spell>().CastSpell();
+            else if (runningSpellScript.ready == 1) {
+                runningSpellScript.CastSpell();
             }
+        }
+        
+        if (style.status.magicGuard) {
+            style.stat.MP -= (10f + style.stat.MPregen) / 60f;
+            StartCoroutine(style.status.Parry(0f, 2, 0, 0));
+        }
+        if ((!(style.status.guarding || style.status.isGuardStunned())) || style.stat.MP <= 0) {
+            style.status.magicGuard = false;
         }
     }
 }

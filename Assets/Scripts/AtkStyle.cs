@@ -19,6 +19,7 @@ public class AtkStyle : MonoBehaviour {
     public StatSheet stat;
     public CharStatSheet charStat; //an attack style might use either a character stat sheet or just a regular one
     public Movement movement;
+    public bool hitlag; //whether or not this style accepts hitlag;
 
     public bool debug;
     public Mesh cube; //for testing hitboxes
@@ -65,7 +66,7 @@ public class AtkStyle : MonoBehaviour {
         print("You need to override this function in a specific attack style that inherits from this class. Look at the existing AtkStyles.");
     }
 
-    public void attackProgression() { //manages attack progression from delay, to duration, to end, and eventually its automatic destruction
+    public void attackProgression() { //manages attack progression from delay, to duration, to end, and eventually its automatic destruction, with the added nature of stopping their movement components when they cannot be accessed
         for (int i = 0; i < instantiatedAttacks.Count; i++) {
 
             
@@ -113,6 +114,9 @@ public class AtkStyle : MonoBehaviour {
                 }
             
         }
+        if (status.guarding || status.rolling) {
+            StopAllCoroutines();
+        }
     }
 
     public void destroyAllAttacks() {
@@ -120,8 +124,15 @@ public class AtkStyle : MonoBehaviour {
             toDestroy = instantiatedAttacks[i];
             //instantiatedAttacks.Remove(instantiatedAttacks[i]);
             Destroy(toDestroy.gameObject);
+            StopAllCoroutines();
         }
         instantiatedAttacks.Clear();
+    }
+
+    public void nonSpellAtkStyle() { //if this attack style has nothing to do with spellcasting, then delete all of its attacks when spellcasting
+        if (status.casting) {
+            destroyAllAttacks();
+        }
     }
 
     public void showHurtBox() {

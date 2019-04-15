@@ -11,13 +11,17 @@ public class Thunderstroke : Spell {
     Vector3 savedPosition;
 
     public GameObject shadow;
-    
-	// Use this for initialization
-	public override void Start () {
+
+    public bool init;
+
+    // Use this for initialization
+    public override void Start () {
         base.Start();
         cam = Camera.main;
+        spellName = "Thunderstroke";
         spellCode = "3113";
         castTime = 20;
+        postCastTime = 0;
         channelTime = 140;
         duration = 40;
         cost = 100; //COST MUST BE PRE-SET IN THE PREFAB TO ALLOW MISFIRING
@@ -32,7 +36,7 @@ public class Thunderstroke : Spell {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
-            _attackOwnerStatus: status, //here's the status manager
+            _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<CapsuleCollider>(), //this attack uses a capsule collider
             _GFXAnimation: "thunderstroke",
@@ -116,7 +120,7 @@ public class Thunderstroke : Spell {
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
-            _attackOwnerStatus: status, //here's the status manager
+            _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<SphereCollider>(), //this attack uses a sphere collider
             _GFXAnimation: "thunderstroke", //same animation; no need for a second one
@@ -131,7 +135,7 @@ public class Thunderstroke : Spell {
             _hitsStanding: true,
             _hitsFloored: true,
             _contact: false, //doesn't make contact.
-            _unblockable: 1); //can only be parried.
+            _unblockable: 1); //can only be parried or magically guarded.
 
         currentAttack.transform.localScale = new Vector3(currentAttack.data.xScale, currentAttack.data.yScale, currentAttack.data.zScale);
 
@@ -161,7 +165,9 @@ public class Thunderstroke : Spell {
         currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
 
         //set the attack's properties on guard
-        currentAttack.onGuard = currentAttack.onHit; //this move is unblockable 3 so no guard stuff.
+        currentAttack.onGuard = new Attack.hitProperties(
+            _causesGuardStun: 10,
+            _onHitForwardBackward: -300f);
 
         //set the attack's properties on charge guard
         currentAttack.onChargeGuard = currentAttack.onGuard; //this move doesn't charge so they're the same as on guard properties
@@ -194,18 +200,6 @@ public class Thunderstroke : Spell {
     public override void CastSpell() {
         base.CastSpell();
 
-        //place the thundercloud over the current target
-        if (mouseTarget) {
-            playInRay = cam.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(playInRay, out playInHit, 100, 1 << LayerMask.NameToLayer("Terrain"))) {
-                playInHit.point = new Vector3(playInHit.point.x, 0, playInHit.point.z);
-                transform.position = playInHit.point;
-            }
-        }
-        else {
-            transform.position = new Vector3(target.transform.position.x, 0.21f, target.transform.position.z);
-        }
-
         ThunderstrokeAttacks();
     }
 
@@ -216,6 +210,21 @@ public class Thunderstroke : Spell {
 
     // FixedUpdate is called once per physics frame
     public override void FixedUpdate() {
+        if (!init) {
+            //place the thundercloud over the current target
+            if (mouseTarget) {
+                playInRay = cam.ScreenPointToRay(Input.mousePosition);
+                if (Physics.Raycast(playInRay, out playInHit, 100, 1 << LayerMask.NameToLayer("Terrain"))) {
+                    playInHit.point = new Vector3(playInHit.point.x, 0, playInHit.point.z);
+                    transform.position = playInHit.point;
+                }
+            }
+            else {
+                transform.position = new Vector3(target.transform.position.x, 0.21f, target.transform.position.z);
+            }
+            init = true;
+        }
+
         shadow.transform.localScale = new Vector3(shadow.transform.localScale.x * 0.99f, shadow.transform.localScale.y, shadow.transform.localScale.z * 0.99f);
 
         base.FixedUpdate();

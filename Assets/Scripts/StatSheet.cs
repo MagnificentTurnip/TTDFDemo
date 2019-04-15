@@ -80,8 +80,13 @@ public class StatSheet : MonoBehaviour {
             MP = 0;
         }
 
-        if (HP < 0) {
-            //u ded boi
-        }
+        //consequences for HP loss are handled in an object's DeathManager, but by means of explanation:
+        /*
+        if (HP < 0) { //if HP is less than zero, then you die
+            Die() or something
+        } else if (HP == 0) { //if HP is exactly zero, then you just get knocked out. 
+            KO() or something
+        } //Very difficult to do outside of Impact or Astral damage, which automatically leave units at 0 who would otherwise be killed.
+        */
     }
 }
