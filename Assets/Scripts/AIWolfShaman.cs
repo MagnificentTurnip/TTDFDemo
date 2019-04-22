@@ -678,7 +678,7 @@ public class AIWolfShaman : MonoBehaviour {
         if (style.status.isFloored() && !(style.status.slain || style.status.unconscious)) {
             ChangeGoal(goalStates.evade);
             goalStarted = false;
-            goalDelay = Random.Range(0, 120);
+            //goalDelay = Random.Range(0, 120);
         }
 
         if (big) {

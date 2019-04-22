@@ -47,7 +47,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Armature_001/Bone/drawLight2
+    path: Armature_001/Blade_R/drawLight
   m_ScaleCurves: []
   m_FloatCurves:
   - curve:
@@ -625,7 +625,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_Range
-    path: Armature_001/Bone/drawLight2
+    path: Armature_001/Blade_R/drawLight
     classID: 108
     script: {fileID: 0}
   m_PPtrCurves: []
@@ -637,7 +637,7 @@ AnimationClip:
   m_ClipBindingConstant:
     genericBindings:
     - serializedVersion: 2
-      path: 3921366406
+      path: 329154478
       attribute: 1
       script: {fileID: 0}
       typeID: 4
@@ -714,7 +714,7 @@ AnimationClip:
       customType: 22
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 3921366406
+      path: 329154478
       attribute: 514968105
       script: {fileID: 0}
       typeID: 108
@@ -1299,7 +1299,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
-    path: Armature_001/Bone/drawLight2
+    path: Armature_001/Blade_R/drawLight
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1336,7 +1336,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
-    path: Armature_001/Bone/drawLight2
+    path: Armature_001/Blade_R/drawLight
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1373,7 +1373,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
-    path: Armature_001/Bone/drawLight2
+    path: Armature_001/Blade_R/drawLight
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1428,7 +1428,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_Range
-    path: Armature_001/Bone/drawLight2
+    path: Armature_001/Blade_R/drawLight
     classID: 108
     script: {fileID: 0}
   m_EulerEditorCurves: []

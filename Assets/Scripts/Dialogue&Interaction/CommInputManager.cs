@@ -59,6 +59,10 @@ public class CommInputManager : MonoBehaviour {
     RectTransform insBtnContinueRect;
     RectTransform insBtnEndRect;
 
+    public void StopBlocks() {
+        flow.StopAllBlocks();
+        
+    }
 
     public bool MouseIntersects(RectTransform transformRect) {
         Rect rect = new Rect(new Vector2(transformRect.position.x - (transformRect.rect.width / 4), transformRect.position.y - (transformRect.rect.height / 4)), new Vector2 (transformRect.rect.width/2, transformRect.rect.height/2));
@@ -146,7 +150,7 @@ public class CommInputManager : MonoBehaviour {
             if (playStatus.sheathed && MouseIntersects(intBtnEndRect)) {
                 flow.SetBooleanVariable("intEnd", true);
             }
-            if (playStatus.sheathed && MouseIntersects(intBtnContinueRect)) {
+            if (playStatus.sheathed && MouseIntersects(intBtnPauseGameRect)) {
                 if (!PauseMenu.menuPaused) {
                     if (PauseMenu.paused) {
                         pauseMenu.Resume();
@@ -257,8 +261,8 @@ public class CommInputManager : MonoBehaviour {
             }
         }
 
-        if (!(MouseIntersects(dlgBtnContinueRect) || MouseIntersects(dlgBtnEndRect) || MouseIntersects(dlgBtnInterruptRect) || MouseIntersects(dlgBtnPauseGameRect)
-            || MouseIntersects(intBtnContinueRect) || MouseIntersects(intBtnEndRect) || MouseIntersects(intBtnPauseGameRect)
+        if (!(MouseIntersects(dlgBtnContinueRect) || MouseIntersects(dlgBtnEndRect) ||  MouseIntersects(dlgBtnInterruptRect) || MouseIntersects(dlgBtnPauseGameRect) 
+            || MouseIntersects(intBtnContinueRect) || MouseIntersects(intBtnEndRect) ||  MouseIntersects(intBtnPauseGameRect) 
             || MouseIntersects(insBtnContinueRect) || MouseIntersects(insBtnEndRect))) {
             helperText.text = "";
         }

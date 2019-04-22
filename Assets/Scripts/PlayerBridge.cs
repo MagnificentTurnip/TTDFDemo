@@ -157,15 +157,15 @@ public class PlayerBridge : MonoBehaviour {
                     cmdIn = buffer.fwdA;
                     cmdRunning = true;
                 }
-                else if (playIn.bakAS.Check()) {
+                else if (playIn.bakA.Check()) {
                     cmdIn = buffer.bakA;
                     cmdRunning = true;
                 }
-                else if (playIn.rgtAS.Check()) {
+                else if (playIn.rgtA.Check()) {
                     cmdIn = buffer.rgtA;
                     cmdRunning = true;
                 }
-                else if (playIn.lftAS.Check()) {
+                else if (playIn.lftA.Check()) {
                     cmdIn = buffer.lftA;
                     cmdRunning = true;
                 }

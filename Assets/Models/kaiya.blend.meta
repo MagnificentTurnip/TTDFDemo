@@ -71,6 +71,8 @@ ModelImporter:
     100130: Tunic
     100132: UpperArm_L
     100134: UpperArm_R
+    100136: Blade_L
+    100138: Blade_R
     400000: Armature
     400002: Armature_001
     400004: Armature_002
@@ -139,6 +141,8 @@ ModelImporter:
     400130: Tunic
     400132: UpperArm_L
     400134: UpperArm_R
+    400136: Blade_L
+    400138: Blade_R
     2100000: NamelessMetal
     2100002: KaiyaOvercloth
     2100004: KaiyaBase
@@ -210,6 +214,7 @@ ModelImporter:
     7400106: getUpFront
     7400108: SitDown
     7400110: Sitting
+    7400112: BackwardBladework
     9500000: //RootNode
     13700000: Boots
     13700002: Braces
@@ -1803,6 +1808,34 @@ ModelImporter:
       loop: 0
       hasAdditiveReferencePose: 0
       loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: BackwardBladework
+      takeName: BackwardBladework
+      firstFrame: 0
+      lastFrame: 86
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0

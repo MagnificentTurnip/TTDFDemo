@@ -161,7 +161,6 @@ public class PlayerSpellBook : MonoBehaviour {
                         }
                         if (!repeatSpell) {
                             currentSpell = Instantiate(spellsKnown[i]).GetComponent<Spell>();
-                            currentSpell.debug = true; //testing mode
                             currentSpell.mouseTarget = true;
                             currentSpell.target = playIn.currentTarget;
                             currentSpell.status = style.status;

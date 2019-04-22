@@ -69,7 +69,7 @@ public class PlayerBridgeWish : PlayerBridge { //bridges between player input an
 
             //attacks
             if (status.canAttack()) {
-                
+                print(cmdOut);
                 switch (style.state) {
                     
                     case AtkStyleWish.attackStates.idle:
@@ -84,6 +84,10 @@ public class PlayerBridgeWish : PlayerBridge { //bridges between player input an
                         } else
                         if (cmdOut == buffer.fwdA || lck == buffer.fwdA) {
                             style.standardBladework1();
+                            style.bladeTracker = 0;
+                        }
+                        if (cmdOut == buffer.bakA || lck == buffer.bakA) {
+                            style.backwardBladework();
                             style.bladeTracker = 0;
                         }
                         if (cmdOut == buffer.fwdS || lck == buffer.fwdS) {

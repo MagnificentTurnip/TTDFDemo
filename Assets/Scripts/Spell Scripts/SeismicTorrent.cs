@@ -32,7 +32,7 @@ public class SeismicTorrent : Spell {
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
             _GFXAnimation: "seismicTorrent",
             _HitboxAnimation: "defaultCube",
-            _xScale: 2f,
+            _xScale: 4f,
             _yScale: 1f,
             _zScale: 1f,
             _attackDelay: 10, //attack begins quickly

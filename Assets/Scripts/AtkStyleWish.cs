@@ -180,242 +180,7 @@ public class AtkStyleWish : AtkStyle {
 
     //IDEA FOR KNOCKBACK. Instead of just forwardback and leftright, include awaytowards force too. Awaytowards is the current implementation. forwardback and leftright are currentAttack.data.attackOwnerStatus.gameObject.transform.(forward or right) * force respectively.
 
-    public void advancingBladework() {
-        //create the new attack as a child of this object
-        currentAttack = Instantiate(attack).GetComponent<Attack>();
-        currentAttack.transform.position = rgtHndBone.transform.position;
-        currentAttack.transform.parent = rgtHndBone.transform;
 
-        //set the attack data
-        currentAttack.data = new Attack.atkData(
-            _attackOwnerStyle: this, //here's the style
-            _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
-            _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
-            _GFXAnimation: "advancingBladework",
-            _HitboxAnimation: "rgtHndMatch", //just uses the default animation that matches the hitbox to the right hand bone
-            _xScale: 0.34f, //match the size of the blade, more or less
-            _yScale: 0.34f,
-            _zScale: 1.23f,
-            _attackDelay: 35, //delay of 35 frames before the attack starts
-            _attackDuration: 17, //17 frames within which the attack is active
-            _attackEnd: 5, //and 5 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
-            _hitsAirborne: true, //hits airborne, standing and floored.
-            _hitsStanding: true,
-            _hitsFloored: true,
-            _contact: true, //makes contact.
-            _unblockable: 0); //and isn't unblockable (this is the default, so it doesn't need to be here but I like keeping it here as an example if I want to change it)
-
-        if (debug == true) {
-            currentAttack.gameObject.GetComponent<MeshFilter>().mesh = cube; //for testing the hitbox
-        }
-
-        if (wraithMode > 0) {
-            currentAttack.data.xScale += 0.02f;
-            currentAttack.data.yScale += 0.02f;
-            currentAttack.data.zScale += 0.3f;
-        }
-
-        currentAttack.transform.localScale = new Vector3(currentAttack.data.xScale, currentAttack.data.yScale, currentAttack.data.zScale);
-
-        currentAttack.data.HitboxAnimator.runtimeAnimatorController = hitboxAnimatorController; //set the attack hitbox animator's animator controller to be the one for this attack style
-        currentAttack.data.atkHitBox.isTrigger = true; //make the hitbox a trigger so that it doesn't have physics
-        state = attackStates.bladework1; //set the attack state;
-
-        //set the attack's properties on hit (all unset properties are defaults)
-        if (charStat != null) {
-            tempDamage.damageAmount = 10f + (0.25f * charStat.STR) + (0.25f * charStat.DEX);
-        }
-        else {
-            tempDamage.damageAmount = 10f + 1f * stat.Level;
-        }
-        tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
-            _causesFlinch: true,
-            _causesStun: 20,
-            _onHitForwardBackward: -600f,
-            _onHitRightLeft: 50f);
-
-        //set the attack's properties on charge hit
-        currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
-
-        //set the attack's properties on guard
-        currentAttack.onGuard = new Attack.hitProperties(
-            _SPcost: 10f,
-            _causesGuardStun: 20,
-            _onHitForwardBackward: -650f,
-            _onHitRightLeft: 50f);
-
-        //set the attack's properties on charge guard
-        currentAttack.onChargeGuard = currentAttack.onGuard; //this move doesn't charge so they're the same as on guard properties
-
-        //set the attack's properties on vulnerable hit
-        if (charStat != null) {
-            tempDamage.damageAmount = 14f + (0.25f * charStat.STR) + (0.25f * charStat.DEX);
-        }
-        else {
-            tempDamage.damageAmount = 14f + 1.4f * stat.Level;
-        }
-        tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onVulnerableHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
-            _causesFlinch: true,
-            _causesStun: 50,
-            _causesFloored: 120,
-            _onHitForwardBackward: -550f,
-            _onHitRightLeft: 50f);
-
-        //set the attack's properties on vulnerable charge hit
-        currentAttack.onVulnerableChargeHit = currentAttack.onVulnerableHit; //this move doesn't charge
-
-        //set the attack's properties on floored hit
-        if (charStat != null) {
-            tempDamage.damageAmount = 8f + (0.25f * charStat.STR) + (0.25f * charStat.DEX);
-        }
-        else {
-            tempDamage.damageAmount = 8f + 0.8f * stat.Level;
-        }
-        tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onFlooredHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
-            _causesFlinch: true,
-            _causesStun: 15,
-            _onHitForwardBackward: -400f,
-            _onHitRightLeft: 50f);
-
-        //set the attack's properties on charged floored hit
-        currentAttack.onFlooredChargeHit = currentAttack.onFlooredHit; //this move doesn't charge
-
-        //set the attack's properties on airborne hit
-        if (charStat != null) {
-            tempDamage.damageAmount = 12f + (0.25f * charStat.STR) + (0.25f * charStat.DEX);
-        }
-        else {
-            tempDamage.damageAmount = 12f + 1.2f * stat.Level;
-        }
-        tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onAirborneHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
-            _causesFlinch: true,
-            _causesStun: 50,
-            _causesFloored: 100,
-            _onHitForwardBackward: -300f,
-            _onHitRightLeft: 50f);
-
-        //set the attack's properties on charged airborne hit
-        currentAttack.onAirborneChargeHit = currentAttack.onAirborneHit; //this move doesn't charge
-
-        //play the animations
-        currentAttack.data.HitboxAnimator.Play(currentAttack.data.HitboxAnimation);
-        animator.Play(currentAttack.data.GFXAnimation, 0, 0f);
-
-        instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
-        movement.pointToTarget(); //this move takes perfect directional input, meaning you can even direct it outside of the space within which you can input the command for it
-        
-        StartCoroutine(movement.motor.timedBurst(0f, 0f, 0f, 3000f, 50f, 2, 0.3f)); //with this move, you jump forward
-
-
-        //THIS ATTACK HAS A SECOND ATTACK, TECHNICALLY BEFORE THE FIRST BUT IT ISN'T THE MAIN PORTION AND EXISTS MAINLY FOR PREVENTING GUARD-CANCELLATION ---------------------------
-
-        //create the new attack as a child of this object
-        currentAttack = Instantiate(attack).GetComponent<Attack>();
-        currentAttack.transform.position = rgtHndBone.transform.position;
-        currentAttack.transform.parent = rgtHndBone.transform;
-
-        //set the attack data
-        currentAttack.data = new Attack.atkData(
-            _attackOwnerStyle: this, //here's the style
-            _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
-            _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
-            _GFXAnimation: "advancingBladework",
-            _HitboxAnimation: "rgtHndMatch", //just uses the default animation that matches the hitbox to the right hand bone
-            _xScale: 0.34f, //match the size of the blade, more or less
-            _yScale: 0.34f,
-            _zScale: 1.23f,
-            _SPcost: 50f,
-            _attackDelay: 14, //delay of 14 frames before the attack starts
-            _attackDuration: 21, //21 frames within which the attack is active
-            _attackEnd: 10, //and 10 frames at the end before the attack is considered complete even though it really doesn't matter in this case. attackCharge is left at the default of 0 as this attack doesn't charge.
-            _hitsAirborne: true, //hits airborne only.
-            _hitsStanding: false,
-            _hitsFloored: false,
-            _contact: true); //and makes contact.
-
-        if (debug == true) {
-            currentAttack.gameObject.GetComponent<MeshFilter>().mesh = cube; //for testing the hitbox
-        }
-
-        if (wraithMode > 0) {
-            currentAttack.data.xScale += 0.02f;
-            currentAttack.data.yScale += 0.02f;
-            currentAttack.data.zScale += 0.3f;
-        }
-
-        currentAttack.transform.localScale = new Vector3(currentAttack.data.xScale, currentAttack.data.yScale, currentAttack.data.zScale);
-
-        currentAttack.data.HitboxAnimator.runtimeAnimatorController = hitboxAnimatorController; //set the attack hitbox animator's animator controller to be the one for this attack style
-        currentAttack.data.atkHitBox.isTrigger = true; //make the hitbox a trigger so that it doesn't have physics
-        //the attack state has already been set
-
-        //set the attack's properties on hit (all unset properties are defaults)
-        if (charStat != null) {
-            tempDamage.damageAmount = 3f + (0.1f * charStat.DEX);
-        }
-        else {
-            tempDamage.damageAmount = 3f + 0.1f * stat.Level;
-        }
-        tempDamage.damageType = Attack.typeOfDamage.Piercing;
-        currentAttack.onHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
-            _causesFlinch: true,
-            _causesStun: 5,
-            _onHitForwardBackward: -350f,
-            _onHitRightLeft: 0f);
-
-        //set the attack's properties on charge hit
-        currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
-
-        //set the attack's properties on guard
-        currentAttack.onGuard = new Attack.hitProperties(
-            _SPcost: 10f,
-            _causesGuardStun: 7,
-            _onHitForwardBackward: -150f,
-            _onHitRightLeft: 0f);
-
-        //set the attack's properties on charge guard
-        currentAttack.onChargeGuard = currentAttack.onGuard; //this move doesn't charge so they're the same as on guard properties
-
-        //set the attack's properties on vulnerable hit
-        currentAttack.onVulnerableHit = currentAttack.onHit; //no additional properties on vulnerable hit
-
-        //set the attack's properties on vulnerable charge hit
-        currentAttack.onVulnerableChargeHit = currentAttack.onVulnerableHit; //this move doesn't charge
-
-        //set the attack's properties on floored hit
-        currentAttack.onFlooredHit = currentAttack.onHit; //this move doesn't even hit floored targets
-
-        //set the attack's properties on charged floored hit
-        currentAttack.onFlooredChargeHit = currentAttack.onFlooredHit; //this move doesn't charge
-
-        //set the attack's properties on airborne hit
-        currentAttack.onAirborneHit = currentAttack.onHit; //This attack only hits airborne targets, so just copy onHit but onHit itself will rarely if ever fire
-
-        //set the attack's properties on charged airborne hit
-        currentAttack.onAirborneChargeHit = currentAttack.onAirborneHit; //this move doesn't charge
-
-        //play the animations
-        currentAttack.data.HitboxAnimator.Play(currentAttack.data.HitboxAnimation);
-        //although the hitbox animation needs to be played for this new attack, the previous attack has already dealt with the gfx animation
-
-        instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
-        //movement.pointToTarget(); doesn't need to be called again as the previous 'attack' has already done that
-        //similarly, no additional movement needs to be performed
-
-
-        idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 20; //always remember to reset the idle counter
-
-
-    }
 
     public void standardBladework1() {
         //create the new attack as a child of this object
@@ -2290,6 +2055,251 @@ public class AtkStyleWish : AtkStyle {
         //similarly, no additional movement needs to be performed
 
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 20; //always remember to reset the idle counter
+    }
+
+    public void backwardBladework() {
+        print("test");
+        StartCoroutine(movement.motor.timedBurst(0f, -300f, -100f, 0f, 0f, 0, 0f)); //move back before you move forwards
+        transform.Rotate(transform.up, 180);
+        standardBladework1();
+        animator.Play("backwardBladework", 0, 0f); //this move is basically StandardBladework1 but with some minor edits made
+    }
+
+    public void advancingBladework() {
+        //create the new attack as a child of this object
+        currentAttack = Instantiate(attack).GetComponent<Attack>();
+        currentAttack.transform.position = rgtHndBone.transform.position;
+        currentAttack.transform.parent = rgtHndBone.transform;
+
+        //set the attack data
+        currentAttack.data = new Attack.atkData(
+            _attackOwnerStyle: this, //here's the style
+            _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
+            _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
+            _GFXAnimation: "advancingBladework",
+            _HitboxAnimation: "rgtHndMatch", //just uses the default animation that matches the hitbox to the right hand bone
+            _xScale: 0.34f, //match the size of the blade, more or less
+            _yScale: 0.34f,
+            _zScale: 1.23f,
+            _attackDelay: 35, //delay of 35 frames before the attack starts
+            _attackDuration: 17, //17 frames within which the attack is active
+            _attackEnd: 5, //and 5 frames at the end before the attack is considered complete. attackCharge is left at the default of 0 as this attack doesn't charge.
+            _hitsAirborne: true, //hits airborne, standing and floored.
+            _hitsStanding: true,
+            _hitsFloored: true,
+            _contact: true, //makes contact.
+            _unblockable: 0); //and isn't unblockable (this is the default, so it doesn't need to be here but I like keeping it here as an example if I want to change it)
+
+        if (debug == true) {
+            currentAttack.gameObject.GetComponent<MeshFilter>().mesh = cube; //for testing the hitbox
+        }
+
+        if (wraithMode > 0) {
+            currentAttack.data.xScale += 0.02f;
+            currentAttack.data.yScale += 0.02f;
+            currentAttack.data.zScale += 0.3f;
+        }
+
+        currentAttack.transform.localScale = new Vector3(currentAttack.data.xScale, currentAttack.data.yScale, currentAttack.data.zScale);
+
+        currentAttack.data.HitboxAnimator.runtimeAnimatorController = hitboxAnimatorController; //set the attack hitbox animator's animator controller to be the one for this attack style
+        currentAttack.data.atkHitBox.isTrigger = true; //make the hitbox a trigger so that it doesn't have physics
+        state = attackStates.bladework1; //set the attack state;
+
+        //set the attack's properties on hit (all unset properties are defaults)
+        if (charStat != null) {
+            tempDamage.damageAmount = 10f + (0.25f * charStat.STR) + (0.25f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 10f + 1f * stat.Level;
+        }
+        tempDamage.damageType = Attack.typeOfDamage.Slashing;
+        currentAttack.onHit = new Attack.hitProperties(
+            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+            _causesFlinch: true,
+            _causesStun: 20,
+            _onHitForwardBackward: -600f,
+            _onHitRightLeft: 50f);
+
+        //set the attack's properties on charge hit
+        currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
+
+        //set the attack's properties on guard
+        currentAttack.onGuard = new Attack.hitProperties(
+            _SPcost: 10f,
+            _causesGuardStun: 20,
+            _onHitForwardBackward: -650f,
+            _onHitRightLeft: 50f);
+
+        //set the attack's properties on charge guard
+        currentAttack.onChargeGuard = currentAttack.onGuard; //this move doesn't charge so they're the same as on guard properties
+
+        //set the attack's properties on vulnerable hit
+        if (charStat != null) {
+            tempDamage.damageAmount = 14f + (0.25f * charStat.STR) + (0.25f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 14f + 1.4f * stat.Level;
+        }
+        tempDamage.damageType = Attack.typeOfDamage.Slashing;
+        currentAttack.onVulnerableHit = new Attack.hitProperties(
+            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+            _causesFlinch: true,
+            _causesStun: 50,
+            _causesFloored: 120,
+            _onHitForwardBackward: -550f,
+            _onHitRightLeft: 50f);
+
+        //set the attack's properties on vulnerable charge hit
+        currentAttack.onVulnerableChargeHit = currentAttack.onVulnerableHit; //this move doesn't charge
+
+        //set the attack's properties on floored hit
+        if (charStat != null) {
+            tempDamage.damageAmount = 8f + (0.25f * charStat.STR) + (0.25f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 8f + 0.8f * stat.Level;
+        }
+        tempDamage.damageType = Attack.typeOfDamage.Slashing;
+        currentAttack.onFlooredHit = new Attack.hitProperties(
+            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+            _causesFlinch: true,
+            _causesStun: 15,
+            _onHitForwardBackward: -400f,
+            _onHitRightLeft: 50f);
+
+        //set the attack's properties on charged floored hit
+        currentAttack.onFlooredChargeHit = currentAttack.onFlooredHit; //this move doesn't charge
+
+        //set the attack's properties on airborne hit
+        if (charStat != null) {
+            tempDamage.damageAmount = 12f + (0.25f * charStat.STR) + (0.25f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 12f + 1.2f * stat.Level;
+        }
+        tempDamage.damageType = Attack.typeOfDamage.Slashing;
+        currentAttack.onAirborneHit = new Attack.hitProperties(
+            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+            _causesFlinch: true,
+            _causesStun: 50,
+            _causesFloored: 100,
+            _onHitForwardBackward: -300f,
+            _onHitRightLeft: 50f);
+
+        //set the attack's properties on charged airborne hit
+        currentAttack.onAirborneChargeHit = currentAttack.onAirborneHit; //this move doesn't charge
+
+        //play the animations
+        currentAttack.data.HitboxAnimator.Play(currentAttack.data.HitboxAnimation);
+        animator.Play(currentAttack.data.GFXAnimation, 0, 0f);
+
+        instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
+        movement.pointToTarget(); //this move takes perfect directional input, meaning you can even direct it outside of the space within which you can input the command for it
+
+        StartCoroutine(movement.motor.timedBurst(0f, 0f, 0f, 3000f, 50f, 2, 0.3f)); //with this move, you jump forward
+
+
+        //THIS ATTACK HAS A SECOND ATTACK, TECHNICALLY BEFORE THE FIRST BUT IT ISN'T THE MAIN PORTION AND EXISTS MAINLY FOR PREVENTING GUARD-CANCELLATION ---------------------------
+
+        //create the new attack as a child of this object
+        currentAttack = Instantiate(attack).GetComponent<Attack>();
+        currentAttack.transform.position = rgtHndBone.transform.position;
+        currentAttack.transform.parent = rgtHndBone.transform;
+
+        //set the attack data
+        currentAttack.data = new Attack.atkData(
+            _attackOwnerStyle: this, //here's the style
+            _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
+            _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
+            _GFXAnimation: "advancingBladework",
+            _HitboxAnimation: "rgtHndMatch", //just uses the default animation that matches the hitbox to the right hand bone
+            _xScale: 0.34f, //match the size of the blade, more or less
+            _yScale: 0.34f,
+            _zScale: 1.23f,
+            _SPcost: 50f,
+            _attackDelay: 14, //delay of 14 frames before the attack starts
+            _attackDuration: 21, //21 frames within which the attack is active
+            _attackEnd: 10, //and 10 frames at the end before the attack is considered complete even though it really doesn't matter in this case. attackCharge is left at the default of 0 as this attack doesn't charge.
+            _hitsAirborne: true, //hits airborne only.
+            _hitsStanding: false,
+            _hitsFloored: false,
+            _contact: true); //and makes contact.
+
+        if (debug == true) {
+            currentAttack.gameObject.GetComponent<MeshFilter>().mesh = cube; //for testing the hitbox
+        }
+
+        if (wraithMode > 0) {
+            currentAttack.data.xScale += 0.02f;
+            currentAttack.data.yScale += 0.02f;
+            currentAttack.data.zScale += 0.3f;
+        }
+
+        currentAttack.transform.localScale = new Vector3(currentAttack.data.xScale, currentAttack.data.yScale, currentAttack.data.zScale);
+
+        currentAttack.data.HitboxAnimator.runtimeAnimatorController = hitboxAnimatorController; //set the attack hitbox animator's animator controller to be the one for this attack style
+        currentAttack.data.atkHitBox.isTrigger = true; //make the hitbox a trigger so that it doesn't have physics
+        //the attack state has already been set
+
+        //set the attack's properties on hit (all unset properties are defaults)
+        if (charStat != null) {
+            tempDamage.damageAmount = 3f + (0.1f * charStat.DEX);
+        }
+        else {
+            tempDamage.damageAmount = 3f + 0.1f * stat.Level;
+        }
+        tempDamage.damageType = Attack.typeOfDamage.Piercing;
+        currentAttack.onHit = new Attack.hitProperties(
+            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+            _causesFlinch: true,
+            _causesStun: 5,
+            _onHitForwardBackward: -350f,
+            _onHitRightLeft: 0f);
+
+        //set the attack's properties on charge hit
+        currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
+
+        //set the attack's properties on guard
+        currentAttack.onGuard = new Attack.hitProperties(
+            _SPcost: 10f,
+            _causesGuardStun: 7,
+            _onHitForwardBackward: -150f,
+            _onHitRightLeft: 0f);
+
+        //set the attack's properties on charge guard
+        currentAttack.onChargeGuard = currentAttack.onGuard; //this move doesn't charge so they're the same as on guard properties
+
+        //set the attack's properties on vulnerable hit
+        currentAttack.onVulnerableHit = currentAttack.onHit; //no additional properties on vulnerable hit
+
+        //set the attack's properties on vulnerable charge hit
+        currentAttack.onVulnerableChargeHit = currentAttack.onVulnerableHit; //this move doesn't charge
+
+        //set the attack's properties on floored hit
+        currentAttack.onFlooredHit = currentAttack.onHit; //this move doesn't even hit floored targets
+
+        //set the attack's properties on charged floored hit
+        currentAttack.onFlooredChargeHit = currentAttack.onFlooredHit; //this move doesn't charge
+
+        //set the attack's properties on airborne hit
+        currentAttack.onAirborneHit = currentAttack.onHit; //This attack only hits airborne targets, so just copy onHit but onHit itself will rarely if ever fire
+
+        //set the attack's properties on charged airborne hit
+        currentAttack.onAirborneChargeHit = currentAttack.onAirborneHit; //this move doesn't charge
+
+        //play the animations
+        currentAttack.data.HitboxAnimator.Play(currentAttack.data.HitboxAnimation);
+        //although the hitbox animation needs to be played for this new attack, the previous attack has already dealt with the gfx animation
+
+        instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
+        //movement.pointToTarget(); doesn't need to be called again as the previous 'attack' has already done that
+        //similarly, no additional movement needs to be performed
+
+
+        idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 20; //always remember to reset the idle counter
+
+
     }
 
     public void overhead() {

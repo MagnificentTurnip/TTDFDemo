@@ -622,6 +622,7 @@
     <Compile Include="Assets\Scripts\Hittable.cs" />
     <Compile Include="Assets\Scripts\KeyCombo.cs" />
     <Compile Include="Assets\Scripts\limitedLife.cs" />
+    <Compile Include="Assets\Scripts\miscellaneous\Oscillate.cs" />
     <Compile Include="Assets\Scripts\Motor.cs" />
     <Compile Include="Assets\Scripts\Movement.cs" />
     <Compile Include="Assets\Scripts\PlayerAnimation.cs" />
@@ -634,11 +635,13 @@
     <Compile Include="Assets\Scripts\Spell Scripts\ArcaneBarrage.cs" />
     <Compile Include="Assets\Scripts\Spell Scripts\HealingSanctuary.cs" />
     <Compile Include="Assets\Scripts\Spell Scripts\SeismicTorrent.cs" />
+    <Compile Include="Assets\Scripts\Spell Scripts\Slumberbolt.cs" />
     <Compile Include="Assets\Scripts\Spell Scripts\Thunderstroke.cs" />
     <Compile Include="Assets\Scripts\Spell.cs" />
     <Compile Include="Assets\Scripts\StandardDeath.cs" />
     <Compile Include="Assets\Scripts\StatSheet.cs" />
     <Compile Include="Assets\Scripts\StatusManager.cs" />
+    <Compile Include="Assets\Scripts\UI\enemyHPSlider.cs" />
     <Compile Include="Assets\Scripts\UI\FailMenu.cs" />
     <Compile Include="Assets\Scripts\UI\followMouse.cs" />
     <Compile Include="Assets\Scripts\UI\FungusBtnExtend.cs" />

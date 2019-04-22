@@ -18,10 +18,11 @@ public class MenuDetection : MonoBehaviour {
     public GameObject prettyMuchWinCanvas;
 
     public void TrueWin() {
-            winCanvas.SetActive(true);
-            failCanvas.SetActive(false);
-            notFailCanvas.SetActive(false);
-            watCanvas.SetActive(false);
+        winCanvas.SetActive(true);
+        failCanvas.SetActive(false);
+        notFailCanvas.SetActive(false);
+        watCanvas.SetActive(false);
+        prettyMuchWinCanvas.SetActive(false);
     }
 
     // Use this for initialization
@@ -49,6 +50,10 @@ public class MenuDetection : MonoBehaviour {
             failCanvas.SetActive(false);
             notFailCanvas.SetActive(false);
             watCanvas.SetActive(true);
+            prettyMuchWinCanvas.SetActive(false);
+        }
+        if (!bossStatus.unconscious) {
+            prettyMuchWinCanvas.SetActive(false);
         }
     }
 }

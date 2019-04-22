@@ -11,6 +11,8 @@ public class Thunderstroke : Spell {
     Vector3 savedPosition;
 
     public GameObject shadow;
+    public GameObject explosion;
+    public GameObject thunderBolt;
 
     public bool init;
 
@@ -23,8 +25,13 @@ public class Thunderstroke : Spell {
         castTime = 20;
         postCastTime = 0;
         channelTime = 140;
-        duration = 40;
+        duration = 120;
         cost = 100; //COST MUST BE PRE-SET IN THE PREFAB TO ALLOW MISFIRING
+    }
+
+    public void ThunderstrokeVFX() {
+        explosion.SetActive(true);
+        thunderBolt.SetActive(true);
     }
 
     public void ThunderstrokeAttacks() {
@@ -223,6 +230,11 @@ public class Thunderstroke : Spell {
                 transform.position = new Vector3(target.transform.position.x, 0.21f, target.transform.position.z);
             }
             init = true;
+        }
+
+        if (channelTime <= 1) {
+            ThunderstrokeVFX();
+            gameObject.GetComponent<Light>().range = 0f;
         }
 
         shadow.transform.localScale = new Vector3(shadow.transform.localScale.x * 0.99f, shadow.transform.localScale.y, shadow.transform.localScale.z * 0.99f);

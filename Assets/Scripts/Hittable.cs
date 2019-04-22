@@ -149,6 +149,10 @@ public class Hittable : MonoBehaviour {
             }
         }
 
+        if (status.unconscious && stat.HP > 0) { //if appropriate, wake up
+            status.unconscious = false;
+        }
+
         if (currentAttack.data.attackOwnerStyle.charStat != null) {
             currentAttack.data.attackOwnerStyle.charStat.HP -= properties.HPcost; //apply costs
             currentAttack.data.attackOwnerStyle.charStat.MP -= properties.MPcost;
