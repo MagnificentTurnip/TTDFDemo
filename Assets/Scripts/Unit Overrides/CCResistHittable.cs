@@ -75,13 +75,13 @@ public class CCResistHittable : Hittable {
                         break;
                     case Attack.typeOfDamage.SPdamage:
                         currentDamageNumber.GetComponent<TextMeshProUGUI>().text = (Mathf.CeilToInt(stat.SP) - Mathf.CeilToInt(stat.SP - properties.damageInstances[i].damageAmount * SPdamageTaken)).ToString();
-                        currentDamageNumber.GetComponent<TextMeshProUGUI>().color = new Color(170, 255, 70);
+                        currentDamageNumber.GetComponent<TextMeshProUGUI>().color = new Color(170, 255, 70, 150);
                         stat.SP -= properties.damageInstances[i].damageAmount * SPdamageTaken;
                         break;
                     case Attack.typeOfDamage.MPdamage:
                         currentDamageNumber.GetComponent<TextMeshProUGUI>().text = (Mathf.CeilToInt(stat.MP) - Mathf.CeilToInt(stat.MP - properties.damageInstances[i].damageAmount * MPdamageTaken)).ToString();
                         stat.MP -= properties.damageInstances[i].damageAmount * MPdamageTaken;
-                        currentDamageNumber.GetComponent<TextMeshProUGUI>().color = new Color(70, 70, 255);
+                        currentDamageNumber.GetComponent<TextMeshProUGUI>().color = new Color(70, 70, 255, 150);
                         break;
                 }
 

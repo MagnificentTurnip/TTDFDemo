@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Scenes/WildwoodArena.unity
+- path: Assets/Scenes/FieldOfEndlessGreen.unity
   isLoaded: 1
   isActive: 1

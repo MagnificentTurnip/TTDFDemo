@@ -9,7 +9,7 @@ public class AIWolfShaman : MonoBehaviour {
     public enum behaviourStates {preBattle, defensive, offensive, mixed, defeated, pacified}; //states for the wolf's current behaviour
     public goalStates goal; 
     public behaviourStates behaviour;
-    public float decider; //a variable that holds a random value that decides which option to cohose
+    public float decider; //a variable that holds a random value that decides which option to choose
 
     public float maxSpeed;
 
@@ -83,8 +83,8 @@ public class AIWolfShaman : MonoBehaviour {
     public bool castSanctuary;
 
     public int pointTargetFrames; //when above zero, this will tick down - for every frame it is above zero, the wolf will point toward its target
-    public int attackFrames; //frames to count down to an attack;
-    public int evadeFrames; //frames to count down to an evade;
+    public int attackFrames; //frames to count down to an attack
+    public int evadeFrames; //frames to count down to an evade
     public int guardFrames; //frames for guarding
 
     public BoxCollider hitBox; //the hitbox of the wolf
@@ -414,7 +414,7 @@ public class AIWolfShaman : MonoBehaviour {
     }
 
     public void ChangeGoal() {
-        decider = Random.Range(0, attackPref+castPref+approachPref+retreatPref+evadePref+guardPref+parryPref);
+        decider = Random.Range(0, attackPref+castPref+bigPref+approachPref+retreatPref+evadePref+guardPref+parryPref);
         if (decider >= 0 && decider <= attackPref) {
             goal = goalStates.attack;
         }

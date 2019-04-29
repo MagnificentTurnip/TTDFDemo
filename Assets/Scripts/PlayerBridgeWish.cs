@@ -9,12 +9,10 @@ public class PlayerBridgeWish : PlayerBridge { //bridges between player input an
         get {
             return style;
         }
-
         set {
             throw new System.NotImplementedException();
         }
     }
-
 
     // Use this for initialization
     void Start () {
@@ -69,7 +67,6 @@ public class PlayerBridgeWish : PlayerBridge { //bridges between player input an
 
             //attacks
             if (status.canAttack()) {
-                print(cmdOut);
                 switch (style.state) {
                     
                     case AtkStyleWish.attackStates.idle:
@@ -242,6 +239,89 @@ public class PlayerBridgeWish : PlayerBridge { //bridges between player input an
 
             }
             //end of attacks
+        }
+
+        //tooltip things 
+        unsheathedTooltip.ClearElements();
+        if (status.sheathed) {
+            sheathedTooltip.gameObject.SetActive(true);
+            unsheathedTooltip.gameObject.SetActive(false);
+            /*
+            if (status.canAttack()) {
+                if (status.sprinting) {
+                    sheathedTooltip.NewElement(playIn.button1Control[0], "Advancing Bladework");
+                } else {
+                    sheathedTooltip.NewElement(playIn.button1Control[0], "Draw weapon");
+                }
+            }
+            */
+        } else {
+            unsheathedTooltip.gameObject.SetActive(true);
+            sheathedTooltip.gameObject.SetActive(false);
+            switch (style.state) {
+                case AtkStyleWish.attackStates.idle:
+                    if (status.sprinting) {
+                        unsheathedTooltip.NewElement(playIn.button1Control[0], "Advancing Bladework", 0);
+                        unsheathedTooltip.NewElement(playIn.button3Control[0], "Overhead", 0);
+                    } else {
+                        unsheathedTooltip.NewElement(playIn.sheatheControl[0], "Sheathe weapon", 0);
+                        unsheathedTooltip.NewElement(playIn.button1Control[0], "Standard Bladework 1", TooltipElement.InputDirection.forward);
+                        unsheathedTooltip.NewElement(playIn.button1Control[0], "Backward Bladework", TooltipElement.InputDirection.back);
+                        unsheathedTooltip.NewElement(playIn.button2Control[0], "Light Bladework 1", TooltipElement.InputDirection.forward);
+                        unsheathedTooltip.NewElement(playIn.button3Control[0], "Heavy Bladework 1", TooltipElement.InputDirection.forward);
+                    }
+                    break;
+
+                case AtkStyleWish.attackStates.fEvade:
+                    unsheathedTooltip.NewElement(playIn.button1Control[0], "Standard Bladework 3", TooltipElement.InputDirection.forward);
+                    unsheathedTooltip.NewElement(playIn.button2Control[0], "Light Bladework 3", TooltipElement.InputDirection.forward);
+                    unsheathedTooltip.NewElement(playIn.button3Control[0], "Heavy Bladework 3", TooltipElement.InputDirection.forward);
+                    break;
+
+                case AtkStyleWish.attackStates.bEvade:
+                    break;
+
+                case AtkStyleWish.attackStates.rEvade:
+                    break;
+
+                case AtkStyleWish.attackStates.lEvade:
+                    break;
+
+                case AtkStyleWish.attackStates.fParry:
+                    unsheathedTooltip.NewElement(playIn.button1Control[0], "Standard Bladework 3", TooltipElement.InputDirection.forward);
+                    unsheathedTooltip.NewElement(playIn.button2Control[0], "Light Bladework 3", TooltipElement.InputDirection.forward);
+                    unsheathedTooltip.NewElement(playIn.button3Control[0], "Heavy Bladework 3", TooltipElement.InputDirection.forward);
+                    unsheathedTooltip.NewElement(playIn.button1Control[0] + " + " + playIn.button2Control[0], "Advancing Bladework", TooltipElement.InputDirection.forward);
+                    break;
+
+                case AtkStyleWish.attackStates.bParry:
+                    unsheathedTooltip.NewElement(playIn.button1Control[0], "Standard Bladework 2", TooltipElement.InputDirection.forward);
+                    unsheathedTooltip.NewElement(playIn.button3Control[0], "Heavy Bladework 2", TooltipElement.InputDirection.forward);
+                    unsheathedTooltip.NewElement(playIn.button1Control[0] + " + " + playIn.button3Control[0], "Overhead", TooltipElement.InputDirection.forward);
+                    break;
+
+                case AtkStyleWish.attackStates.bladework1:
+                    unsheathedTooltip.NewElement(playIn.button1Control[0], "Standard Bladework 2", TooltipElement.InputDirection.forward);
+                    unsheathedTooltip.NewElement(playIn.button2Control[0], "Light Bladework 2", TooltipElement.InputDirection.forward);
+                    unsheathedTooltip.NewElement(playIn.button3Control[0], "Heavy Bladework 2", TooltipElement.InputDirection.forward);
+                    unsheathedTooltip.NewElement(playIn.button1Control[0] + " + " + playIn.button3Control[0], "Overhead", TooltipElement.InputDirection.forward);
+                    break;
+
+                case AtkStyleWish.attackStates.bladework2:
+                    unsheathedTooltip.NewElement(playIn.button1Control[0], "Standard Bladework 3", TooltipElement.InputDirection.forward);
+                    unsheathedTooltip.NewElement(playIn.button2Control[0], "Light Bladework 3", TooltipElement.InputDirection.forward);
+                    unsheathedTooltip.NewElement(playIn.button3Control[0], "Heavy Bladework 3", TooltipElement.InputDirection.forward);
+                    break;
+
+                case AtkStyleWish.attackStates.bladework3:
+                    unsheathedTooltip.NewElement(playIn.button1Control[0], "Standard Bladework 4", TooltipElement.InputDirection.forward);
+                    unsheathedTooltip.NewElement(playIn.button2Control[0], "Light Bladework 4", TooltipElement.InputDirection.forward);
+                    unsheathedTooltip.NewElement(playIn.button3Control[0], "Heavy Bladework 4", TooltipElement.InputDirection.forward);
+                    break;
+
+                case AtkStyleWish.attackStates.bladework4:
+                    break;
+            }
         }
 
     }

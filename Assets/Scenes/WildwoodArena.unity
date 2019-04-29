@@ -1964,6 +1964,9 @@ RectTransform:
   - {fileID: 1881686765}
   - {fileID: 921791357}
   - {fileID: 1733295627}
+  - {fileID: 1680050803}
+  - {fileID: 1818905290}
+  - {fileID: 587337105}
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -7236,6 +7239,57 @@ RectTransform:
   m_AnchoredPosition: {x: -5, y: 0}
   m_SizeDelta: {x: -20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &587337104
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 587337105}
+  - component: {fileID: 587337106}
+  m_Layer: 5
+  m_Name: spellcastTooltip
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &587337105
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 587337104}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 111128051}
+  m_RootOrder: 12
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -330, y: -35}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &587337106
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 587337104}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33ff95d7dd8140145a0b2ebf6449b9f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipElementPrefab: {fileID: 1799767148984222, guid: ff8c50ff5a585044986ae5d90e940a7d,
+    type: 2}
+  tooltipElements: []
+  currentElement: {fileID: 0}
+  toDestroy: {fileID: 0}
+  playerTransform: {fileID: 1677921486}
 --- !u!1 &595081586
 GameObject:
   m_ObjectHideFlags: 0
@@ -21187,6 +21241,8 @@ MonoBehaviour:
   playIn: {fileID: 1677921481}
   status: {fileID: 1677921483}
   spellBook: {fileID: 1677921474}
+  unsheathedTooltip: {fileID: 1680050804}
+  sheathedTooltip: {fileID: 1818905291}
   canGuardCancel: 0
   cmdIn: 0
   cmdOut: 0
@@ -21577,6 +21633,57 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 0
   m_Center: {x: 0, y: 0, z: 0}
   m_TimeToStationary: 0.5
+--- !u!1 &1680050802
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1680050803}
+  - component: {fileID: 1680050804}
+  m_Layer: 5
+  m_Name: unsheathedTooltip
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1680050803
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1680050802}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 111128051}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -330, y: -35}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1680050804
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1680050802}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33ff95d7dd8140145a0b2ebf6449b9f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipElementPrefab: {fileID: 1799767148984222, guid: ff8c50ff5a585044986ae5d90e940a7d,
+    type: 2}
+  tooltipElements: []
+  currentElement: {fileID: 0}
+  toDestroy: {fileID: 0}
+  playerTransform: {fileID: 1677921486}
 --- !u!1 &1685961994
 GameObject:
   m_ObjectHideFlags: 0
@@ -22144,7 +22251,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   version: 1
-  scrollPos: {x: -33.66662, y: 210.10649}
+  scrollPos: {x: 58.641094, y: 188.9526}
   variablesScrollPos: {x: 0, y: 0}
   variablesExpanded: 0
   blockViewHeight: 405
@@ -33548,6 +33655,57 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1818349080}
   m_CullTransparentMesh: 0
+--- !u!1 &1818905289
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1818905290}
+  - component: {fileID: 1818905291}
+  m_Layer: 5
+  m_Name: sheathedTooltip
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1818905290
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1818905289}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 111128051}
+  m_RootOrder: 11
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -330, y: -35}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1818905291
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1818905289}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33ff95d7dd8140145a0b2ebf6449b9f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipElementPrefab: {fileID: 1799767148984222, guid: ff8c50ff5a585044986ae5d90e940a7d,
+    type: 2}
+  tooltipElements: []
+  currentElement: {fileID: 0}
+  toDestroy: {fileID: 0}
+  playerTransform: {fileID: 1677921486}
 --- !u!1 &1820925983
 GameObject:
   m_ObjectHideFlags: 0

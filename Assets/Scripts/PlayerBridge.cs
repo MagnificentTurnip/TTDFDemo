@@ -8,6 +8,8 @@ public class PlayerBridge : MonoBehaviour {
     public virtual AtkStyle Style { get; set; }
     public StatusManager status;
     public PlayerSpellBook spellBook;
+    public TooltipManager unsheathedTooltip;
+    public TooltipManager sheathedTooltip;
 
     public bool canGuardCancel;
 

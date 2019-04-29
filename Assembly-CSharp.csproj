@@ -604,6 +604,7 @@
     <Compile Include="Assets\FungusExamples\MonoBehEvents\SpriteColorChangeFromFungusMouseEvent.cs" />
     <Compile Include="Assets\Scripts\AIMovement.cs" />
     <Compile Include="Assets\Scripts\AIWolfShaman.cs" />
+    <Compile Include="Assets\Scripts\ApparitionDeath.cs" />
     <Compile Include="Assets\Scripts\AtkStyle.cs" />
     <Compile Include="Assets\Scripts\AtkStyleWish.cs" />
     <Compile Include="Assets\Scripts\AtkStyleWolf.cs" />
@@ -618,6 +619,8 @@
     <Compile Include="Assets\Scripts\Dialogue&amp;Interaction\Interact.cs" />
     <Compile Include="Assets\Scripts\Dialogue&amp;Interaction\Specific\InspectShamanwolf.cs" />
     <Compile Include="Assets\Scripts\Effect.cs" />
+    <Compile Include="Assets\Scripts\EnemyAI.cs" />
+    <Compile Include="Assets\Scripts\FieldEnemySpawner.cs" />
     <Compile Include="Assets\Scripts\HitLag.cs" />
     <Compile Include="Assets\Scripts\Hittable.cs" />
     <Compile Include="Assets\Scripts\KeyCombo.cs" />
@@ -649,7 +652,10 @@
     <Compile Include="Assets\Scripts\UI\PauseMenu.cs" />
     <Compile Include="Assets\Scripts\UI\setConditionSlider.cs" />
     <Compile Include="Assets\Scripts\UI\TargetHPSlider.cs" />
+    <Compile Include="Assets\Scripts\UI\TooltipElement.cs" />
+    <Compile Include="Assets\Scripts\UI\TooltipManager.cs" />
     <Compile Include="Assets\Scripts\UI\UISliderManager.cs" />
+    <Compile Include="Assets\Scripts\Unit Overrides\AIDummy.cs" />
     <Compile Include="Assets\Scripts\Unit Overrides\CCResistHittable.cs" />
     <Compile Include="Assets\Scripts\Unit Overrides\SizeIncreaseHittable.cs" />
     <Compile Include="Assets\Scripts\verySimpleAI.cs" />

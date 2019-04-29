@@ -122,7 +122,7 @@ public class ArcaneBarrage : Spell {
     public override void CastSpell() {
         base.CastSpell();
         if (mouseTarget) {
-            if (target.gameObject.tag.Contains("Enm")) {
+            if (target != null && target.gameObject.tag.Contains("Enm")) {
                 //do spell stuff
                 switch (arcaneBarrageNo) {
                     case 1:

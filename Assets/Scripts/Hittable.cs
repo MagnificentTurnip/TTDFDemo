@@ -44,6 +44,14 @@ public class Hittable : MonoBehaviour {
 
     public float towardAttackerAngle;
 
+    //audio things
+    public AudioSource source;
+    public AudioClip onHitSound;
+    public AudioClip onVulnerableHitSound;
+    public AudioClip onGuardSound;
+    public AudioClip onParrySound;
+
+
 	// Use this for initialization
 	void Start () {
 	}
@@ -136,13 +144,13 @@ public class Hittable : MonoBehaviour {
                         break;
                     case Attack.typeOfDamage.SPdamage:
                         currentDamageNumber.GetComponent<TextMeshProUGUI>().text = (Mathf.CeilToInt(stat.SP) - Mathf.CeilToInt(stat.SP - properties.damageInstances[i].damageAmount * SPdamageTaken)).ToString();
-                        currentDamageNumber.GetComponent<TextMeshProUGUI>().color = new Color(170, 255, 70);
+                        currentDamageNumber.GetComponent<TextMeshProUGUI>().color = new Color(170, 255, 70, 150);
                         stat.SP -= properties.damageInstances[i].damageAmount * SPdamageTaken;
                         break;
                     case Attack.typeOfDamage.MPdamage:
                         currentDamageNumber.GetComponent<TextMeshProUGUI>().text = (Mathf.CeilToInt(stat.MP) - Mathf.CeilToInt(stat.MP - properties.damageInstances[i].damageAmount * MPdamageTaken)).ToString();
                         stat.MP -= properties.damageInstances[i].damageAmount * MPdamageTaken;
-                        currentDamageNumber.GetComponent<TextMeshProUGUI>().color = new Color(70, 70, 255);
+                        currentDamageNumber.GetComponent<TextMeshProUGUI>().color = new Color(70, 70, 255, 150);
                         break;
                 }
 
@@ -248,14 +256,18 @@ public class Hittable : MonoBehaviour {
                         status.parryLock = 0; //undo the parryLock
                         //and the attack has no effect
 
+
                         //unless it's magically guarded
                         if (status.magicGuard) {
+                            source.PlayOneShot(onGuardSound);
                             ApplyHitProperties(currentAttack.onGuard);
                             motor.rb.AddForce(currentAttack.data.attackOwnerStyle.gameObject.transform.forward * -currentAttack.onGuard.onHitForwardBackward);
                             motor.rb.AddForce(currentAttack.data.attackOwnerStyle.gameObject.transform.right * -currentAttack.onGuard.onHitRightLeft);
                             if (currentAttack.data.attackOwnerStyle.hitlag) {
                                 StartCoroutine(HitLag(currentAttack.data.attackOwnerStyle.animator, 0.1f, 0.1f)); //guard hitlag
                             }
+                        } else {
+                            source.PlayOneShot(onParrySound);
                         }
 
 
@@ -279,6 +291,8 @@ public class Hittable : MonoBehaviour {
                         print("Guard"); //testing
                         ApplyHitProperties(currentAttack.onGuard);
 
+                        source.PlayOneShot(onGuardSound);
+
                         if (currentAttack.data.attackOwnerStyle.hitlag) {
                             StartCoroutine(HitLag(currentAttack.data.attackOwnerStyle.animator, 0.1f, 0.1f)); //guard hitlag
                         }
@@ -300,6 +314,8 @@ public class Hittable : MonoBehaviour {
 
                         ApplyHitProperties(currentAttack.onFlooredHit);
 
+                        source.PlayOneShot(onHitSound);
+
                         if (currentAttack.data.attackOwnerStyle.hitlag) {
                             StartCoroutine(HitLag(currentAttack.data.attackOwnerStyle.animator, 0.4f, 0.15f)); //floored hitlag
                         }
@@ -320,6 +336,8 @@ public class Hittable : MonoBehaviour {
                         print("AirborneHit"); //testing
 
                         ApplyHitProperties(currentAttack.onAirborneHit);
+
+                        source.PlayOneShot(onHitSound);
 
                         if (currentAttack.data.attackOwnerStyle.hitlag) {
                             StartCoroutine(HitLag(currentAttack.data.attackOwnerStyle.animator, 0.4f, 0.3f)); //airborne hitlag
@@ -343,6 +361,8 @@ public class Hittable : MonoBehaviour {
                         //consume vulnerable status
                         status.vulnerable = 0;
 
+                        source.PlayOneShot(onVulnerableHitSound);
+
                         ApplyHitProperties(currentAttack.onVulnerableHit);
 
                         if (currentAttack.data.attackOwnerStyle.hitlag) {
@@ -364,6 +384,8 @@ public class Hittable : MonoBehaviour {
                     else {
                         //apply attack
                         print("Hit"); //testing
+
+                        source.PlayOneShot(onHitSound);
 
                         ApplyHitProperties(currentAttack.onHit);
 

@@ -518,7 +518,6 @@ public class AtkStyleWish : AtkStyle {
         else {
             tempDamage.damageAmount = 8f + 1f * stat.Level;
         }
-        tempDamage.damageAmount = 8f + (0.25f * charStat.STR) + (0.25f * charStat.DEX);
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onFlooredHit = currentAttack.onHit; //this move doesn't hit floored targets
 
@@ -532,7 +531,6 @@ public class AtkStyleWish : AtkStyle {
         else {
             tempDamage.damageAmount = 8f + 0.8f*stat.Level;
         }
-        tempDamage.damageAmount = 8f + (0.15f * charStat.STR) + (0.25f * charStat.DEX);
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onAirborneHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
@@ -649,7 +647,6 @@ public class AtkStyleWish : AtkStyle {
         else {
             tempDamage.damageAmount = 8f + 0.8f * stat.Level;
         }
-        tempDamage.damageAmount = 8f + (0.1f * charStat.STR) + (0.30f * charStat.DEX);
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onFlooredHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
@@ -1584,7 +1581,6 @@ public class AtkStyleWish : AtkStyle {
         else {
             tempDamage.damageAmount = 8f + 0.4f * stat.Level;
         }
-        tempDamage.damageAmount = 8f + (0.2f * charStat.STR) + (0.05f * charStat.DEX);
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
         currentAttack.onHit = new Attack.hitProperties(
             _damageInstances: new List<Attack.damage>(1) { tempDamage },
