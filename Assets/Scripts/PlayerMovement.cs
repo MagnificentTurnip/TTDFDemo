@@ -12,6 +12,8 @@ public class PlayerMovement : Movement {
     public Camera cam; //going to need to put the main camera in here, because for some reason unity currently hates using Camera.main
     float a; //the angle at which to rotate the object
 
+    public float delayBeforeStep;
+    private float stepDelayCounter;
 
     public override void pointToTarget() { //a function that makes the player point toward the cursor
         transform.rotation = Quaternion.Euler(new Vector3(0, playerInput.toMouseAngle, 0)); //rotation happens on the Y axis
@@ -32,6 +34,7 @@ public class PlayerMovement : Movement {
         status = gameObject.GetComponent<StatusManager>(); //get the status manager of the player object
         motor = gameObject.GetComponent<Motor>(); //get the motor of the player object
         playerInput = gameObject.GetComponent<PlayerInput>(); //get the input for the player
+        stepDelayCounter = delayBeforeStep;
     }
 	
 	// Update is called once per frame
@@ -42,37 +45,55 @@ public class PlayerMovement : Movement {
             if (status.guarding == true) { //player goes slow if guarding
                 if (status.isParalyzed()) {
                     motor.SetSpeed(creepSpeed / 2);
+                    stepDelayCounter -= 2.6f * animator.GetFloat("speedPercent");
                 }
                 else {
                     motor.SetSpeed(creepSpeed);
+                    stepDelayCounter -= 2.6f * animator.GetFloat("speedPercent");
                 }
             }
             else if (playerInput.sprint && !status.isParalyzed()) { //player sprints to go fast
                 motor.SetSpeed(sprintSpeed);
                 status.sprinting = true;
+                stepDelayCounter -= 0.7f * animator.GetFloat("speedPercent");
             }
             else if (playerInput.cursorDistance < Screen.width * 0.05) { //player creeps if the cursor is really close to the player
                 if (status.isParalyzed()) {
                     motor.SetSpeed(creepSpeed / 2);
+                    stepDelayCounter -= 1.8f * animator.GetFloat("speedPercent");
                 }
                 else {
                     motor.SetSpeed(creepSpeed);
+                    stepDelayCounter -= 1.8f * animator.GetFloat("speedPercent");
                 }
                 status.sneaking = true; //turn sneaking on if sneaking
             }
             else if (playerInput.cursorDistance < Screen.width * 0.1) { //player walks if the cursor is fairly close to the player
                 if (status.isParalyzed()) {
                     motor.SetSpeed(walkSpeed / 2);
+                    stepDelayCounter -= 1.6f * animator.GetFloat("speedPercent");
                 }
                 else {
                     motor.SetSpeed(walkSpeed);
+                    stepDelayCounter -= 1.6f * animator.GetFloat("speedPercent");
                 }
             }
             else { //player jogs at further distances
                 if (status.isParalyzed()) {
                     motor.SetSpeed(jogSpeed / 2);
+                    if (status.sheathed) {
+                        stepDelayCounter -= 0.8f * animator.GetFloat("speedPercent");
+                    } else {
+                        stepDelayCounter -= 0.9f * animator.GetFloat("speedPercent");
+                    }
                 } else {
                     motor.SetSpeed(jogSpeed);
+                    if (status.sheathed) {
+                        stepDelayCounter -= 0.8f * animator.GetFloat("speedPercent");
+                    }
+                    else {
+                        stepDelayCounter -= 0.9f * animator.GetFloat("speedPercent");
+                    }
                 }
             }
             pointToTarget();
@@ -93,11 +114,8 @@ public class PlayerMovement : Movement {
                 evade(rollSpeed, 0f, rollTime);
                 animator.Play("forwardRoll");
             } //other evades can be done at other times, but they are handled under the current attack style of the player, and are treated similarly to attacks.
-
-        } 
-
-
-
+        }
+        
 	}
 
 
@@ -107,6 +125,10 @@ public class PlayerMovement : Movement {
         //Some animation bits have to go elsewhere in the script, however, so this isn't everything.
         animator.SetFloat("speedPercent", motor.rb.velocity.magnitude / (sprintSpeed / 150), .1f, Time.deltaTime);
         animator.SetBool("sneak", status.sneaking);
+        if (stepDelayCounter <= 0) {
+            source.PlayOneShot(footStep, Random.Range(0.1f, 0.4f));
+            stepDelayCounter = delayBeforeStep;
+        }
     }
 
 }

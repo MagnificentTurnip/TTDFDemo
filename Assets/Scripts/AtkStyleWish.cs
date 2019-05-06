@@ -15,6 +15,33 @@ public class AtkStyleWish : AtkStyle {
     public float evadespeed; //you may want attack-break evades to be faster or slower than regular ones
     public float evadetime;
 
+    public AudioSource source;
+
+    public AudioClip drawClip;
+    public AudioClip sheathClip;
+    public AudioClip morphClip;
+    public AudioClip fParryClip;
+    public AudioClip bParryClip;
+
+    public AudioClip advancingBladeworkClip1;
+    public AudioClip advancingBladeworkClip2;
+    public AudioClip standardBladework1Clip;
+    public AudioClip standardBladework2Clip;
+    public AudioClip standardBladework3Clip;
+    public AudioClip standardBladework4Clip;
+    public AudioClip lightBladework1Clip;
+    public AudioClip lightBladework2Clip;
+    public AudioClip lightBladework3Clip1;
+    public AudioClip lightBladework3Clip2;
+    public AudioClip lightBladework4Clip1;
+    public AudioClip lightBladework4Clip2;
+    public AudioClip heavyBladework1Clip;
+    public AudioClip heavyBladework2Clip1;
+    public AudioClip heavyBladework2Clip2;
+    public AudioClip heavyBladework3Clip;
+    public AudioClip heavyBladework4Clip1;
+    public AudioClip heavyBladework4Clip2;
+    public AudioClip overheadClip;
 
     // Use this for initialization
     void Start () {
@@ -95,7 +122,7 @@ public class AtkStyleWish : AtkStyle {
             idleCounter = 60; //always remember to reset the idle counter
         }
         stat.MP -= 20;
-        StartCoroutine(status.Parry(0f, 20, 60, 40));
+        StartCoroutine(status.Parry(0f, 25, 60, 35));
         movement.motor.instantBurst(-100f, 50f);
     }
 
@@ -114,7 +141,7 @@ public class AtkStyleWish : AtkStyle {
             idleCounter = 60; //always remember to reset the idle counter
         }
         stat.MP -= 20;
-        StartCoroutine(status.Parry(0.1f, 10, 60, 70));
+        StartCoroutine(status.Parry(0.1f, 15, 60, 70));
         movement.motor.instantBurst(700f, -100f);
     }
 
@@ -187,6 +214,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack = Instantiate(attack).GetComponent<Attack>();
         currentAttack.transform.position = rgtHndBone.transform.position;
         currentAttack.transform.parent = rgtHndBone.transform;
+        currentAttack.clip = standardBladework1Clip;
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
@@ -333,6 +361,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack = Instantiate(attack).GetComponent<Attack>();
         currentAttack.transform.position = rgtHndBone.transform.position;
         currentAttack.transform.parent = rgtHndBone.transform;
+        currentAttack.clip = standardBladework2Clip;
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
@@ -429,6 +458,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack = Instantiate(attack).GetComponent<Attack>();
         currentAttack.transform.position = rgtHndBone.transform.position; //this attack uses the right hand bone's default movement
         currentAttack.transform.parent = rgtHndBone.transform;
+        currentAttack.clip = standardBladework3Clip;
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
@@ -558,6 +588,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack = Instantiate(attack).GetComponent<Attack>();
         currentAttack.transform.position = rgtHndBone.transform.position; //this attack uses the right hand bone's default movement
         currentAttack.transform.parent = rgtHndBone.transform;
+        currentAttack.clip = standardBladework4Clip;
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
@@ -693,6 +724,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack = Instantiate(attack).GetComponent<Attack>();
         currentAttack.transform.position = rgtHndBone.transform.position;
         currentAttack.transform.parent = rgtHndBone.transform;
+        currentAttack.clip = lightBladework1Clip;
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
@@ -802,6 +834,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack = Instantiate(attack).GetComponent<Attack>();
         currentAttack.transform.position = rgtHndBone.transform.position;
         currentAttack.transform.parent = rgtHndBone.transform;
+        currentAttack.clip = lightBladework2Clip;
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
@@ -911,6 +944,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack = Instantiate(attack).GetComponent<Attack>();
         currentAttack.transform.position = rgtHndBone.transform.position;
         currentAttack.transform.parent = rgtHndBone.transform;
+        currentAttack.clip = lightBladework3Clip1;
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
@@ -1007,6 +1041,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack = Instantiate(attack).GetComponent<Attack>();
         currentAttack.transform.position = rgtHndBone.transform.position;
         currentAttack.transform.parent = rgtHndBone.transform;
+        currentAttack.clip = lightBladework3Clip2;
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
@@ -1104,6 +1139,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack = Instantiate(attack).GetComponent<Attack>();
         currentAttack.transform.position = rgtHndBone.transform.position;
         currentAttack.transform.parent = rgtHndBone.transform;
+        currentAttack.clip = lightBladework4Clip1;
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
@@ -1212,6 +1248,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack = Instantiate(attack).GetComponent<Attack>();
         currentAttack.transform.position = rgtHndBone.transform.position;
         currentAttack.transform.parent = rgtHndBone.transform;
+        currentAttack.clip = lightBladework4Clip2;
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
@@ -1309,6 +1346,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack = Instantiate(attack).GetComponent<Attack>();
         currentAttack.transform.position = rgtHndBone.transform.position;
         currentAttack.transform.parent = rgtHndBone.transform;
+        currentAttack.clip = heavyBladework1Clip;
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
@@ -1431,6 +1469,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack = Instantiate(attack).GetComponent<Attack>();
         currentAttack.transform.position = rgtHndBone.transform.position;
         currentAttack.transform.parent = rgtHndBone.transform;
+        currentAttack.clip = heavyBladework2Clip1;
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
@@ -1539,6 +1578,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack = Instantiate(attack).GetComponent<Attack>();
         currentAttack.transform.position = rgtHndBone.transform.position;
         currentAttack.transform.parent = rgtHndBone.transform;
+        currentAttack.clip = heavyBladework2Clip2;
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
@@ -1643,6 +1683,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack = Instantiate(attack).GetComponent<Attack>();
         currentAttack.transform.position = rgtHndBone.transform.position;
         currentAttack.transform.parent = rgtHndBone.transform;
+        currentAttack.clip = heavyBladework3Clip;
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
@@ -1767,6 +1808,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack = Instantiate(attack).GetComponent<Attack>();
         currentAttack.transform.position = rgtHndBone.transform.position;
         currentAttack.transform.parent = rgtHndBone.transform;
+        currentAttack.clip = heavyBladework4Clip1;
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
@@ -1910,6 +1952,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack = Instantiate(attack).GetComponent<Attack>();
         currentAttack.transform.position = rgtHndBone.transform.position;
         currentAttack.transform.parent = rgtHndBone.transform;
+        currentAttack.clip = heavyBladework4Clip2;
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
@@ -2066,6 +2109,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack = Instantiate(attack).GetComponent<Attack>();
         currentAttack.transform.position = rgtHndBone.transform.position;
         currentAttack.transform.parent = rgtHndBone.transform;
+        currentAttack.clip = advancingBladeworkClip1;
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
@@ -2202,6 +2246,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack = Instantiate(attack).GetComponent<Attack>();
         currentAttack.transform.position = rgtHndBone.transform.position;
         currentAttack.transform.parent = rgtHndBone.transform;
+        currentAttack.clip = advancingBladeworkClip2;
 
         //set the attack data
         currentAttack.data = new Attack.atkData(
@@ -2303,6 +2348,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack = Instantiate(attack).GetComponent<Attack>();
         currentAttack.transform.position = rgtHndBone.transform.position;
         currentAttack.transform.parent = rgtHndBone.transform;
+        currentAttack.clip = overheadClip;
 
         //set the attack data
         currentAttack.data = new Attack.atkData(

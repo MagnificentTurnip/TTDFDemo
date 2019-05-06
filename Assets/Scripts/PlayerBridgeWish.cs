@@ -33,6 +33,7 @@ public class PlayerBridgeWish : PlayerBridge { //bridges between player input an
                 style.advancingBladework();
                 style.bladeTracker = 0;
                 status.sheathed = false;
+                style.source.PlayOneShot(style.drawClip, 0.8f);
             } else {
                 style.state = AtkStyleWish.attackStates.drawing;
                 drawCount = 10;
@@ -74,6 +75,7 @@ public class PlayerBridgeWish : PlayerBridge { //bridges between player input an
                             status.sheathed = true;
                             style.animator.Play("MainBladeOff", 1, 0f); //play the sheathing animation
                             style.bladeTracker = 0;
+                            style.source.PlayOneShot(style.sheathClip, 1f);
                         }
                         if (status.sprinting && (cmdOut == buffer.fwdA || lck == buffer.fwdA)) {
                             style.advancingBladework();
@@ -333,6 +335,7 @@ public class PlayerBridgeWish : PlayerBridge { //bridges between player input an
         if (style.state == AtkStyleWish.attackStates.drawing && drawCount <= 0) {
             style.state = AtkStyleWish.attackStates.idle;
             status.sheathed = false;
+            style.source.PlayOneShot(style.drawClip, 0.8f);
         }
 
         if (status.sheathed == false && drawCount <= 0) {

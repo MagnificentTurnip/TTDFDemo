@@ -9,6 +9,10 @@ public class Movement : MonoBehaviour {
     public Motor motor; //also going to need a motor to actually drive movement
     public Animator animator; //the animator is needed to animate the character because I can't do it in a seperate script because I have grown to hate the unity animator for all of its annoyingness
 
+    public AudioSource source;
+    public AudioClip footStep;
+    public AudioClip roll;
+
     public float jogSpeed; //various speeds
     public float sprintSpeed;
     public float walkSpeed;
@@ -43,6 +47,8 @@ public class Movement : MonoBehaviour {
         status.channelLock = 0;
         motor.instantBurst(fbSpeed, lrSpeed);
         StartCoroutine(endroll(evadeTime, evadeTime));
+        source.PlayOneShot(roll, Random.Range(0.1f, 0.2f));
+        source.PlayOneShot(footStep, Random.Range(0.2f, 0.4f));
     }
 
     public IEnumerator endroll(float evadeTime, float delay) {

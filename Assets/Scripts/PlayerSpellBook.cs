@@ -13,6 +13,10 @@ public class PlayerSpellBook : MonoBehaviour {
     public GameObject toDestroy;
     public TMPro.TextMeshProUGUI codeDisplay;
 
+    public AudioSource source;
+    public AudioClip castingSound;
+    public bool soundCheck;
+
     public string currentSpellCode;
     public string displaySpellCode;
     public int reclickCounter;
@@ -56,7 +60,13 @@ public class PlayerSpellBook : MonoBehaviour {
         }
 
         if (style.status.casting) {
-            
+
+            source.clip = castingSound;
+            if (!soundCheck) {
+                source.Play();
+            }
+            soundCheck = true;
+
             style.forceSpellcast(1); //set the spellcast state while casting
 
             //Spell input management - needs to be only on press to prevent large strings of the same command on a single tap of the button/key
@@ -195,6 +205,11 @@ public class PlayerSpellBook : MonoBehaviour {
                 displaySpellCode = "";
             }
 
+        } else {
+            if (source.clip == castingSound) {
+                source.clip = null;
+            }
+            soundCheck = false;
         }
 	}
 

@@ -664,7 +664,8 @@ Transform:
   m_LocalRotation: {x: 0.44721308, y: 0, z: 0, w: 0.8944275}
   m_LocalPosition: {x: 0, y: 20, z: -15}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 1777493344}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -13944,6 +13945,130 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1762657466}
   m_CullTransparentMesh: 0
+--- !u!1 &1777493343
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1777493344}
+  - component: {fileID: 1777493345}
+  m_Layer: 0
+  m_Name: Background sound
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1777493344
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1777493343}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 50967633}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &1777493345
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1777493343}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 7a93bdffccec7574683060e25f40206e, type: 3}
+  m_PlayOnAwake: 1
+  m_Volume: 0.04
+  m_Pitch: 1
+  Loop: 1
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: -0.314
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &1791042348
 GameObject:
   m_ObjectHideFlags: 0
@@ -14228,7 +14353,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   version: 1
-  scrollPos: {x: 12.957037, y: 18.846022}
+  scrollPos: {x: -113.35875, y: -14.048731}
   variablesScrollPos: {x: 0, y: 0}
   variablesExpanded: 0
   blockViewHeight: 405
@@ -14239,8 +14364,7 @@ MonoBehaviour:
     y: -340
     width: 1114
     height: 859
-  selectedBlocks:
-  - {fileID: 1791042602}
+  selectedBlocks: []
   selectedCommands: []
   variables:
   - {fileID: 1791042363}
@@ -14632,8 +14756,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemId: 273
   indentLevel: 0
-  storyText: If she stops fighting, then sheathe your weapon and give her some space
-    to let her know that the fight is indeed over. {w=0.5}
+  storyText: "Just interact with yourself if you feel like taking on a few spectral
+    doppelg\xE4ngers. {w=0.5}"
   description: 
   character: {fileID: 2101595459}
   portrait: {fileID: 21300000, guid: 784b760727078e14da561737180384e9, type: 3}
@@ -15022,8 +15146,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemId: 262
   indentLevel: 0
-  storyText: If what I've been told of Semia is true, however, she may just stand
-    down if you can 'prove yourself' - whatever that means. {w=0.5}
+  storyText: If you don't want to just swing at empty air, then I can conjure a few
+    Training Phantoms for you. {w=0.5}
   description: 
   character: {fileID: 2101595459}
   portrait: {fileID: 21300000, guid: 784b760727078e14da561737180384e9, type: 3}
@@ -15331,8 +15455,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemId: 255
   indentLevel: 0
-  storyText: Well, if you're {s=10}{i}very, very{/i}{/s} careful then you might be
-    able to just knock her out. Slumberbolt's good if you want to do that. {w=0.5}
+  storyText: Well, there's all this open space - you can do more-or-less whatever
+    you like. {w=0.5}
   description: 
   character: {fileID: 2101595459}
   portrait: {fileID: 21300000, guid: 784b760727078e14da561737180384e9, type: 3}
@@ -15531,7 +15655,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemId: 251
   indentLevel: 0
-  text: How can I end this fight without killing the wolf?
+  text: How should I train?
   description: 
   targetBlock: {fileID: 1791042387}
   hideIfVisited: 0
@@ -26896,6 +27020,44 @@ MonoBehaviour:
   bladeTracker: 0
   evadespeed: 2200
   evadetime: 0.5
+  source: {fileID: 2094783530}
+  drawClip: {fileID: 8300000, guid: 731fb14a5425ad642b3dad31977ca0c6, type: 3}
+  sheathClip: {fileID: 8300000, guid: 2e0967d97b41d3d4e9ddcafa60c03f86, type: 3}
+  morphClip: {fileID: 8300000, guid: b3d4dc96cc0efc94081a965ef548dc54, type: 3}
+  fParryClip: {fileID: 0}
+  bParryClip: {fileID: 0}
+  advancingBladeworkClip1: {fileID: 8300000, guid: 05116aa3bd37f1446a13d73b60a21914,
+    type: 3}
+  advancingBladeworkClip2: {fileID: 0}
+  standardBladework1Clip: {fileID: 8300000, guid: 48dbccba9d040bc4f9abb0dad77a2f86,
+    type: 3}
+  standardBladework2Clip: {fileID: 8300000, guid: da34930124b8ccd4ba80ea1e12388254,
+    type: 3}
+  standardBladework3Clip: {fileID: 8300000, guid: 768a5673216b47e489e6dfe49022d12a,
+    type: 3}
+  standardBladework4Clip: {fileID: 8300000, guid: 53b13ba36720da844b60e185d5e6cf01,
+    type: 3}
+  lightBladework1Clip: {fileID: 8300000, guid: 57fe6e90ddafc7e40aff8eb615516b5f, type: 3}
+  lightBladework2Clip: {fileID: 8300000, guid: 57fe6e90ddafc7e40aff8eb615516b5f, type: 3}
+  lightBladework3Clip1: {fileID: 8300000, guid: c480168d2de996d4bb61cc1f5d948c8f,
+    type: 3}
+  lightBladework3Clip2: {fileID: 8300000, guid: 1fcb3d9cbb4960b449efd8bb3892944c,
+    type: 3}
+  lightBladework4Clip1: {fileID: 8300000, guid: 57fe6e90ddafc7e40aff8eb615516b5f,
+    type: 3}
+  lightBladework4Clip2: {fileID: 8300000, guid: 05db54dbc651877428eb2d7fd83dc277,
+    type: 3}
+  heavyBladework1Clip: {fileID: 8300000, guid: 8d1437f5a51968a46a8f5de6eb2ed401, type: 3}
+  heavyBladework2Clip1: {fileID: 8300000, guid: da34930124b8ccd4ba80ea1e12388254,
+    type: 3}
+  heavyBladework2Clip2: {fileID: 8300000, guid: fe3b4d61ecdef2d4bbeaa804e5fca9f0,
+    type: 3}
+  heavyBladework3Clip: {fileID: 8300000, guid: 8fe195f8785f1c041a404e7e876cefc1, type: 3}
+  heavyBladework4Clip1: {fileID: 8300000, guid: 48dbccba9d040bc4f9abb0dad77a2f86,
+    type: 3}
+  heavyBladework4Clip2: {fileID: 8300000, guid: fe3b4d61ecdef2d4bbeaa804e5fca9f0,
+    type: 3}
+  overheadClip: {fileID: 8300000, guid: 996e42d35f6d16746a37942fcdc5653a, type: 3}
 --- !u!114 &2094783515
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26921,6 +27083,10 @@ MonoBehaviour:
   diveTime: 0.8
   playerInput: {fileID: 2094783518}
   cam: {fileID: 50967630}
+  source: {fileID: 2094783530}
+  footStep: {fileID: 8300000, guid: 7270ca9a2b485cd4a80cb03fb6831ba3, type: 3}
+  roll: {fileID: 8300000, guid: 52ca15cce32808746828d8abab209d52, type: 3}
+  delayBeforeStep: 5
 --- !u!114 &2094783516
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27146,6 +27312,9 @@ MonoBehaviour:
   playIn: {fileID: 2094783518}
   toDestroy: {fileID: 0}
   codeDisplay: {fileID: 468999483}
+  source: {fileID: 2094783530}
+  castingSound: {fileID: 8300000, guid: 31e68e1dc78dd574bbc78ff5440bac50, type: 3}
+  soundCheck: 0
   currentSpellCode: 
   displaySpellCode: 
   reclickCounter: 0
@@ -27197,11 +27366,23 @@ MonoBehaviour:
   hitLagTime: 0
   towardAttackerAngle: 0
   source: {fileID: 2094783530}
-  onHitSound: {fileID: 8300000, guid: de2fb1782528aa948a3b2f7fecf6f986, type: 3}
-  onVulnerableHitSound: {fileID: 8300000, guid: 4d2cd07a2314cf14cb7ee09c1684e4b2,
+  onHitSound: {fileID: 8300000, guid: 7643929cdf87f1244b30ae9cd0105032, type: 3}
+  onVulnerableHitSound: {fileID: 8300000, guid: 409828da1b2977649989ee27c27ce80e,
     type: 3}
   onGuardSound: {fileID: 8300000, guid: d4819f39b43454e45ae296d30054b4dc, type: 3}
   onParrySound: {fileID: 8300000, guid: 9f362f0e870f567419eacbf95dfbb8ca, type: 3}
+  slashingSound: {fileID: 8300000, guid: 4d2cd07a2314cf14cb7ee09c1684e4b2, type: 3}
+  impactSound: {fileID: 8300000, guid: ae0bae8a591c53e4abe40deb60e73a3c, type: 3}
+  piercingSound: {fileID: 8300000, guid: c656b662cffb9584da211127ec6d2ce9, type: 3}
+  fireSound: {fileID: 8300000, guid: 2d129872c31650e41885a482ead927f8, type: 3}
+  coldSound: {fileID: 8300000, guid: 459a7c316441f71429d7d61b5a28b447, type: 3}
+  causticSound: {fileID: 0}
+  shockSound: {fileID: 8300000, guid: e8a2eeffcd9f2fb478ed113e1c25cf65, type: 3}
+  astralSound: {fileID: 0}
+  ruinousSound: {fileID: 0}
+  magicSound: {fileID: 8300000, guid: f542d01f7e0259a459553b64854f9fbf, type: 3}
+  SPdamageSound: {fileID: 8300000, guid: a15f96da8375f134bb431bda1e8117f9, type: 3}
+  MPdamageSound: {fileID: 8300000, guid: e9db9b48135993b4e9182fc280d7c20f, type: 3}
   flinchLimit: 0
   flinchCounter: 0
 --- !u!114 &2094783527
@@ -27272,8 +27453,8 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_audioClip: {fileID: 8300000, guid: 31e68e1dc78dd574bbc78ff5440bac50, type: 3}
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0

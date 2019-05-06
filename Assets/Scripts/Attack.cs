@@ -56,7 +56,7 @@ public class Attack : MonoBehaviour {
         public atkData( //constructor
             AtkStyle _attackOwnerStyle = null,
             Animator _HitboxAnimator = null,
-            Collider _atkHitBox = null, 
+            Collider _atkHitBox = null,
             string _GFXAnimation = "defaultAnimation", 
             string _HitboxAnimation = "defaultAnimation", 
             float _xScale = 1f, 
@@ -157,6 +157,11 @@ public class Attack : MonoBehaviour {
     public int same;
     public TrailRenderer trail;
 
+    //audio things
+    public AudioSource source;
+    public AudioClip clip;
+    public bool clipPlayed;
+
     public atkData data;
     public hitProperties onHit;
     public hitProperties onChargeHit;
@@ -170,12 +175,19 @@ public class Attack : MonoBehaviour {
     public hitProperties onAirborneChargeHit;
 
     // Use this for initialization
-    void Start () { //get the collider of the object - either sphere or box
+    void Start () {
         trail = GetComponent<TrailRenderer>();
+        source = GetComponent<AudioSource>();
+        clipPlayed = false;
     }
 
     // Update is called once per frame
     void Update () {
+
+        if (!clipPlayed && source != null && clip != null) {
+            source.PlayOneShot(clip, Random.Range(0.1f, 0.2f));
+            clipPlayed = true;
+        }
 
         //set the colour of the trail
         if (data.unblockable == 3) { //unblockable 3 attacks are red
