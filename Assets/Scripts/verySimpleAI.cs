@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class verySimpleAI : MonoBehaviour {
+public class verySimpleAI : MonoBehaviour {  //legacy script, no longer used
 
     public AtkStyleWish style;
     public StatusManager status;
@@ -18,7 +18,7 @@ public class verySimpleAI : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (status.canAttack() && attacking && buh) {
+		if (status.CanAttack() && attacking && buh) {
             buh = false;
             StartCoroutine(bup());
         }
@@ -26,8 +26,8 @@ public class verySimpleAI : MonoBehaviour {
 
     public IEnumerator bup() {
         yield return new WaitForSeconds(2);
-        if (status.canAttack()) {
-            style.heavyBladework4();
+        if (status.CanAttack()) {
+            style.HeavyBladework4();
         }
         buh = true;
     }

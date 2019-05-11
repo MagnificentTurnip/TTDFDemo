@@ -10,7 +10,7 @@ public class FailMenu : MonoBehaviour {
     }
 
     public void ReturnToHamlet () {
-        print("Not yet implemented");
+        SceneManager.LoadScene("ClearingHamlet");
     }
 
     public void quitAreYouSure() {

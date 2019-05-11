@@ -28,7 +28,7 @@ public class AtkStyle : MonoBehaviour {
 
     public bool hurtboxShown; //whether the hurtbox is displayed or not
 
-    public Attack.damage tempDamage;
+    public Attack.Damage tempDamage;
 
     public Attack currentAttack;
     public List<Attack> instantiatedAttacks;
@@ -42,31 +42,31 @@ public class AtkStyle : MonoBehaviour {
         hurtboxShown = false;
 	}
 
-    public virtual void forceIdle() { //this function is for outside access, to set the attack state of inheriting attack styles to its idle position
+    public virtual void ForceIdle() { //this function is for outside access, to set the attack state of inheriting attack styles to its idle position
         print("You need to override this function in a specific attack style that inherits from this class. The function should simply set the attack state to idle. Look at the existing AtkStyles.");
     }
 
-    public virtual void forceGuarding(int counterIdle) { //this function is for outside access, to set the attack state of inheriting attack styles to the guarding state
+    public virtual void ForceGuarding(int counterIdle) { //this function is for outside access, to set the attack state of inheriting attack styles to the guarding state
         print("You need to override this function in a specific attack style that inherits from this class. The function should set the attack state to guarding and also set the idle counter to an appropriate amount (counterIdle). Look at the existing AtkStyles.");
     }
 
-    public virtual void forceSpellcast(int counterIdle) { //this function is for outside access, to set the attack state of inheriting attack styles to the spellcast state
+    public virtual void ForceSpellcast(int counterIdle) { //this function is for outside access, to set the attack state of inheriting attack styles to the spellcast state
         print("You need to override this function in a specific attack style that inherits from this class.The function should set the attack state to spellcast and also set the idle counter to an appropriate amount (counterIdle). Look at the existing AtkStyles.");
     }
 
-    public virtual void returnToIdle() {
+    public virtual void ReturnToIdle() {
         print("You need to override this function in a specific attack style that inherits from this class. The function should manage returning to idle gradually over time. Look at the existing AtkStyles.");
     }
 
-    public virtual void fParry() {
+    public virtual void FParry() {
         print("You need to override this function in a specific attack style that inherits from this class. Look at the existing AtkStyles.");
     }
 
-    public virtual void bParry() {
+    public virtual void BParry() {
         print("You need to override this function in a specific attack style that inherits from this class. Look at the existing AtkStyles.");
     }
 
-    public void attackProgression() { //manages attack progression from delay, to duration, to end, and eventually its automatic destruction, with the added nature of stopping their movement components when they cannot be accessed
+    public void AttackProgression() { //manages attack progression from delay, to duration, to end, and eventually its automatic destruction, with the added nature of stopping their movement components when they cannot be accessed
         for (int i = 0; i < instantiatedAttacks.Count; i++) {
 
             
@@ -119,7 +119,7 @@ public class AtkStyle : MonoBehaviour {
         }
     }
 
-    public void destroyAllAttacks() {
+    public void DestroyAllAttacks() {
         for (int i = 0; i < instantiatedAttacks.Count; i++) {
             toDestroy = instantiatedAttacks[i];
             //instantiatedAttacks.Remove(instantiatedAttacks[i]);
@@ -129,13 +129,13 @@ public class AtkStyle : MonoBehaviour {
         instantiatedAttacks.Clear();
     }
 
-    public void nonSpellAtkStyle() { //if this attack style has nothing to do with spellcasting, then delete all of its attacks when spellcasting
+    public void NonSpellAtkStyle() { //if this attack style has nothing to do with spellcasting, then delete all of its attacks when spellcasting
         if (status.casting) {
-            destroyAllAttacks();
+            DestroyAllAttacks();
         }
     }
 
-    public void showHurtBox() {
+    public void ShowHurtBox() {
         if (gameObject.GetComponent<CapsuleCollider>() && !hurtboxShown) {
             gameObject.GetComponent<MeshFilter>().mesh = capsule;
             hurtboxShown = true;

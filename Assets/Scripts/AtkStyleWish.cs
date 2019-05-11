@@ -49,7 +49,7 @@ public class AtkStyleWish : AtkStyle {
         instantiatedAttacks = new List<Attack>();
 	}
 
-    public override void forceIdle() {
+    public override void ForceIdle() { //forces the idle state
         if (bladeTracker == 1) {
             animator.Play("GreatBladeOff", 1, 0f);
         }
@@ -60,7 +60,7 @@ public class AtkStyleWish : AtkStyle {
         state = attackStates.idle;
     }
 
-    public override void forceGuarding(int counterIdle) {
+    public override void ForceGuarding(int counterIdle) { //forces a guarding state
         if (bladeTracker == 1) {
             animator.Play("GreatBladeOff", 1, 0f);
         }
@@ -72,7 +72,7 @@ public class AtkStyleWish : AtkStyle {
         idleCounter = counterIdle;
     }
 
-    public override void forceSpellcast(int counterIdle) {
+    public override void ForceSpellcast(int counterIdle) { //forces the spellcast state
         if (bladeTracker == 1) {
             animator.Play("GreatBladeOff", 1, 0f);
         }
@@ -84,8 +84,7 @@ public class AtkStyleWish : AtkStyle {
         idleCounter = counterIdle;
     }
 
-    public override void returnToIdle() {
-        //manage returning to idle
+    public override void ReturnToIdle() { //manages returning to idle naturally
         if (state != attackStates.idle) {
             if (state != attackStates.drawing && state != attackStates.guarding) {
                 status.toIdleLock = true;
@@ -107,7 +106,7 @@ public class AtkStyleWish : AtkStyle {
         }
     }
 
-    public override void bParry() {
+    public override void BParry() { //backwards parry; a more defensive parry
         if (bladeTracker == 1) {
             animator.Play("GreatBladeOff", 1, 0f);
         }
@@ -115,7 +114,7 @@ public class AtkStyleWish : AtkStyle {
             animator.Play("SecBladeOff", 1, 0f);
         }
         bladeTracker = 0;
-        movement.pointToTarget();
+        movement.PointToTarget();
         animator.Play("bParry");
         if (status.sheathed == false) {
             state = attackStates.bParry; //set the attack state;
@@ -123,10 +122,10 @@ public class AtkStyleWish : AtkStyle {
         }
         stat.MP -= 20;
         StartCoroutine(status.Parry(0f, 25, 60, 35));
-        movement.motor.instantBurst(-100f, 50f);
+        movement.motor.InstantBurst(-100f, 50f);
     }
 
-    public override void fParry() {
+    public override void FParry() { //forwards parry; a more offensive parry
         if (bladeTracker == 1) {
             animator.Play("GreatBladeOff", 1, 0f);
         }
@@ -134,7 +133,7 @@ public class AtkStyleWish : AtkStyle {
             animator.Play("SecBladeOff", 1, 0f);
         }
         bladeTracker = 0;
-        movement.pointToTarget();
+        movement.PointToTarget();
         animator.Play("fParry");
         if (status.sheathed == false) {
             state = attackStates.fParry; //set the attack state;
@@ -142,14 +141,14 @@ public class AtkStyleWish : AtkStyle {
         }
         stat.MP -= 20;
         StartCoroutine(status.Parry(0.1f, 15, 60, 70));
-        movement.motor.instantBurst(700f, -100f);
+        movement.motor.InstantBurst(700f, -100f);
     }
 
-    public void defaultAttack() {
+    public void DefaultAttack() { //an unused default attack
         currentAttack = Instantiate(attack).GetComponent<Attack>();
     }
 
-    public void evadeForward() {
+    public void EvadeForward() {
         if (bladeTracker == 1) {
             animator.Play("GreatBladeOff", 1, 0f);
         }
@@ -157,13 +156,13 @@ public class AtkStyleWish : AtkStyle {
             animator.Play("SecBladeOff", 1, 0f);
         }
         bladeTracker = 0;
-        movement.evade(evadespeed, 0f, evadetime);
+        movement.Evade(evadespeed, 0f, evadetime);
         animator.Play("fRoll");
         state = attackStates.fEvade; //set the attack state;
         idleCounter = 30; //always remember to reset the idle counter
     }
 
-    public void evadeBack() {
+    public void EvadeBack() {
         if (bladeTracker == 1) {
             animator.Play("GreatBladeOff", 1, 0f);
         }
@@ -171,13 +170,13 @@ public class AtkStyleWish : AtkStyle {
             animator.Play("SecBladeOff", 1, 0f);
         }
         bladeTracker = 0;
-        movement.evade(-evadespeed, 0f, evadetime);
+        movement.Evade(-evadespeed, 0f, evadetime);
         animator.Play("bRoll", -1, 0.3f);
         state = attackStates.bEvade; //set the attack state;
         idleCounter = 30; //always remember to reset the idle counter
     }
 
-    public void evadeRight() {
+    public void EvadeRight() {
         if (bladeTracker == 1) {
             animator.Play("GreatBladeOff", 1, 0f);
         }
@@ -185,13 +184,13 @@ public class AtkStyleWish : AtkStyle {
             animator.Play("SecBladeOff", 1, 0f);
         }
         bladeTracker = 0;
-        movement.evade(0f, evadespeed, evadetime);
+        movement.Evade(0f, evadespeed, evadetime);
         animator.Play("rRoll");
         state = attackStates.rEvade; //set the attack state;
         idleCounter = 30; //always remember to reset the idle counter
     }
 
-    public void evadeLeft() {
+    public void EvadeLeft() {
         if (bladeTracker == 1) {
             animator.Play("GreatBladeOff", 1, 0f);
         }
@@ -199,7 +198,7 @@ public class AtkStyleWish : AtkStyle {
             animator.Play("SecBladeOff", 1, 0f);
         }
         bladeTracker = 0;
-        movement.evade(0f, -evadespeed, evadetime);
+        movement.Evade(0f, -evadespeed, evadetime);
         animator.Play("lRoll");
         state = attackStates.lEvade; //set the attack state;
         idleCounter = 30; //always remember to reset the idle counter
@@ -209,7 +208,7 @@ public class AtkStyleWish : AtkStyle {
 
 
 
-    public void standardBladework1() {
+    public void StandardBladework1() {
         //create the new attack as a child of this object
         currentAttack = Instantiate(attack).GetComponent<Attack>();
         currentAttack.transform.position = rgtHndBone.transform.position;
@@ -217,7 +216,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.clip = standardBladework1Clip;
 
         //set the attack data
-        currentAttack.data = new Attack.atkData(
+        currentAttack.data = new Attack.AtkData(
             _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
@@ -259,8 +258,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 8f + 0.8f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 20,
             _onHitForwardBackward: -300f, 
@@ -270,7 +269,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
 
         //set the attack's properties on guard
-        currentAttack.onGuard = new Attack.hitProperties(
+        currentAttack.onGuard = new Attack.HitProperties(
             _SPcost : 10f, 
             _causesGuardStun: 20, 
             _onHitForwardBackward: -450f, 
@@ -287,8 +286,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 12f + 1.2f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onVulnerableHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onVulnerableHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 50,
             _onHitForwardBackward: -350f,
@@ -305,8 +304,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 5f + 0.6f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onFlooredHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onFlooredHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 15,
             _onHitForwardBackward: -300f,
@@ -323,8 +322,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 8f + 0.8f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onAirborneHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onAirborneHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 50,
             _causesFloored: 100,
@@ -349,14 +348,14 @@ public class AtkStyleWish : AtkStyle {
         animator.Play(currentAttack.data.GFXAnimation, 0, 0f);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
-        movement.pointToTarget(); //this move takes perfect directional input, meaning you can even direct it outside of the space within which you can input the command for it
+        movement.PointToTarget(); //this move takes perfect directional input, meaning you can even direct it outside of the space within which you can input the command for it
         
-        StartCoroutine(movement.motor.timedBurst(0.15f, 300f, 50f, 0f, 0f, 0, 0f)); //with this move you move forward a tiny bit
+        StartCoroutine(movement.motor.TimedBurst(0.15f, 300f, 50f, 0f, 0f, 0, 0f)); //with this move you move forward a tiny bit
 
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 20; //always remember to reset the idle counter
     }
 
-    public void standardBladework2() {
+    public void StandardBladework2() {
         //create the new attack as a child of this object
         currentAttack = Instantiate(attack).GetComponent<Attack>();
         currentAttack.transform.position = rgtHndBone.transform.position;
@@ -364,7 +363,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.clip = standardBladework2Clip;
 
         //set the attack data
-        currentAttack.data = new Attack.atkData(
+        currentAttack.data = new Attack.AtkData(
             _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
@@ -404,8 +403,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 8f + 0.8f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 10,
             _onHitForwardBackward: -200f,
@@ -415,7 +414,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
 
         //set the attack's properties on guard
-        currentAttack.onGuard = new Attack.hitProperties(
+        currentAttack.onGuard = new Attack.HitProperties(
             _SPcost: 8f,
             _causesGuardStun: 5,
             _onHitForwardBackward: -1000f,
@@ -447,13 +446,13 @@ public class AtkStyleWish : AtkStyle {
         animator.Play(currentAttack.data.GFXAnimation, 0, 0f);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
-        movement.pointTowardTarget(20f); //this move doesn't follow the cursor extremely well but it's a wide attack so it doesn't need to that much
-        StartCoroutine(movement.motor.timedBurst(0.2f, 400f, 50f, 0f, 0f, 0, 0f)); //this move moves you a smidge forward
+        movement.PointTowardTarget(20f); //this move doesn't follow the cursor extremely well but it's a wide attack so it doesn't need to that much
+        StartCoroutine(movement.motor.TimedBurst(0.2f, 400f, 50f, 0f, 0f, 0, 0f)); //this move moves you a smidge forward
 
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 25; //always remember to reset the idle counter
     }
 
-    public void standardBladework3() {
+    public void StandardBladework3() {
         //create the new attack as a child of this object
         currentAttack = Instantiate(attack).GetComponent<Attack>();
         currentAttack.transform.position = rgtHndBone.transform.position; //this attack uses the right hand bone's default movement
@@ -461,7 +460,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.clip = standardBladework3Clip;
 
         //set the attack data
-        currentAttack.data = new Attack.atkData(
+        currentAttack.data = new Attack.AtkData(
             _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
@@ -502,8 +501,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 12f + 1.2f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 25,
             _onHitForwardBackward: -300f,
@@ -513,7 +512,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
 
         //set the attack's properties on guard
-        currentAttack.onGuard = new Attack.hitProperties(
+        currentAttack.onGuard = new Attack.HitProperties(
             _SPcost: 10f,
             _causesGuardStun: 20,
             _onHitForwardBackward: -250f,
@@ -530,8 +529,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 15f + 1.5f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onVulnerableHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onVulnerableHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 40,
             _causesAirborne: 40,
@@ -562,8 +561,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 8f + 0.8f*stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onAirborneHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onAirborneHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 15,
             _onHitForwardBackward: -350f,
@@ -577,13 +576,13 @@ public class AtkStyleWish : AtkStyle {
         animator.Play(currentAttack.data.GFXAnimation, 0, 0f);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
-        movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
-        StartCoroutine(movement.motor.timedBurst(0.2f, 400f, -50f, 0f, 0f, 0, 0f)); //this move moves you a smidge forward
+        movement.PointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
+        StartCoroutine(movement.motor.TimedBurst(0.2f, 400f, -50f, 0f, 0f, 0, 0f)); //this move moves you a smidge forward
 
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 25; //always remember to reset the idle counter
     }
 
-    public void standardBladework4() {
+    public void StandardBladework4() {
         //create the new attack as a child of this object
         currentAttack = Instantiate(attack).GetComponent<Attack>();
         currentAttack.transform.position = rgtHndBone.transform.position; //this attack uses the right hand bone's default movement
@@ -591,7 +590,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.clip = standardBladework4Clip;
 
         //set the attack data
-        currentAttack.data = new Attack.atkData(
+        currentAttack.data = new Attack.AtkData(
             _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
@@ -632,8 +631,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 8f + 0.9f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 30,
             _onHitForwardBackward: -50f,
@@ -643,7 +642,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
 
         //set the attack's properties on guard
-        currentAttack.onGuard = new Attack.hitProperties(
+        currentAttack.onGuard = new Attack.HitProperties(
             _SPcost: 10f,
             _causesGuardStun: 16,
             _onHitForwardBackward: -300f,
@@ -660,8 +659,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 12f + 1f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onVulnerableHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onVulnerableHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 60,
             _causesFloored: 120,
@@ -679,8 +678,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 8f + 0.8f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onFlooredHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onFlooredHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 15,
             _onHitForwardBackward: -30f,
@@ -697,8 +696,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 12f + 1f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onAirborneHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onAirborneHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 60,
             _causesFloored: 120,
@@ -713,13 +712,13 @@ public class AtkStyleWish : AtkStyle {
         animator.Play(currentAttack.data.GFXAnimation, 0, 0f);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
-        movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
-        StartCoroutine(movement.motor.timedBurst(0.1f, 300f, 50f, 0f, 0f, 0, 0f)); //this move moves you a smidge forward
+        movement.PointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
+        StartCoroutine(movement.motor.TimedBurst(0.1f, 300f, 50f, 0f, 0f, 0, 0f)); //this move moves you a smidge forward
 
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 30; //always remember to reset the idle counter
     }
 
-    public void lightBladework1() {
+    public void LightBladework1() {
         //create the new attack as a child of this object
         currentAttack = Instantiate(attack).GetComponent<Attack>();
         currentAttack.transform.position = rgtHndBone.transform.position;
@@ -727,7 +726,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.clip = lightBladework1Clip;
 
         //set the attack data
-        currentAttack.data = new Attack.atkData(
+        currentAttack.data = new Attack.AtkData(
             _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
@@ -768,8 +767,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 5f + 0.9f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Piercing;
-        currentAttack.onHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 30,
             _onHitForwardBackward: -100f,
@@ -779,7 +778,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
 
         //set the attack's properties on guard
-        currentAttack.onGuard = new Attack.hitProperties(
+        currentAttack.onGuard = new Attack.HitProperties(
             _SPcost: 30f,
             _causesGuardStun: 10,
             _onHitForwardBackward: -500f,
@@ -796,8 +795,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 10f + 0.9f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Piercing;
-        currentAttack.onVulnerableHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onVulnerableHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 40,
             _onHitForwardBackward: 500f,
@@ -823,13 +822,13 @@ public class AtkStyleWish : AtkStyle {
         animator.Play(currentAttack.data.GFXAnimation, 0, 0f);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
-        movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
-        StartCoroutine(movement.motor.timedBurst(0.4f, 500f, -100f, -2000f, 100f, 2, 0.1f)); //with this move, you jump forward and abruptly stop
+        movement.PointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
+        StartCoroutine(movement.motor.TimedBurst(0.4f, 500f, -100f, -2000f, 100f, 2, 0.1f)); //with this move, you jump forward and abruptly stop
 
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 20; //always remember to reset the idle counter
     }
 
-    public void lightBladework2() {
+    public void LightBladework2() {
         //create the new attack as a child of this object
         currentAttack = Instantiate(attack).GetComponent<Attack>();
         currentAttack.transform.position = rgtHndBone.transform.position;
@@ -837,7 +836,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.clip = lightBladework2Clip;
 
         //set the attack data
-        currentAttack.data = new Attack.atkData(
+        currentAttack.data = new Attack.AtkData(
             _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
@@ -878,8 +877,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 4f + 0.8f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Piercing;
-        currentAttack.onHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 30,
             _onHitForwardBackward: -100f,
@@ -889,7 +888,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
 
         //set the attack's properties on guard
-        currentAttack.onGuard = new Attack.hitProperties(
+        currentAttack.onGuard = new Attack.HitProperties(
             _SPcost: 30f,
             _causesGuardStun: 20,
             _onHitForwardBackward: -500f,
@@ -906,8 +905,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 10f + 0.9f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Piercing;
-        currentAttack.onVulnerableHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onVulnerableHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 35,
             _onHitForwardBackward: 200f,
@@ -933,13 +932,13 @@ public class AtkStyleWish : AtkStyle {
         animator.Play(currentAttack.data.GFXAnimation, 0, 0f);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
-        movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
-        StartCoroutine(movement.motor.timedBurst(0.3f, 500f, 100f, -2000f, -100f, 2, 0.15f)); //with this move, you jump forward and abruptly stop
+        movement.PointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
+        StartCoroutine(movement.motor.TimedBurst(0.3f, 500f, 100f, -2000f, -100f, 2, 0.15f)); //with this move, you jump forward and abruptly stop
 
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 20; //always remember to reset the idle counter
     }
 
-    public void lightBladework3() {
+    public void LightBladework3() {
         //create the new attack as a child of this object
         currentAttack = Instantiate(attack).GetComponent<Attack>();
         currentAttack.transform.position = rgtHndBone.transform.position;
@@ -947,7 +946,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.clip = lightBladework3Clip1;
 
         //set the attack data
-        currentAttack.data = new Attack.atkData(
+        currentAttack.data = new Attack.AtkData(
             _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
@@ -988,8 +987,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 3f + 0.5f*stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Piercing;
-        currentAttack.onHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 10,
             _onHitForwardBackward: -150f,
@@ -999,7 +998,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
 
         //set the attack's properties on guard
-        currentAttack.onGuard = new Attack.hitProperties(
+        currentAttack.onGuard = new Attack.HitProperties(
             _SPcost: 20f,
             _causesGuardStun: 10,
             _onHitForwardBackward: -250f,
@@ -1031,8 +1030,8 @@ public class AtkStyleWish : AtkStyle {
         animator.Play(currentAttack.data.GFXAnimation, 0, 0f);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
-        movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
-        StartCoroutine(movement.motor.timedBurst(0.2f, 300f, 0f, 300f, 0f, 2, 0.4f)); //with this move, you jump forward and abruptly stop
+        movement.PointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
+        StartCoroutine(movement.motor.TimedBurst(0.2f, 300f, 0f, 300f, 0f, 2, 0.4f)); //with this move, you jump forward and abruptly stop
 
 
         //THIS ATTACK HAS A SECOND ATTACK SLIGHTLY AFTER THE FIRST TAKE NOTE OF IT ----------------------------------------------------------------------------------
@@ -1044,7 +1043,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.clip = lightBladework3Clip2;
 
         //set the attack data
-        currentAttack.data = new Attack.atkData(
+        currentAttack.data = new Attack.AtkData(
             _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
@@ -1085,8 +1084,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 3f + 0.3f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 14,
             _onHitForwardBackward: -350f,
@@ -1096,7 +1095,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
 
         //set the attack's properties on guard
-        currentAttack.onGuard = new Attack.hitProperties(
+        currentAttack.onGuard = new Attack.HitProperties(
             _SPcost: 10f,
             _causesGuardStun: 7,
             _onHitForwardBackward: -150f,
@@ -1134,7 +1133,7 @@ public class AtkStyleWish : AtkStyle {
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 20; //always remember to reset the idle counter
     }
 
-    public void lightBladework4() {
+    public void LightBladework4() {
         //create the new attack as a child of this object
         currentAttack = Instantiate(attack).GetComponent<Attack>();
         currentAttack.transform.position = rgtHndBone.transform.position;
@@ -1142,7 +1141,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.clip = lightBladework4Clip1;
 
         //set the attack data
-        currentAttack.data = new Attack.atkData(
+        currentAttack.data = new Attack.AtkData(
             _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
@@ -1183,8 +1182,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 3f + 0.3f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 20,
             _onHitForwardBackward: -100f,
@@ -1194,7 +1193,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
 
         //set the attack's properties on guard
-        currentAttack.onGuard = new Attack.hitProperties(
+        currentAttack.onGuard = new Attack.HitProperties(
             _SPcost: 15f,
             _causesGuardStun: 20,
             _onHitForwardBackward: -100f,
@@ -1223,8 +1222,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 3f + 0.3f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 10,
             _onHitForwardBackward: -300f,
@@ -1238,8 +1237,8 @@ public class AtkStyleWish : AtkStyle {
         animator.Play(currentAttack.data.GFXAnimation, 0, 0f);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
-        movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
-        StartCoroutine(movement.motor.timedBurst(0.2f, 600f, 0f, -2500f, 0f, 2, 0.6f)); //with this move, you jump forward and abruptly stop
+        movement.PointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
+        StartCoroutine(movement.motor.TimedBurst(0.2f, 600f, 0f, -2500f, 0f, 2, 0.6f)); //with this move, you jump forward and abruptly stop
 
 
         //THIS ATTACK HAS A SECOND ATTACK SLIGHTLY AFTER THE FIRST TAKE NOTE OF IT ----------------------------------------------------------------------------------
@@ -1251,7 +1250,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.clip = lightBladework4Clip2;
 
         //set the attack data
-        currentAttack.data = new Attack.atkData(
+        currentAttack.data = new Attack.AtkData(
             _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
@@ -1292,8 +1291,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 4f + 0.4f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Piercing;
-        currentAttack.onHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 50,
             _onHitForwardBackward: -100f,
@@ -1303,7 +1302,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
 
         //set the attack's properties on guard
-        currentAttack.onGuard = new Attack.hitProperties(
+        currentAttack.onGuard = new Attack.HitProperties(
             _SPcost: 30f,
             _causesGuardStun: 30,
             _onHitForwardBackward: -450f,
@@ -1341,7 +1340,7 @@ public class AtkStyleWish : AtkStyle {
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 20; //always remember to reset the idle counter
     }
 
-    public void heavyBladework1() {
+    public void HeavyBladework1() {
         //create the new attack as a child of this object
         currentAttack = Instantiate(attack).GetComponent<Attack>();
         currentAttack.transform.position = rgtHndBone.transform.position;
@@ -1349,7 +1348,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.clip = heavyBladework1Clip;
 
         //set the attack data
-        currentAttack.data = new Attack.atkData(
+        currentAttack.data = new Attack.AtkData(
             _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
@@ -1390,8 +1389,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 15f + 1.5f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 50,
             _onHitForwardBackward: -350f,
@@ -1401,7 +1400,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
 
         //set the attack's properties on guard
-        currentAttack.onGuard = new Attack.hitProperties(
+        currentAttack.onGuard = new Attack.HitProperties(
             _SPcost: 10f,
             _causesGuardStun: 30,
             _onHitForwardBackward: -250f,
@@ -1418,8 +1417,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 20f + 1.7f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onVulnerableHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onVulnerableHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 70,
             _onHitForwardBackward: -400f,
@@ -1442,8 +1441,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 12f + 1.2f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onAirborneHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onAirborneHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 50,
             _causesFloored: 120,
@@ -1458,13 +1457,13 @@ public class AtkStyleWish : AtkStyle {
         animator.Play(currentAttack.data.GFXAnimation, 0, 0f);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
-        movement.pointToTarget(); //this move takes perfect directional input, meaning you can even direct it outside of the space within which you can input the command for it
-        StartCoroutine(movement.motor.timedBurst(0.1f, -100f, -30f, 50f, 10f, 12, 0.05f)); //with this move, you jump forward and abruptly stop
+        movement.PointToTarget(); //this move takes perfect directional input, meaning you can even direct it outside of the space within which you can input the command for it
+        StartCoroutine(movement.motor.TimedBurst(0.1f, -100f, -30f, 50f, 10f, 12, 0.05f)); //with this move, you jump forward and abruptly stop
 
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 20; //always remember to reset the idle counter
     }
 
-    public void heavyBladework2() {
+    public void HeavyBladework2() {
         //create the new attack as a child of this object
         currentAttack = Instantiate(attack).GetComponent<Attack>();
         currentAttack.transform.position = rgtHndBone.transform.position;
@@ -1472,7 +1471,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.clip = heavyBladework2Clip1;
 
         //set the attack data
-        currentAttack.data = new Attack.atkData(
+        currentAttack.data = new Attack.AtkData(
             _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
@@ -1513,8 +1512,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 8f + 0.4f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 16,
             _onHitForwardBackward: -800f,
@@ -1524,7 +1523,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
 
         //set the attack's properties on guard
-        currentAttack.onGuard = new Attack.hitProperties(
+        currentAttack.onGuard = new Attack.HitProperties(
             _SPcost: 10f,
             _causesGuardStun: 40,
             _onHitForwardBackward: -300f,
@@ -1541,8 +1540,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 8f + 0.4f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onVulnerableHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onVulnerableHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 40,
             _onHitForwardBackward: -800f,
@@ -1568,8 +1567,8 @@ public class AtkStyleWish : AtkStyle {
         animator.Play(currentAttack.data.GFXAnimation, 0, 0f);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
-        movement.pointTowardTarget(15f); //this move allows only 15 degrees of rotational adjustment
-        StartCoroutine(movement.motor.timedBurst(0.1f, 300f, 0f, 8f, 0f, 16, 0.05f)); //with this move, you jump forward and abruptly stop
+        movement.PointTowardTarget(15f); //this move allows only 15 degrees of rotational adjustment
+        StartCoroutine(movement.motor.TimedBurst(0.1f, 300f, 0f, 8f, 0f, 16, 0.05f)); //with this move, you jump forward and abruptly stop
 
 
         //THIS ATTACK HAS A SECOND ATTACK SLIGHTLY AFTER THE FIRST TAKE NOTE OF IT ----------------------------------------------------------------------------------
@@ -1581,7 +1580,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.clip = heavyBladework2Clip2;
 
         //set the attack data
-        currentAttack.data = new Attack.atkData(
+        currentAttack.data = new Attack.AtkData(
             _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
@@ -1622,8 +1621,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 8f + 0.4f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 20,
             _onHitForwardBackward: -800f,
@@ -1633,7 +1632,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
 
         //set the attack's properties on guard
-        currentAttack.onGuard = new Attack.hitProperties(
+        currentAttack.onGuard = new Attack.HitProperties(
             _SPcost: 10f,
             _causesGuardStun: 15,
             _onHitForwardBackward: -900f,
@@ -1678,7 +1677,7 @@ public class AtkStyleWish : AtkStyle {
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 20; //always remember to reset the idle counter
     }
 
-    public void heavyBladework3() {
+    public void HeavyBladework3() {
         //create the new attack as a child of this object
         currentAttack = Instantiate(attack).GetComponent<Attack>();
         currentAttack.transform.position = rgtHndBone.transform.position;
@@ -1686,7 +1685,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.clip = heavyBladework3Clip;
 
         //set the attack data
-        currentAttack.data = new Attack.atkData(
+        currentAttack.data = new Attack.AtkData(
             _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
@@ -1727,8 +1726,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 15f + 1.6f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 60,
             _causesAirborne: 40,
@@ -1739,7 +1738,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
 
         //set the attack's properties on guard
-        currentAttack.onGuard = new Attack.hitProperties(
+        currentAttack.onGuard = new Attack.HitProperties(
             _SPcost: 10f,
             _causesGuardStun: 17,
             _onHitForwardBackward: -350f,
@@ -1756,8 +1755,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 20f + 2f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onVulnerableHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onVulnerableHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 90,
             _causesAirborne: 90,
@@ -1781,8 +1780,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 12f + 1f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onAirborneHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onAirborneHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 30,
             _causesAirborne: 30,
@@ -1797,13 +1796,13 @@ public class AtkStyleWish : AtkStyle {
         animator.Play(currentAttack.data.GFXAnimation, 0, 0f);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
-        movement.pointTowardTarget(25f); //this move allows 25 degrees of directional adjustment
-        StartCoroutine(movement.motor.timedBurst(0.7f, 400f, -50f, 0f, 0f, 0, 0f)); //with this move, you jump forward and abruptly stop
+        movement.PointTowardTarget(25f); //this move allows 25 degrees of directional adjustment
+        StartCoroutine(movement.motor.TimedBurst(0.7f, 400f, -50f, 0f, 0f, 0, 0f)); //with this move, you jump forward and abruptly stop
 
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 20; //always remember to reset the idle counter
     }
 
-    public void heavyBladework4() {
+    public void HeavyBladework4() {
         //create the new attack as a child of this object
         currentAttack = Instantiate(attack).GetComponent<Attack>();
         currentAttack.transform.position = rgtHndBone.transform.position;
@@ -1811,7 +1810,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.clip = heavyBladework4Clip1;
 
         //set the attack data
-        currentAttack.data = new Attack.atkData(
+        currentAttack.data = new Attack.AtkData(
             _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
@@ -1852,8 +1851,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 5f + 0.5f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 10,
             _onHitForwardBackward: -600f,
@@ -1863,7 +1862,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
 
         //set the attack's properties on guard
-        currentAttack.onGuard = new Attack.hitProperties(
+        currentAttack.onGuard = new Attack.HitProperties(
             _SPcost: 10f,
             _causesGuardStun: 30,
             _onHitForwardBackward: -700f,
@@ -1880,8 +1879,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 8f + 0.6f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onVulnerableHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onVulnerableHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 50,
             _onHitForwardBackward: -600f,
@@ -1898,8 +1897,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 5f + 0.5f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onFlooredHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onFlooredHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 20,
             _onHitForwardBackward: -200f,
@@ -1916,8 +1915,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 5f + 0.5f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onAirborneHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onAirborneHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 50,
             _causesFloored: 120,
@@ -1942,8 +1941,8 @@ public class AtkStyleWish : AtkStyle {
         animator.Play(currentAttack.data.GFXAnimation, 0, 0f);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
-        movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
-        StartCoroutine(movement.motor.timedBurst(0.3f, 800f, 0f, -50f, 0f, 12, 0.08f)); //with this move, you jump forward and abruptly stop
+        movement.PointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
+        StartCoroutine(movement.motor.TimedBurst(0.3f, 800f, 0f, -50f, 0f, 12, 0.08f)); //with this move, you jump forward and abruptly stop
 
 
         //THIS ATTACK HAS A SECOND ATTACK SLIGHTLY AFTER THE FIRST TAKE NOTE OF IT ----------------------------------------------------------------------------------
@@ -1955,7 +1954,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.clip = heavyBladework4Clip2;
 
         //set the attack data
-        currentAttack.data = new Attack.atkData(
+        currentAttack.data = new Attack.AtkData(
             _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
@@ -1996,8 +1995,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 12f + 0.5f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 50,
             _causesFloored: 120,
@@ -2008,7 +2007,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
 
         //set the attack's properties on guard
-        currentAttack.onGuard = new Attack.hitProperties(
+        currentAttack.onGuard = new Attack.HitProperties(
             _SPcost: 10f,
             _causesGuardStun: 40,
             _onHitForwardBackward: -1500f,
@@ -2025,8 +2024,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 15f + 0.6f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onVulnerableHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onVulnerableHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 70,
             _causesFloored: 120,
@@ -2044,8 +2043,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 10f + 0.4f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onFlooredHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onFlooredHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 30,
             _causesFloored: 100,
@@ -2064,8 +2063,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 15f + 0.5f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onAirborneHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onAirborneHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 70,
             _causesFloored: 120,
@@ -2096,15 +2095,15 @@ public class AtkStyleWish : AtkStyle {
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 20; //always remember to reset the idle counter
     }
 
-    public void backwardBladework() {
+    public void BackwardBladework() {
         print("test");
-        StartCoroutine(movement.motor.timedBurst(0f, -300f, -100f, 0f, 0f, 0, 0f)); //move back before you move forwards
+        StartCoroutine(movement.motor.TimedBurst(0f, -300f, -100f, 0f, 0f, 0, 0f)); //move back before you move forwards
         transform.Rotate(transform.up, 180);
-        standardBladework1();
+        StandardBladework1();
         animator.Play("backwardBladework", 0, 0f); //this move is basically StandardBladework1 but with some minor edits made
     }
 
-    public void advancingBladework() {
+    public void AdvancingBladework() {
         //create the new attack as a child of this object
         currentAttack = Instantiate(attack).GetComponent<Attack>();
         currentAttack.transform.position = rgtHndBone.transform.position;
@@ -2112,7 +2111,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.clip = advancingBladeworkClip1;
 
         //set the attack data
-        currentAttack.data = new Attack.atkData(
+        currentAttack.data = new Attack.AtkData(
             _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
@@ -2154,8 +2153,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 10f + 1f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 20,
             _onHitForwardBackward: -600f,
@@ -2165,7 +2164,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
 
         //set the attack's properties on guard
-        currentAttack.onGuard = new Attack.hitProperties(
+        currentAttack.onGuard = new Attack.HitProperties(
             _SPcost: 10f,
             _causesGuardStun: 20,
             _onHitForwardBackward: -650f,
@@ -2182,8 +2181,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 14f + 1.4f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onVulnerableHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onVulnerableHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 50,
             _causesFloored: 120,
@@ -2201,8 +2200,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 8f + 0.8f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onFlooredHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onFlooredHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 15,
             _onHitForwardBackward: -400f,
@@ -2219,8 +2218,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 12f + 1.2f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onAirborneHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onAirborneHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 50,
             _causesFloored: 100,
@@ -2235,9 +2234,9 @@ public class AtkStyleWish : AtkStyle {
         animator.Play(currentAttack.data.GFXAnimation, 0, 0f);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
-        movement.pointToTarget(); //this move takes perfect directional input, meaning you can even direct it outside of the space within which you can input the command for it
+        movement.PointToTarget(); //this move takes perfect directional input, meaning you can even direct it outside of the space within which you can input the command for it
 
-        StartCoroutine(movement.motor.timedBurst(0f, 0f, 0f, 3000f, 50f, 2, 0.3f)); //with this move, you jump forward
+        StartCoroutine(movement.motor.TimedBurst(0f, 0f, 0f, 3000f, 50f, 2, 0.3f)); //with this move, you jump forward
 
 
         //THIS ATTACK HAS A SECOND ATTACK, TECHNICALLY BEFORE THE FIRST BUT IT ISN'T THE MAIN PORTION AND EXISTS MAINLY FOR PREVENTING GUARD-CANCELLATION ---------------------------
@@ -2249,7 +2248,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.clip = advancingBladeworkClip2;
 
         //set the attack data
-        currentAttack.data = new Attack.atkData(
+        currentAttack.data = new Attack.AtkData(
             _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
@@ -2291,8 +2290,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 3f + 0.1f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Piercing;
-        currentAttack.onHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 5,
             _onHitForwardBackward: -350f,
@@ -2302,7 +2301,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
 
         //set the attack's properties on guard
-        currentAttack.onGuard = new Attack.hitProperties(
+        currentAttack.onGuard = new Attack.HitProperties(
             _SPcost: 10f,
             _causesGuardStun: 7,
             _onHitForwardBackward: -150f,
@@ -2343,7 +2342,7 @@ public class AtkStyleWish : AtkStyle {
 
     }
 
-    public void overhead() {
+    public void Overhead() {
         //create the new attack as a child of this object
         currentAttack = Instantiate(attack).GetComponent<Attack>();
         currentAttack.transform.position = rgtHndBone.transform.position;
@@ -2351,7 +2350,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.clip = overheadClip;
 
         //set the attack data
-        currentAttack.data = new Attack.atkData(
+        currentAttack.data = new Attack.AtkData(
             _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
@@ -2394,8 +2393,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 14f + 1.2f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 50,
             _causesFloored: 120,
@@ -2416,7 +2415,7 @@ public class AtkStyleWish : AtkStyle {
         currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
 
         //set the attack's properties on guard
-        currentAttack.onGuard = new Attack.hitProperties(
+        currentAttack.onGuard = new Attack.HitProperties(
             _SPcost: 100f,
             _causesGuardStun: 30,
             _onHitForwardBackward: -2000f,
@@ -2433,8 +2432,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 18f + 1.2f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onVulnerableHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onVulnerableHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 70,
             _causesFloored: 140,
@@ -2465,8 +2464,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 15f + 1.2f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onFlooredHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onFlooredHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 30,
             _causesFloored: 120,
@@ -2491,8 +2490,8 @@ public class AtkStyleWish : AtkStyle {
             tempDamage.damageAmount = 15f + 1.2f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onAirborneHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onAirborneHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 50,
             _causesFloored: 120,
@@ -2527,8 +2526,8 @@ public class AtkStyleWish : AtkStyle {
         animator.Play(currentAttack.data.GFXAnimation, 0, 0f);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
-        movement.pointToTarget(); //this move takes perfect directional input, meaning you can even direct it outside of the space within which you can input the command for it
-        StartCoroutine(movement.motor.timedBurst(0.1f, -100f, -30f, 50f, 10f, 16, 0.05f)); //with this move, you move forward slowly over the course of a little while
+        movement.PointToTarget(); //this move takes perfect directional input, meaning you can even direct it outside of the space within which you can input the command for it
+        StartCoroutine(movement.motor.TimedBurst(0.1f, -100f, -30f, 50f, 10f, 16, 0.05f)); //with this move, you move forward slowly over the course of a little while
 
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 20; //always remember to reset the idle counter
     }
@@ -2542,15 +2541,15 @@ public class AtkStyleWish : AtkStyle {
             status.attackLock = true; //if there are then you are, kind of makes sense
         }
         if (debug) {
-            showHurtBox();
+            ShowHurtBox();
         }
     }
 
     private void FixedUpdate() {
 
         //call the attack progression and return to idle functions that have been overridden in this class
-        attackProgression(); 
-        returnToIdle();
-        nonSpellAtkStyle();
+        AttackProgression(); 
+        ReturnToIdle();
+        NonSpellAtkStyle();
     }
 }

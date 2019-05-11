@@ -42,7 +42,7 @@ public class ArcaneBarrage : Spell {
         currentAttack.transform.parent = transform;
 
         //set the attack data
-        currentAttack.data = new Attack.atkData(
+        currentAttack.data = new Attack.AtkData(
             _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<SphereCollider>(), //this attack uses a box collider
@@ -77,8 +77,8 @@ public class ArcaneBarrage : Spell {
             tempDamage.damageAmount = 1f + 0.25f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Magic;
-        currentAttack.onHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _onHitForwardBackward: 0f,
             _onHitRightLeft: 0f);
@@ -87,7 +87,7 @@ public class ArcaneBarrage : Spell {
         currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
 
         //set the attack's properties on guard
-        currentAttack.onGuard = new Attack.hitProperties(
+        currentAttack.onGuard = new Attack.HitProperties(
             _causesGuardStun: 5,
             _onHitForwardBackward: -50f);
 
@@ -117,6 +117,22 @@ public class ArcaneBarrage : Spell {
         //animator.Play(currentAttack.data.GFXAnimation);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
+    }
+
+    public override bool CanCast() {
+        if (mouseTarget) {
+            if (target != null && target.gameObject.tag.Contains("Enm")) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            if (target != null) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 
     public override void CastSpell() {

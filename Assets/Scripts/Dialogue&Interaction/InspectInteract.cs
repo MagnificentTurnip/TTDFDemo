@@ -24,13 +24,13 @@ public class InspectInteract : MonoBehaviour {
         if (playIn.currentTarget == this.gameObject && playerStatus.sheathed && !playerStatus.unconscious && !playerStatus.slain && Vector3.Distance(transform.position, playerStatus.gameObject.transform.position) <= minDistance) {
             comms.Ins = false;
             comms.Int = true;
-            if (playIn.button4 && !playerStatus.casting && !comms.commIn.interactInstantiated && !comms.commIn.dialogueInstantiated && !comms.commIn.inspectInstantiated) {
+            if (playIn.button4 && !playerStatus.casting && !comms.commIn.interactInstantiated && !comms.commIn.dialogueInstantiated && !comms.commIn.inspectInstantiated && !comms.commIn.menuInstantiated) {
                 Flowchart.BroadcastFungusMessage(intMessage);
             }
         } else if (playIn.currentTarget == this.gameObject && playerStatus.sheathed && !playerStatus.unconscious && !playerStatus.slain) {
             comms.Ins = true;
             comms.Int = false;
-            if (playIn.button4 && !playerStatus.casting && !comms.commIn.interactInstantiated && !comms.commIn.dialogueInstantiated && !comms.commIn.inspectInstantiated) {
+            if (playIn.button4 && !playerStatus.casting && !comms.commIn.interactInstantiated && !comms.commIn.dialogueInstantiated && !comms.commIn.inspectInstantiated && !comms.commIn.menuInstantiated) {
                 Flowchart.BroadcastFungusMessage(insMessage);
             }
         }

@@ -21,7 +21,7 @@ public class Movement : MonoBehaviour {
     public float rollTime;
     public float diveSpeed;
     public float diveTime;
-    float speedPercent; //a variable for the animator
+    public float speedPercent; //a variable for the animator
 
     void Start() {
 
@@ -31,33 +31,33 @@ public class Movement : MonoBehaviour {
 
     }
 
-    public virtual void pointToTarget() {
+    public virtual void PointToTarget() {
 
     }
 
-    public virtual void pointTowardTarget(float maxTurn) {
+    public virtual void PointTowardTarget(float maxTurn) {
 
     }
 
-    public void evade(float fbSpeed, float lrSpeed, float evadeTime) {
+    public void Evade(float fbSpeed, float lrSpeed, float evadeTime) {
         stat.SP -= 100;
         status.rollLock = true;
         status.rolling = true;
         status.floored = 0;
         status.channelLock = 0;
-        motor.instantBurst(fbSpeed, lrSpeed);
-        StartCoroutine(endroll(evadeTime, evadeTime));
+        motor.InstantBurst(fbSpeed, lrSpeed);
+        StartCoroutine(Endroll(evadeTime, evadeTime));
         source.PlayOneShot(roll, Random.Range(0.1f, 0.2f));
         source.PlayOneShot(footStep, Random.Range(0.2f, 0.4f));
     }
 
-    public IEnumerator endroll(float evadeTime, float delay) {
+    public IEnumerator Endroll(float evadeTime, float delay) {
         yield return new WaitForSeconds(delay);
         status.rolling = false;
-        Invoke("rollLockout", evadeTime);
+        Invoke("RollLockout", evadeTime);
     }
 
-    public void rollLockout() {
+    public void RollLockout() {
         status.rollLock = false;
     }
 

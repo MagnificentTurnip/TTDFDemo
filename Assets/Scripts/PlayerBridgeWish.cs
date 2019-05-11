@@ -28,9 +28,9 @@ public class PlayerBridgeWish : PlayerBridge { //bridges between player input an
         handleDefences();
 
         //unsheathing
-        if (status.sheathed == true && playIn.button1 && status.canAttack()) {
+        if (status.sheathed == true && playIn.button1 && status.CanAttack()) {
             if (status.sprinting) { // the player performs an unsheathe attack if sprinting at the point of drawing their weapon
-                style.advancingBladework();
+                style.AdvancingBladework();
                 style.bladeTracker = 0;
                 status.sheathed = false;
                 style.source.PlayOneShot(style.drawClip, 0.8f);
@@ -44,30 +44,30 @@ public class PlayerBridgeWish : PlayerBridge { //bridges between player input an
 
         if (status.sheathed == false) { //only do attack style stuff when unsheathed
             //evades. Wish style has four directional evades out of attacks.
-            if ((lck == buffer.evade || playIn.evade) && status.canRoll() && style.state != AtkStyleWish.attackStates.idle && style.state != AtkStyleWish.attackStates.fEvade && style.state != AtkStyleWish.attackStates.bEvade && style.state != AtkStyleWish.attackStates.lEvade && style.state != AtkStyleWish.attackStates.rEvade) {
+            if ((lck == buffer.evade || playIn.evade) && status.CanRoll() && style.state != AtkStyleWish.attackStates.idle && style.state != AtkStyleWish.attackStates.fEvade && style.state != AtkStyleWish.attackStates.bEvade && style.state != AtkStyleWish.attackStates.lEvade && style.state != AtkStyleWish.attackStates.rEvade) {
                 if (playIn.pointForward == true) {
                     print(style.state);
-                    style.evadeForward();
+                    style.EvadeForward();
                 }
                 if (playIn.pointBack == true) {
-                    style.evadeBack();
+                    style.EvadeBack();
                 }
                 if (playIn.pointRight == true) {
-                    style.evadeRight();
+                    style.EvadeRight();
                 }
                 if (playIn.pointLeft == true) {
-                    style.evadeLeft();
+                    style.EvadeLeft();
                 } //all of these evades do not alter the direction that the player is facing.
             }
 
             //manage regular movement rolling transitioning momentarily into the fEvade state
-            if ((lck == buffer.evade || playIn.evade) && status.canRoll() && !status.sprinting && style.state == AtkStyleWish.attackStates.idle && style.state != AtkStyleWish.attackStates.fEvade && style.state != AtkStyleWish.attackStates.bEvade && style.state != AtkStyleWish.attackStates.lEvade && style.state != AtkStyleWish.attackStates.rEvade) {
+            if ((lck == buffer.evade || playIn.evade) && status.CanRoll() && !status.sprinting && style.state == AtkStyleWish.attackStates.idle && style.state != AtkStyleWish.attackStates.fEvade && style.state != AtkStyleWish.attackStates.bEvade && style.state != AtkStyleWish.attackStates.lEvade && style.state != AtkStyleWish.attackStates.rEvade) {
                 style.state = AtkStyleWish.attackStates.fEvade; //set the attack state;
                 style.idleCounter = 30; //always remember to reset the idle counter
             }
 
             //attacks
-            if (status.canAttack()) {
+            if (status.CanAttack()) {
                 switch (style.state) {
                     
                     case AtkStyleWish.attackStates.idle:
@@ -78,23 +78,23 @@ public class PlayerBridgeWish : PlayerBridge { //bridges between player input an
                             style.source.PlayOneShot(style.sheathClip, 1f);
                         }
                         if (status.sprinting && (cmdOut == buffer.fwdA || lck == buffer.fwdA)) {
-                            style.advancingBladework();
+                            style.AdvancingBladework();
                             style.bladeTracker = 0;
                         } else
                         if (cmdOut == buffer.fwdA || lck == buffer.fwdA) {
-                            style.standardBladework1();
+                            style.StandardBladework1();
                             style.bladeTracker = 0;
                         }
                         if (cmdOut == buffer.bakA || lck == buffer.bakA) {
-                            style.backwardBladework();
+                            style.BackwardBladework();
                             style.bladeTracker = 0;
                         }
                         if (cmdOut == buffer.fwdS || lck == buffer.fwdS) {
-                            style.lightBladework1();
+                            style.LightBladework1();
                             style.bladeTracker = 0;
                         }
                         if (status.sprinting && (cmdOut == buffer.fwdD || lck == buffer.fwdD || cmdOut == buffer.fwdAD || lck == buffer.fwdAD)) {
-                            style.overhead();
+                            style.Overhead();
                             if (style.bladeTracker == 0) {
                                 style.animator.Play("GreatBladeOn", 1, 0f);
                             }
@@ -106,22 +106,22 @@ public class PlayerBridgeWish : PlayerBridge { //bridges between player input an
                         }
                         else
                         if (cmdOut == buffer.fwdD || lck == buffer.fwdD) {
-                            style.heavyBladework1();
+                            style.HeavyBladework1();
                             style.bladeTracker = 0;
                         }
                         break;
 
                     case AtkStyleWish.attackStates.fEvade:
                         if (cmdOut == buffer.fwdA || lck == buffer.fwdA) {
-                            style.standardBladework3();
+                            style.StandardBladework3();
                             style.bladeTracker = 0;
                         }
                         if (cmdOut == buffer.fwdS || lck == buffer.fwdS) {
-                            style.lightBladework3();
+                            style.LightBladework3();
                             style.bladeTracker = 0;
                         }
                         if (cmdOut == buffer.fwdD || lck == buffer.fwdD) {
-                            style.heavyBladework3();
+                            style.HeavyBladework3();
                             style.bladeTracker = 0;
                         }
                         break;
@@ -137,26 +137,26 @@ public class PlayerBridgeWish : PlayerBridge { //bridges between player input an
 
                     case AtkStyleWish.attackStates.fParry:
                         if (cmdOut == buffer.fwdAS || lck == buffer.fwdAS) {
-                            style.advancingBladework();
+                            style.AdvancingBladework();
                             style.bladeTracker = 0;
                         }
                         if (cmdOut == buffer.fwdA || lck == buffer.fwdA) {
-                            style.standardBladework3();
+                            style.StandardBladework3();
                             style.bladeTracker = 0;
                         }
                         if (cmdOut == buffer.fwdS || lck == buffer.fwdS) {
-                            style.lightBladework3();
+                            style.LightBladework3();
                             style.bladeTracker = 0;
                         }
                         if (cmdOut == buffer.fwdD || lck == buffer.fwdD) {
-                            style.heavyBladework3();
+                            style.HeavyBladework3();
                             style.bladeTracker = 0;
                         }
                         break;
 
                     case AtkStyleWish.attackStates.bParry:
                         if (cmdOut == buffer.fwdAD || lck == buffer.fwdAD) {
-                            style.overhead();
+                            style.Overhead();
                             if (style.bladeTracker == 0) {
                                 style.animator.Play("GreatBladeOn", 1, 0f);
                             }
@@ -167,21 +167,21 @@ public class PlayerBridgeWish : PlayerBridge { //bridges between player input an
                             style.bladeTracker = 1;
                         }
                         if (cmdOut == buffer.fwdA || lck == buffer.fwdA) {
-                            style.standardBladework2();
+                            style.StandardBladework2();
                             style.bladeTracker = 0;
                         }
                         //if (cmdOut == buffer.fwdS || lck == buffer.fwdS) {
                         //    style.lightBladework3();
                         //}
                         if (cmdOut == buffer.fwdD || lck == buffer.fwdD) {
-                            style.heavyBladework2();
+                            style.HeavyBladework2();
                             style.bladeTracker = 0;
                         }
                         break;
 
                     case AtkStyleWish.attackStates.bladework1:
                         if (cmdOut == buffer.fwdAD || lck == buffer.fwdAD) {
-                            style.overhead();
+                            style.Overhead();
                             if (style.bladeTracker == 0) {
                                 style.animator.Play("GreatBladeOn", 1, 0f);
                             }
@@ -192,45 +192,45 @@ public class PlayerBridgeWish : PlayerBridge { //bridges between player input an
                             style.bladeTracker = 1;
                         }
                         if (cmdOut == buffer.fwdA || lck == buffer.fwdA) {
-                            style.standardBladework2();
+                            style.StandardBladework2();
                             style.bladeTracker = 0;
                         }
                         if (cmdOut == buffer.fwdS || lck == buffer.fwdS) {
-                            style.lightBladework2();
+                            style.LightBladework2();
                             style.bladeTracker = 0;
                         }
                         if (cmdOut == buffer.fwdD || lck == buffer.fwdD) {
-                            style.heavyBladework2();
+                            style.HeavyBladework2();
                             style.bladeTracker = 0;
                         }
                         break;
 
                     case AtkStyleWish.attackStates.bladework2:
                         if (cmdOut == buffer.fwdA || lck == buffer.fwdA) {
-                            style.standardBladework3();
+                            style.StandardBladework3();
                             style.bladeTracker = 0;
                         }
                         if (cmdOut == buffer.fwdS || lck == buffer.fwdS) {
-                            style.lightBladework3();
+                            style.LightBladework3();
                             style.bladeTracker = 0;
                         }
                         if (cmdOut == buffer.fwdD || lck == buffer.fwdD) {
-                            style.heavyBladework3();
+                            style.HeavyBladework3();
                             style.bladeTracker = 0;
                         }
                         break;
 
                     case AtkStyleWish.attackStates.bladework3:
                         if (cmdOut == buffer.fwdA || lck == buffer.fwdA) {
-                            style.standardBladework4();
+                            style.StandardBladework4();
                             style.bladeTracker = 0;
                         }
                         if (cmdOut == buffer.fwdS || lck == buffer.fwdS) {
-                            style.lightBladework4();
+                            style.LightBladework4();
                             style.bladeTracker = 0;
                         }
                         if (cmdOut == buffer.fwdD || lck == buffer.fwdD) {
-                            style.heavyBladework4();
+                            style.HeavyBladework4();
                             style.bladeTracker = 0;
                         }
                         break;

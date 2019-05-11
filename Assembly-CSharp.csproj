@@ -620,11 +620,11 @@
     <Compile Include="Assets\Scripts\Dialogue&amp;Interaction\Specific\InspectShamanwolf.cs" />
     <Compile Include="Assets\Scripts\Effect.cs" />
     <Compile Include="Assets\Scripts\EnemyAI.cs" />
-    <Compile Include="Assets\Scripts\FieldEnemySpawner.cs" />
-    <Compile Include="Assets\Scripts\HitLag.cs" />
     <Compile Include="Assets\Scripts\Hittable.cs" />
     <Compile Include="Assets\Scripts\KeyCombo.cs" />
+    <Compile Include="Assets\Scripts\LevelManager.cs" />
     <Compile Include="Assets\Scripts\limitedLife.cs" />
+    <Compile Include="Assets\Scripts\miscellaneous\FieldEnemySpawner.cs" />
     <Compile Include="Assets\Scripts\miscellaneous\Oscillate.cs" />
     <Compile Include="Assets\Scripts\Motor.cs" />
     <Compile Include="Assets\Scripts\Movement.cs" />

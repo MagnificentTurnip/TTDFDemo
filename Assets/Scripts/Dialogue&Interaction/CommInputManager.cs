@@ -21,6 +21,7 @@ public class CommInputManager : MonoBehaviour {
     public bool dialogueInstantiated;
     public bool inspectInstantiated;
     public bool interactInstantiated;
+    public bool menuInstantiated;
 
     public bool resetOnce;
 
@@ -116,7 +117,9 @@ public class CommInputManager : MonoBehaviour {
         dialogueInstantiated = flow.GetBooleanVariable("dlgInstantiated");
         inspectInstantiated = flow.GetBooleanVariable("insInstantiated");
         interactInstantiated = flow.GetBooleanVariable("intInstantiated");
-        
+        menuInstantiated = flow.GetBooleanVariable("menuInstantiated");
+
+
         if (b3New && b3release) {
             if (playStatus.sheathed && MouseIntersects(dlgBtnContinueRect)) {
                 flow.SetBooleanVariable("dlgContinue", true);

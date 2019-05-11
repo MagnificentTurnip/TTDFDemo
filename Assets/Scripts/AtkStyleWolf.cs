@@ -12,27 +12,32 @@ public class AtkStyleWolf : AtkStyle {
     public GameObject jawBone;
     public GameObject chest;
 
+    public AudioClip quickBiteClip;
+    public AudioClip forwardBiteClip;
+    public AudioClip swipeClip;
+    public AudioClip pounceClip;
+
     // Use this for initialization
     void Start() {
         state = attackStates.idle;
         instantiatedAttacks = new List<Attack>();
     }
 
-    public override void forceIdle() {
+    public override void ForceIdle() {
         state = attackStates.idle;
     }
 
-    public override void forceGuarding(int counterIdle) {
+    public override void ForceGuarding(int counterIdle) {
         state = attackStates.guarding;
         idleCounter = counterIdle;
     }
 
-    public override void forceSpellcast(int counterIdle) {
+    public override void ForceSpellcast(int counterIdle) {
         state = attackStates.spellcast;
         idleCounter = counterIdle;
     }
 
-    public override void returnToIdle() {
+    public override void ReturnToIdle() {
         //manage returning to idle
         if (state != attackStates.idle) {
             if (state != attackStates.guarding) {
@@ -48,7 +53,7 @@ public class AtkStyleWolf : AtkStyle {
         }
     }
 
-    public override void bParry() {
+    public override void BParry() {
         animator.Play("bParry", 0, 0f);
         if (status.sheathed == false) {
             state = attackStates.bParry; //set the attack state;
@@ -56,10 +61,10 @@ public class AtkStyleWolf : AtkStyle {
         }
         stat.MP -= 20;
         StartCoroutine(status.Parry(0.3f, 15, 60, 60));
-        movement.motor.instantBurst(-700f, 100f);
+        movement.motor.InstantBurst(-700f, 100f);
     }
 
-    public override void fParry() {
+    public override void FParry() {
         animator.Play("fParry", 0, 0f);
         if (status.sheathed == false) {
             state = attackStates.fParry; //set the attack state;
@@ -67,18 +72,19 @@ public class AtkStyleWolf : AtkStyle {
         }
         stat.MP -= 20;
         StartCoroutine(status.Parry(0.3f, 15, 60, 60));
-        movement.motor.instantBurst(700f, -100f);
+        movement.motor.InstantBurst(700f, -100f);
     }
 
-    public void quickBite() {
+    public void QuickBite() {
         print("quickbite");
         //create the new attack as a child of this object
         currentAttack = Instantiate(attack).GetComponent<Attack>();
         currentAttack.transform.position = jawBone.transform.position;
         currentAttack.transform.parent = jawBone.transform;
+        currentAttack.clip = quickBiteClip;
 
         //set the attack data
-        currentAttack.data = new Attack.atkData(
+        currentAttack.data = new Attack.AtkData(
             _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>() as BoxCollider, //this attack uses a box collider
@@ -108,8 +114,8 @@ public class AtkStyleWolf : AtkStyle {
             tempDamage.damageAmount = 5f + 0.9f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Piercing;
-        currentAttack.onHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 10,
             _onHitForwardBackward: -100f,
@@ -126,8 +132,8 @@ public class AtkStyleWolf : AtkStyle {
             tempDamage.damageAmount = 5f + 0.9f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.SPdamage;
-        currentAttack.onGuard = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onGuard = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _SPcost: 30f,
             _causesGuardStun: 5,
             _onHitForwardBackward: -500f,
@@ -144,8 +150,8 @@ public class AtkStyleWolf : AtkStyle {
             tempDamage.damageAmount = 10f + 0.9f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Piercing;
-        currentAttack.onVulnerableHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onVulnerableHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 20,
             _onHitForwardBackward: 200f,
@@ -172,20 +178,21 @@ public class AtkStyleWolf : AtkStyle {
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
         //movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
-        StartCoroutine(movement.motor.timedBurst(0.1f, 300f, 50f, 0f, 0f, 0, 0f)); //this move moves you a smidge forward
+        StartCoroutine(movement.motor.TimedBurst(0.1f, 300f, 50f, 0f, 0f, 0, 0f)); //this move moves you a smidge forward
 
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 20; //always remember to reset the idle counter
     }
 
-    public void forwardBite(int unblock) { //this attack takes an int because it is sometimes unblockable
+    public void ForwardBite(int unblock) { //this attack takes an int because it is sometimes unblockable
         print("forwardbite");
         //create the new attack as a child of this object
         currentAttack = Instantiate(attack).GetComponent<Attack>();
         currentAttack.transform.position = jawBone.transform.position;
         currentAttack.transform.parent = jawBone.transform;
+        currentAttack.clip = forwardBiteClip;
 
         //set the attack data
-        currentAttack.data = new Attack.atkData(
+        currentAttack.data = new Attack.AtkData(
             _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
@@ -216,8 +223,8 @@ public class AtkStyleWolf : AtkStyle {
             tempDamage.damageAmount = 15f + 1.5f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Piercing;
-        currentAttack.onHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 10,
             _onHitForwardBackward: -400f,
@@ -234,7 +241,7 @@ public class AtkStyleWolf : AtkStyle {
             tempDamage.damageAmount = 40f + 1.5f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.SPdamage;
-        currentAttack.onGuard = new Attack.hitProperties(
+        currentAttack.onGuard = new Attack.HitProperties(
             _SPcost: 30f,
             _causesGuardStun: 5,
             _onHitForwardBackward: -700f,
@@ -251,8 +258,8 @@ public class AtkStyleWolf : AtkStyle {
             tempDamage.damageAmount = 10f + 0.9f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Piercing;
-        currentAttack.onVulnerableHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onVulnerableHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 20,
             _onHitForwardBackward: 200f,
@@ -279,21 +286,22 @@ public class AtkStyleWolf : AtkStyle {
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
         //movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
-        StartCoroutine(movement.motor.timedBurst(0.5f, 700f, 50f, 0f, 0f, 0, 0f)); //this move moves you a fair bit forward
+        StartCoroutine(movement.motor.TimedBurst(0.5f, 700f, 50f, 0f, 0f, 0, 0f)); //this move moves you a fair bit forward
 
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 20; //always remember to reset the idle counter
     }
 
-    public void lSwipe(int unblock) { //this attack takes an int because it is sometimes unblockable
+    public void LSwipe(int unblock) { //this attack takes an int because it is sometimes unblockable
         print("lswipe");
 
         //create the new attack as a child of this object
         currentAttack = Instantiate(attack).GetComponent<Attack>();
         currentAttack.transform.position = lftPawBone.transform.position;
         currentAttack.transform.parent = lftPawBone.transform;
+        currentAttack.clip = swipeClip;
 
         //set the attack data
-        currentAttack.data = new Attack.atkData(
+        currentAttack.data = new Attack.AtkData(
             _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
@@ -324,8 +332,8 @@ public class AtkStyleWolf : AtkStyle {
             tempDamage.damageAmount = 10f + 1.4f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 35,
             _onHitForwardBackward: -500f,
@@ -342,8 +350,8 @@ public class AtkStyleWolf : AtkStyle {
             tempDamage.damageAmount = 30f + 1.4f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.SPdamage;
-        currentAttack.onGuard = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onGuard = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _SPcost: 30f,
             _causesGuardStun: 10,
             _onHitForwardBackward: -700f,
@@ -360,8 +368,8 @@ public class AtkStyleWolf : AtkStyle {
             tempDamage.damageAmount = 15f + 1.4f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onVulnerableHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onVulnerableHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 40,
             _causesFloored: 120,
@@ -389,21 +397,22 @@ public class AtkStyleWolf : AtkStyle {
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
         //movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
-        StartCoroutine(movement.motor.timedBurst(0.1f, 100f, 700f, 0f, 0f, 0, 0f)); //this move moves you a smidge right
+        StartCoroutine(movement.motor.TimedBurst(0.1f, 100f, 700f, 0f, 0f, 0, 0f)); //this move moves you a smidge right
 
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 20; //always remember to reset the idle counter
     }
 
-    public void rSwipe(int unblock) { //this attack takes an int because it is sometimes unblockable
+    public void RSwipe(int unblock) { //this attack takes an int because it is sometimes unblockable
         print("rswipe");
 
         //create the new attack as a child of this object
         currentAttack = Instantiate(attack).GetComponent<Attack>();
         currentAttack.transform.position = rgtPawBone.transform.position;
         currentAttack.transform.parent = rgtPawBone.transform;
+        currentAttack.clip = swipeClip;
 
         //set the attack data
-        currentAttack.data = new Attack.atkData(
+        currentAttack.data = new Attack.AtkData(
             _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
@@ -434,8 +443,8 @@ public class AtkStyleWolf : AtkStyle {
             tempDamage.damageAmount = 10f + 1.4f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 35,
             _onHitForwardBackward: -500f,
@@ -452,8 +461,8 @@ public class AtkStyleWolf : AtkStyle {
             tempDamage.damageAmount = 30f + 1.4f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.SPdamage;
-        currentAttack.onGuard = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onGuard = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _SPcost: 30f,
             _causesGuardStun: 10,
             _onHitForwardBackward: -700f,
@@ -470,8 +479,8 @@ public class AtkStyleWolf : AtkStyle {
             tempDamage.damageAmount = 15f + 1.4f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Slashing;
-        currentAttack.onVulnerableHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onVulnerableHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 40,
             _causesFloored: 120,
@@ -499,12 +508,12 @@ public class AtkStyleWolf : AtkStyle {
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
         //movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
-        StartCoroutine(movement.motor.timedBurst(0.6f, 100f, -700f, 0f, 0f, 0, 0f)); //this move moves you a smidge right
+        StartCoroutine(movement.motor.TimedBurst(0.6f, 100f, -700f, 0f, 0f, 0, 0f)); //this move moves you a smidge right
 
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 20; //always remember to reset the idle counter
     }
 
-    public void pounce(int unblock) { //this attack takes an int because it is sometimes unblockable
+    public void Pounce(int unblock) { //this attack takes an int because it is sometimes unblockable
         print("pounce");
 
         //create the new attack as a child of this object
@@ -513,9 +522,10 @@ public class AtkStyleWolf : AtkStyle {
         //currentAttack.transform.parent = jawBone.transform;
         currentAttack.transform.position = chest.transform.position;
         currentAttack.transform.parent = chest.transform;
+        currentAttack.clip = pounceClip;
 
         //set the attack data
-        currentAttack.data = new Attack.atkData(
+        currentAttack.data = new Attack.AtkData(
             _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
@@ -546,8 +556,8 @@ public class AtkStyleWolf : AtkStyle {
             tempDamage.damageAmount = 25f + 3f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Impact;
-        currentAttack.onHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 60,
             _causesFloored: 180,
@@ -576,8 +586,8 @@ public class AtkStyleWolf : AtkStyle {
             tempDamage.damageAmount = 100f + 5f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.SPdamage;
-        currentAttack.onGuard = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onGuard = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _SPcost: 100f,
             _causesGuardStun: 5,
             _onHitForwardBackward: -1000f,
@@ -594,8 +604,8 @@ public class AtkStyleWolf : AtkStyle {
             tempDamage.damageAmount = 30f + 3f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Impact;
-        currentAttack.onVulnerableHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onVulnerableHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 80,
             _causesFloored: 180,
@@ -633,7 +643,7 @@ public class AtkStyleWolf : AtkStyle {
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
         //movement.pointTowardTarget(45f); //this move allows you to adjust rotation within the space where you can input the command for it
-        StartCoroutine(movement.motor.timedBurst(2f, 5500f, 0f, -4100f, 0f, 2, 0.45f)); //this move moves launches you forward
+        StartCoroutine(movement.motor.TimedBurst(2f, 5500f, 0f, -4100f, 0f, 2, 0.45f)); //this move moves launches you forward
 
         idleCounter = currentAttack.data.attackDelay + currentAttack.data.attackDuration + currentAttack.data.attackEnd + 20; //always remember to reset the idle counter
     }
@@ -647,16 +657,16 @@ public class AtkStyleWolf : AtkStyle {
             status.attackLock = true; //if there are then you are, kind of makes sense
         }
         if (debug) {
-            showHurtBox();
+            ShowHurtBox();
         }
     }
 
     private void FixedUpdate() {
 
         //call the attack progression and return to idle functions that have been overridden in this class
-        attackProgression();
-        returnToIdle();
-        nonSpellAtkStyle();
+        AttackProgression();
+        ReturnToIdle();
+        NonSpellAtkStyle();
     }
 
 }

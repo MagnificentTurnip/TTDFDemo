@@ -26,7 +26,7 @@ public class SeismicTorrent : Spell {
         currentAttack.transform.parent = transform;
 
         //set the attack data
-        currentAttack.data = new Attack.atkData(
+        currentAttack.data = new Attack.AtkData(
             _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<BoxCollider>(), //this attack uses a box collider
@@ -61,8 +61,8 @@ public class SeismicTorrent : Spell {
             tempDamage.damageAmount = 5f + 0.4f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Magic;
-        currentAttack.onHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 20,
             _causesAirborne: 20,
@@ -112,7 +112,7 @@ public class SeismicTorrent : Spell {
         //animator.Play(currentAttack.data.GFXAnimation);
 
         instantiatedAttacks.Add(currentAttack); //add the current attack to the list of instantiated attacks so that it can be tracked
-        StartCoroutine(movement.motor.timedBurst(0.2f, 400f, 50f, 0f, 0f, 0, 0f)); //this move moves you a smidge forward
+        StartCoroutine(movement.motor.TimedBurst(0.2f, 400f, 50f, 0f, 0f, 0, 0f)); //this move moves you a smidge forward
 
 
     }

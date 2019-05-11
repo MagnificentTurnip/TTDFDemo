@@ -29,7 +29,7 @@ public class Slumberbolt : Spell {
         currentAttack.transform.parent = transform;
 
         //set the attack data
-        currentAttack.data = new Attack.atkData(
+        currentAttack.data = new Attack.AtkData(
             _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<SphereCollider>(), //this attack uses a box collider
@@ -57,7 +57,7 @@ public class Slumberbolt : Spell {
         currentAttack.data.atkHitBox.isTrigger = true; //make the hitbox a trigger so that it doesn't have physics
 
         //set the attack's properties on hit (all unset properties are defaults)
-        currentAttack.onHit = new Attack.hitProperties(
+        currentAttack.onHit = new Attack.HitProperties(
             _causesFlinch: true,
             _causesStun: 60,
             _onHitForwardBackward: 0f,
@@ -67,7 +67,7 @@ public class Slumberbolt : Spell {
         currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
 
         //set the attack's properties on guard
-        currentAttack.onGuard = new Attack.hitProperties(
+        currentAttack.onGuard = new Attack.HitProperties(
             _causesFlinch: false,
             _causesGuardStun: 40,
             _onHitForwardBackward: -600f,
@@ -129,7 +129,7 @@ public class Slumberbolt : Spell {
                         }
                     }
                     
-                    destroyAllAttacks();
+                    DestroyAllAttacks();
                     Destroy(gfx);
                 }
             }

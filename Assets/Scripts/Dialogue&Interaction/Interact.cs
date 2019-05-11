@@ -19,7 +19,7 @@ public class Interact : MonoBehaviour {
 
     // Update is called once per frame
     public virtual void Update() {
-        if (playIn.currentTarget == this.gameObject && playIn.button4 && !playerStatus.casting && playerStatus.sheathed && !playerStatus.unconscious && !playerStatus.slain && Vector3.Distance(transform.position, playerStatus.gameObject.transform.position) <= minDistance && !comms.commIn.interactInstantiated && !comms.commIn.dialogueInstantiated && !comms.commIn.inspectInstantiated) {
+        if (playIn.currentTarget == this.gameObject && playIn.button4 && !playerStatus.casting && playerStatus.sheathed && !playerStatus.unconscious && !playerStatus.slain && Vector3.Distance(transform.position, playerStatus.gameObject.transform.position) <= minDistance && !comms.commIn.interactInstantiated && !comms.commIn.dialogueInstantiated && !comms.commIn.inspectInstantiated && !comms.commIn.menuInstantiated) {
             Flowchart.BroadcastFungusMessage(flowMessage);
         }
         if (Vector3.Distance(transform.position, playerStatus.gameObject.transform.position) > minDistance) {

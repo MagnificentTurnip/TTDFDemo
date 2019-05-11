@@ -12,17 +12,17 @@ public class Motor : MonoBehaviour {
         speed = inSpeed;
     }
 
-    public void forwardGradual() { //gradual force, the kind of thing you put down to happen every frame while something's true or whatever.
+    public void ForwardGradual() { //gradual force, the kind of thing you put down to happen every frame while something's true or whatever.
         rb.AddForce(transform.forward * speed * Time.fixedDeltaTime);
     }
 
-    public void instantBurst(float forwardBack, float rightLeft) {
+    public void InstantBurst(float forwardBack, float rightLeft) {
         rb.velocity = new Vector3(0, 0, 0);
         rb.AddForce(transform.forward * forwardBack);
         rb.AddForce(transform.right * rightLeft);
     }
 
-    public IEnumerator timedBurst(float timeBeforeStart, float initialFB, float initialRL, float incrementFB, float incrementRL, int totalKeyframes, float keyframeInterval) {
+    public IEnumerator TimedBurst(float timeBeforeStart, float initialFB, float initialRL, float incrementFB, float incrementRL, int totalKeyframes, float keyframeInterval) {
         timeOut = false;
         yield return new WaitForSeconds(timeBeforeStart);
         if (timeOut == false) {
@@ -32,7 +32,7 @@ public class Motor : MonoBehaviour {
             yield return new WaitForSeconds(keyframeInterval);
             if (timeOut == false) {
                 if (totalKeyframes > 1) {
-                    StartCoroutine(timedBurst(0f, initialFB + incrementFB, initialRL + incrementRL, incrementFB, incrementRL, totalKeyframes - 1, keyframeInterval));
+                    StartCoroutine(TimedBurst(0f, initialFB + incrementFB, initialRL + incrementRL, incrementFB, incrementRL, totalKeyframes - 1, keyframeInterval));
                 }
             }
         }

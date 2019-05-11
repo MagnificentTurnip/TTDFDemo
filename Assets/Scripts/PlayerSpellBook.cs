@@ -34,9 +34,36 @@ public class PlayerSpellBook : MonoBehaviour {
                 if (runningSpells[i].GetComponent<Spell>().castTime > 0) {
                     toDestroy = runningSpells[i];
                     runningSpells.Remove(runningSpells[i]);
-                    toDestroy.GetComponent<Spell>().destroySpell();
+                    toDestroy.GetComponent<Spell>().DestroySpell();
                 }
             }
+        }
+    }
+
+    public void EngageCasting(int i) {
+        currentSpell = Instantiate(spellsKnown[i]).GetComponent<Spell>();
+        //currentSpell.debug = true; //testing mode
+        currentSpell.mouseTarget = true;
+        currentSpell.target = playIn.currentTarget;
+        currentSpell.status = style.status;
+        currentSpell.charStat = style.charStat;
+        currentSpell.movement = style.movement;
+        currentSpell.animator = style.animator;
+        currentSpell.transform.position = transform.position;
+        currentSpell.transform.rotation = transform.rotation;
+        currentSpell.active = true;
+        currentSpell.ready = -1;
+        currentSpell.Start();
+        if (currentSpell.CanCast()) {
+            currentSpell.ready = 0;
+            style.status.castLock = currentSpell.castTime + currentSpell.postCastTime;
+            style.status.channelLock = currentSpell.castTime + +currentSpell.postCastTime + currentSpell.channelTime;
+            currentSpellCode = "";
+            displaySpellCode = "";
+            runningSpells.Add(currentSpell.gameObject);
+            style.ForceSpellcast(currentSpell.castTime + currentSpell.postCastTime + 5); //set the spellcast state for a while
+        } else {
+            Destroy(currentSpell.gameObject);
         }
     }
 
@@ -52,7 +79,7 @@ public class PlayerSpellBook : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (playIn.spellcast && style.status.canCast() && style.status.castLock <= 0 && !style.status.casting && style.status.channelLock <= 0 && reclickCounter <= 0) { 
+        if (playIn.spellcast && style.status.CanCast() && style.status.castLock <= 0 && !style.status.casting && style.status.channelLock <= 0 && reclickCounter <= 0) { 
             currentSpellCode = "";
             displaySpellCode = "";
             reclickCounter = 15; //can't exit spellcasting for 15 frames 
@@ -67,7 +94,7 @@ public class PlayerSpellBook : MonoBehaviour {
             }
             soundCheck = true;
 
-            style.forceSpellcast(1); //set the spellcast state while casting
+            style.ForceSpellcast(1); //set the spellcast state while casting
 
             //Spell input management - needs to be only on press to prevent large strings of the same command on a single tap of the button/key
             if (playIn.button1 && b1release) {
@@ -104,23 +131,23 @@ public class PlayerSpellBook : MonoBehaviour {
             }
 
             //check to see if it's one of the funky spells that aren't cast with lmb and have the honour of being hardcoded into the spellbook
-            if (playIn.evade && style.status.canCast() && style.status.castLock <= 0 && style.status.channelLock <= 0 && currentSpellCode == "") {
+            if (playIn.evade && style.status.CanCast() && style.status.castLock <= 0 && style.status.channelLock <= 0 && currentSpellCode == "") {
                 //perform the magical evade
-                style.movement.evade(style.movement.rollSpeed, 0f, style.movement.rollTime);
+                style.movement.Evade(style.movement.rollSpeed, 0f, style.movement.rollTime);
                 style.animator.Play("magicEvade", 2, 0f);
                 style.status.invulnerable = 30;
                 style.status.Incorporealise(30);
                 style.status.castLock = 30;
                 style.stat.MP -= 30;
             }
-            if (playIn.guard && style.status.canCast() && style.status.castLock <= 0 && style.status.channelLock <= 0 && currentSpellCode == "") {
+            if (playIn.guard && style.status.CanCast() && style.status.castLock <= 0 && style.status.channelLock <= 0 && currentSpellCode == "") {
                 //perform the magical guard
                 style.status.casting = false;
                 style.status.guarding = true;
                 style.status.magicGuard = true;
             }
 
-            if (playIn.movement && style.status.canCast() && style.status.castLock <= 0 && style.status.channelLock <= 0) {
+            if (playIn.movement && style.status.CanCast() && style.status.castLock <= 0 && style.status.channelLock <= 0) {
                 //check to see if the current spellCode matches that of any of the player's known spells.
                 for (int i = 0; i < spellsKnown.Count; i++) {
                     if (currentSpellCode == spellsKnown[i].GetComponent<Spell>().spellCode) {
@@ -135,32 +162,14 @@ public class PlayerSpellBook : MonoBehaviour {
                                 }
                             }
                             if (!repeatSpell) {
-                                currentSpell = Instantiate(spellsKnown[i]).GetComponent<Spell>();
-                                //currentSpell.debug = true; //testing mode
-                                currentSpell.mouseTarget = true;
-                                currentSpell.target = playIn.currentTarget;
-                                currentSpell.status = style.status;
-                                currentSpell.charStat = style.charStat;
-                                currentSpell.movement = style.movement;
-                                currentSpell.animator = style.animator;
-                                currentSpell.transform.position = transform.position;
-                                currentSpell.transform.rotation = transform.rotation;
-                                currentSpell.active = true;
-                                currentSpell.ready = 0;
-                                currentSpell.Start();
-                                style.status.castLock = currentSpell.castTime + currentSpell.postCastTime;
-                                style.status.channelLock = currentSpell.castTime + +currentSpell.postCastTime + currentSpell.channelTime;
-                                currentSpellCode = "";
-                                displaySpellCode = "";
-                                runningSpells.Add(currentSpell.gameObject);
-                                style.forceSpellcast(currentSpell.castTime + currentSpell.postCastTime + 5); //set the spellcast state for a while
+                                EngageCasting(i);
                             }
                         }
                     }
                 }
             }
 
-            if (playIn.movement && style.status.canCast() && misfireFrames > 0 && misfireFrames < 21) {
+            if (playIn.movement && style.status.CanCast() && misfireFrames > 0 && misfireFrames < 21) {
                 for (int i = 0; i < spellsKnown.Count; i++) {
                     if (currentSpellCode == spellsKnown[i].GetComponent<Spell>().spellCode) {
                         repeatSpell = false;
@@ -170,23 +179,7 @@ public class PlayerSpellBook : MonoBehaviour {
                             }
                         }
                         if (!repeatSpell) {
-                            currentSpell = Instantiate(spellsKnown[i]).GetComponent<Spell>();
-                            currentSpell.mouseTarget = true;
-                            currentSpell.target = playIn.currentTarget;
-                            currentSpell.status = style.status;
-                            currentSpell.charStat = style.charStat;
-                            currentSpell.movement = style.movement;
-                            currentSpell.transform.position = transform.position;
-                            currentSpell.transform.rotation = transform.rotation;
-                            currentSpell.active = true;
-                            currentSpell.ready = 0;
-                            currentSpell.Start();
-                            style.status.castLock = currentSpell.castTime + currentSpell.postCastTime;
-                            style.status.channelLock = currentSpell.castTime + +currentSpell.postCastTime + currentSpell.channelTime;
-                            currentSpellCode = "";
-                            displaySpellCode = "";
-                            runningSpells.Add(currentSpell.gameObject);
-                            style.forceSpellcast(currentSpell.castTime + currentSpell.postCastTime + 5); //set the spellcast state for a while
+                            EngageCasting(i);
                         }
                     }
                 }
@@ -216,7 +209,7 @@ public class PlayerSpellBook : MonoBehaviour {
     private void FixedUpdate() {
         codeDisplay.text = displaySpellCode;
         if (style.status.casting && style.status.castLock <= 0) {
-            style.movement.pointToTarget(); //point to the mouse cursor while casting (unless castlocked) (in fixedUpdate because it looks weird to point places while paused)
+            style.movement.PointToTarget(); //point to the mouse cursor while casting (unless castlocked) (in fixedUpdate because it looks weird to point places while paused)
         }
         if (style.status.spellFlinchTrigger) {
             currentSpellCode = "";
@@ -255,7 +248,7 @@ public class PlayerSpellBook : MonoBehaviour {
             if (runningSpellScript.duration <= 0) {
                 toDestroy = runningSpells[i];
                 runningSpells.Remove(runningSpells[i]);
-                toDestroy.GetComponent<Spell>().destroySpell();
+                toDestroy.GetComponent<Spell>().DestroySpell();
             }
             else if (runningSpellScript.ready == 1) {
                 runningSpellScript.CastSpell();
@@ -266,7 +259,7 @@ public class PlayerSpellBook : MonoBehaviour {
             style.stat.MP -= (10f + style.stat.MPregen) / 60f;
             StartCoroutine(style.status.Parry(0f, 2, 0, 0));
         }
-        if ((!(style.status.guarding || style.status.isGuardStunned())) || style.stat.MP <= 0) {
+        if ((!(style.status.guarding || style.status.IsGuardStunned())) || style.stat.MP <= 0) {
             style.status.magicGuard = false;
         }
     }

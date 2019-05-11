@@ -86,7 +86,7 @@ public class PlayerInput : MonoBehaviour {
     public KeyCombo lftSD;
     public KeyCombo lftASD;
 
-    void calculateMouseAngle() { //calculates the angle between the mouse and the way the player is facing. This calculates two useful values.
+    void CalculateMouseAngle() { //calculates the angle between the mouse and the way the player is facing. This calculates two useful values.
         mousePos = Input.mousePosition;
         mousePos.z = 5.23f;
         objectPos = cam.WorldToScreenPoint(transform.position); //gets the player's position on screen
@@ -162,7 +162,7 @@ public class PlayerInput : MonoBehaviour {
 
         cursorDistance = Vector2.Distance(new Vector2(Screen.width / 2, Screen.height / 2), Input.mousePosition); //get distance from player to cursor
 
-        calculateMouseAngle(); //calculate the angles for the mouse so we can then discern where it's pointing
+        CalculateMouseAngle(); //calculate the angles for the mouse so we can then discern where it's pointing
 
         //set the bools for input of where the cursor is pointed relative to the player for use in controls
         if (45 >= mouseDifAngle && mouseDifAngle > -45) { //between 45 and -45 degrees, point forward

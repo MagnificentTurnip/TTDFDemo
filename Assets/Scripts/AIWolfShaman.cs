@@ -100,6 +100,17 @@ public class AIWolfShaman : MonoBehaviour {
     public GameObject jawBoneL;
     public GameObject chestL;
 
+    public AudioSource source;
+
+    //audio clips
+    public AudioClip howlClipShort;
+    public AudioClip howlClipLong;
+    public AudioClip whimperClip;
+    public AudioClip jumpClip;
+    public AudioClip moveClip;
+
+    public AudioClip bossMusic;
+
     public void SelectTarget(GameObject newTarget) {
         target = newTarget;
         movementAI.target = target;
@@ -113,7 +124,7 @@ public class AIWolfShaman : MonoBehaviour {
                 if (runningSpells[i].GetComponent<Spell>().castTime > 0) {
                     toDestroy = runningSpells[i];
                     runningSpells.Remove(runningSpells[i]);
-                    toDestroy.GetComponent<Spell>().destroySpell();
+                    toDestroy.GetComponent<Spell>().DestroySpell();
                 }
             }
         }
@@ -250,11 +261,11 @@ public class AIWolfShaman : MonoBehaviour {
         }
 
         //alter preference based on state of the player (opponent)
-        if (targetStatus.isVulnerable()) {
+        if (targetStatus.IsVulnerable()) {
             attackPref += 30;
             approachPref += 30;
         }
-        if (targetStatus.isStunned()) {
+        if (targetStatus.IsStunned()) {
             guardPref -= 50;
             parryPref -= 50;
             castPref += 30;
@@ -460,37 +471,37 @@ public class AIWolfShaman : MonoBehaviour {
     public void Attack() {
         decider = Random.Range(0, quickBitePref + forwardBitePref + lSwipePref + rSwipePref + pouncePref);
         if (decider >= 0 && decider <= quickBitePref) {
-            style.quickBite();
+            style.QuickBite();
         }
         else if (decider <= quickBitePref + forwardBitePref) {
             if (big) {
-                style.forwardBite(2);
+                style.ForwardBite(2);
             } else {
-                style.forwardBite(0);
+                style.ForwardBite(0);
             }
         }
         else if (decider <= quickBitePref + forwardBitePref + lSwipePref) {
             if (big) {
-                style.lSwipe(2);
+                style.LSwipe(2);
             }
             else {
-                style.lSwipe(0);
+                style.LSwipe(0);
             }
         }
         else if (decider <= quickBitePref + forwardBitePref + lSwipePref + rSwipePref) {
             if (big) {
-                style.rSwipe(2);
+                style.RSwipe(2);
             }
             else {
-                style.rSwipe(0);
+                style.RSwipe(0);
             }
         }
         else {
             if (big) {
-                style.pounce(3);
+                style.Pounce(3);
             }
             else {
-                style.pounce(2);
+                style.Pounce(2);
             }
             pointTargetFrames = 80;
         }
@@ -550,7 +561,7 @@ public class AIWolfShaman : MonoBehaviour {
 
         if (pointTargetFrames > 0) {
             pointTargetFrames--;
-            movementAI.pointTowardTarget(45);
+            movementAI.PointTowardTarget(45);
         }
 
         if (attackFrames > 0) {
@@ -564,7 +575,7 @@ public class AIWolfShaman : MonoBehaviour {
             }
         }
 
-        if (evadeFrames > 0 && style.status.canMove()) {
+        if (evadeFrames > 0 && style.status.CanMove()) {
             evadeFrames--;
             if (navMesh.enabled) {
                 navMesh.isStopped = true;
@@ -587,7 +598,7 @@ public class AIWolfShaman : MonoBehaviour {
             bigAnimator.SetBool("curious", false);
         }
         smallAnimator.SetBool("curious", false);
-
+        
         if (behaviour == behaviourStates.defeated && !(style.status.slain || style.status.unconscious)) {
             if (big) {
                 BecomeSmall();
@@ -610,7 +621,7 @@ public class AIWolfShaman : MonoBehaviour {
                     navMesh.isStopped = true;
                 }
                 navMesh.enabled = false;
-                movementAI.pointTowardTarget(4);
+                movementAI.PointTowardTarget(4);
             }
             if ((Vector3.Distance(transform.position, target.transform.position) < 5 || !targetStatus.sheathed || targetStatus.casting) && pacifiedCounter < 600) {
                 pacifiedCounter++;
@@ -630,6 +641,7 @@ public class AIWolfShaman : MonoBehaviour {
             target = stump;
             movementAI.target = target;
             if (!castSanctuary) {
+                source.PlayOneShot(howlClipLong, Random.Range(0.4f, 0.6f));
                 currentSpell = Instantiate(healingSanctuary).GetComponent<Spell>();
                 currentSpell.duration = 14400; //the Shamanwolf's healing sanctuary is longer, lasting 4 minutes
                 currentSpell.mouseTarget = false;
@@ -648,7 +660,7 @@ public class AIWolfShaman : MonoBehaviour {
                 style.status.castLock = currentSpell.castTime + currentSpell.postCastTime;
                 style.status.channelLock = currentSpell.castTime + currentSpell.postCastTime + currentSpell.channelTime;
                 runningSpells.Add(currentSpell.gameObject);
-                style.forceSpellcast(currentSpell.castTime + currentSpell.postCastTime + 5); //set the spellcast state for a while
+                style.ForceSpellcast(currentSpell.castTime + currentSpell.postCastTime + 5); //set the spellcast state for a while
                 castSanctuary = true;
             } else {
                 if (Vector3.Distance(transform.position, target.transform.position) > 6) {
@@ -675,7 +687,7 @@ public class AIWolfShaman : MonoBehaviour {
             castSanctuary = false;
         }
 
-        if (style.status.isFloored() && !(style.status.slain || style.status.unconscious)) {
+        if (style.status.IsFloored() && !(style.status.slain || style.status.unconscious)) {
             ChangeGoal(goalStates.evade);
             goalStarted = false;
             //goalDelay = Random.Range(0, 120);
@@ -725,7 +737,7 @@ public class AIWolfShaman : MonoBehaviour {
         if ((!goalStarted) && goalDelay <= 0) {
             switch (goal) {
                 case goalStates.attack:
-                    if (style.status.canMove()) {
+                    if (style.status.CanMove()) {
                         if (big) {
                             bigAnimator.Play("turn", 0, 0f);
                         }
@@ -735,13 +747,15 @@ public class AIWolfShaman : MonoBehaviour {
                     goalStarted = true;
                     break;
                 case goalStates.cast:
-                    if (style.status.canCast()) { 
+                    if (style.status.CanCast()) {
+                        source.PlayOneShot(howlClipShort, Random.Range(0.4f, 0.6f));
                         goalStarted = true;
                         goalDelay = 40;
                     }
                     break;
                 case goalStates.big:
-                    if (style.status.canCast()) {
+                    if (style.status.CanCast()) {
+                        source.PlayOneShot(howlClipShort, Random.Range(0.4f, 0.6f));
                         goalStarted = true;
                         BecomeBig();
                         bigCounter = Random.Range(10*60, 30*60); //become big for anywhere between 10 and 30 seconds
@@ -749,7 +763,7 @@ public class AIWolfShaman : MonoBehaviour {
                     }
                     break;
                 case goalStates.approach:
-                    if (style.status.canMove()) {
+                    if (style.status.CanMove()) {
                         navMesh.enabled = true;
                         navMesh.isStopped = false;
                         navMesh.SetDestination(target.transform.position);
@@ -758,7 +772,7 @@ public class AIWolfShaman : MonoBehaviour {
                     }
                     break;
                 case goalStates.retreat:
-                    if (style.status.canMove()) {
+                    if (style.status.CanMove()) {
                         navMesh.enabled = true;
                         navMesh.isStopped = false;
                         retreatDist = Random.Range(Vector3.Distance(transform.position, target.transform.position), 28f);
@@ -768,7 +782,7 @@ public class AIWolfShaman : MonoBehaviour {
                     }
                     break;
                 case goalStates.evade:
-                    if (style.status.canMove()) {
+                    if (style.status.CanMove()) {
                         if (big) {
                             bigAnimator.Play("turn", 0, 0f);
                         }
@@ -782,14 +796,14 @@ public class AIWolfShaman : MonoBehaviour {
                     goalStarted = true;
                     break;
                 case goalStates.parry:
-                    if (style.status.canParry()) {
-                        movementAI.pointTowardTarget(60);
+                    if (style.status.CanParry()) {
+                        movementAI.PointTowardTarget(60);
                         decider = Random.Range(0, 2);
                         if (decider > 1) {
-                            style.fParry();
+                            style.FParry();
                         }
                         else {
-                            style.bParry();
+                            style.BParry();
                         }
                         goalStarted = true;
                     }
@@ -801,11 +815,11 @@ public class AIWolfShaman : MonoBehaviour {
             switch (goal) {
                 case goalStates.attack:
                     if (attackFrames > 1) {
-                        movementAI.pointTowardTarget(12);
+                        movementAI.PointTowardTarget(12);
                     }
                     else {
                         if (attackFrames > 0) {
-                            if (style.status.canAttack()) {
+                            if (style.status.CanAttack()) {
                                 CalculateAttackPref();
                                 Attack();
                             }
@@ -817,11 +831,11 @@ public class AIWolfShaman : MonoBehaviour {
                     break;
                 case goalStates.cast:
                     chosenSpellNumber = Random.Range(0, spellsKnown.Count - 1);
-                    if (style.status.canCast() && style.status.castLock <= 0 && !style.status.casting) {
+                    if (style.status.CanCast() && style.status.castLock <= 0 && !style.status.casting) {
                         style.status.casting = true;
                     }
                     if (style.status.casting && style.status.channelLock <= 0) {
-                        style.forceSpellcast(1);
+                        style.ForceSpellcast(1);
                         currentSpellName = spellsKnown[chosenSpellNumber].GetComponent<Spell>().spellName;
                         repeatSpell = false;
                         for (int i2 = 0; i2 < runningSpells.Count; i2++) {
@@ -846,7 +860,7 @@ public class AIWolfShaman : MonoBehaviour {
                             style.status.castLock = currentSpell.castTime + currentSpell.postCastTime;
                             style.status.channelLock = currentSpell.castTime + currentSpell.postCastTime + currentSpell.channelTime;
                             runningSpells.Add(currentSpell.gameObject);
-                            style.forceSpellcast(currentSpell.castTime + currentSpell.postCastTime + 5); //set the spellcast state for a while
+                            style.ForceSpellcast(currentSpell.castTime + currentSpell.postCastTime + 5); //set the spellcast state for a while
                         }
                     }
                     if (style.status.castLock > 0) {
@@ -860,7 +874,7 @@ public class AIWolfShaman : MonoBehaviour {
                     }
                     break;
                 case goalStates.approach: 
-                    if (style.status.canMove()) {
+                    if (style.status.CanMove()) {
                         navMesh.enabled = true;
                         navMesh.isStopped = false;
                     } else {
@@ -890,7 +904,7 @@ public class AIWolfShaman : MonoBehaviour {
                     }
                     break;
                 case goalStates.retreat:
-                    if (style.status.canMove()) {
+                    if (style.status.CanMove()) {
                         navMesh.enabled = true;
                         navMesh.isStopped = false;
                     }
@@ -928,11 +942,11 @@ public class AIWolfShaman : MonoBehaviour {
                     }
                     break;
                 case goalStates.evade:
-                    if (evadeFrames > 0 && style.status.canMove()) {
-                        movementAI.pointAwayFromTarget(Random.Range(3, 5));
+                    if (evadeFrames > 0 && style.status.CanMove()) {
+                        movementAI.PointAwayFromTarget(Random.Range(3, 5));
                     } else {
-                        if (style.status.canRoll()) {
-                            style.movement.evade(evadeSpeed, 0, 0.5f);
+                        if (style.status.CanRoll()) {
+                            style.movement.Evade(evadeSpeed, 0, 0.5f);
                             if (big) {
                                 bigAnimator.Play("jump", 0, 0f);
                             }
@@ -947,10 +961,10 @@ public class AIWolfShaman : MonoBehaviour {
                         goalComplete = true;
                         style.status.guarding = false;
                     } else {
-                        if (style.status.canGuard()) {
+                        if (style.status.CanGuard()) {
                             style.status.guarding = true;
-                            if (!style.status.isGuardStunned()) {
-                                movementAI.pointTowardTarget(3);
+                            if (!style.status.IsGuardStunned()) {
+                                movementAI.PointTowardTarget(3);
                             }
                         } else {
                             style.status.guarding = false;
@@ -965,7 +979,22 @@ public class AIWolfShaman : MonoBehaviour {
 
         }
 
-        if (!style.status.canGuard()) {
+        if (navMesh.enabled) {
+            if (!source.isPlaying) {
+                source.Play();
+            }
+            source.loop = true;
+            if (behaviour == behaviourStates.defeated) {
+                source.clip = whimperClip;
+            } else {
+                source.clip = moveClip;
+            }
+        } else {
+            source.clip = null;
+            source.loop = false;
+        }
+
+        if (!style.status.CanGuard()) {
             style.status.guarding = false;
         }
 
@@ -977,7 +1006,7 @@ public class AIWolfShaman : MonoBehaviour {
             parryBubbleL.material.color = new Color(parryBubbleL.material.color.r, parryBubbleL.material.color.g, parryBubbleL.material.color.b, 0f);
         }
 
-        if ((!style.status.canMove())) {
+        if ((!style.status.CanMove())) {
             if (navMesh.enabled) {
                 navMesh.isStopped = true;
             }
@@ -993,7 +1022,7 @@ public class AIWolfShaman : MonoBehaviour {
                 navMesh.isStopped = true;
             }
             navMesh.enabled = false;
-            movementAI.pointTowardTarget(30); //point to the target while casting
+            movementAI.PointTowardTarget(30); //point to the target while casting
         } else {
             if (big) {
                 bigAnimator.SetBool("trueCasting", false);
@@ -1028,7 +1057,7 @@ public class AIWolfShaman : MonoBehaviour {
             if (runningSpellScript.duration <= 0) {
                 toDestroy = runningSpells[i];
                 runningSpells.Remove(runningSpells[i]);
-                toDestroy.GetComponent<Spell>().destroySpell();
+                toDestroy.GetComponent<Spell>().DestroySpell();
             }
             else if (runningSpellScript.ready == 1) {
                 runningSpellScript.CastSpell();

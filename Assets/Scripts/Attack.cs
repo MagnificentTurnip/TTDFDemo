@@ -7,12 +7,12 @@ public class Attack : MonoBehaviour {
     public enum typeOfDamage { True, Slashing, Impact, Piercing, Fire, Cold, Caustic, Shock, Astral, Ruinous, Magic, SPdamage, MPdamage };
     //true damage is another word for HPdamage, just flat out. SPdamage and MPdamage could I guess also be considered true damage but whatever.
 
-    public struct damage {
+    public struct Damage {
         public float damageAmount;
         public typeOfDamage damageType;
     }
 
-    public struct atkData {
+    public struct AtkData {
         //the status manager of whoever instantiated this attack
         public AtkStyle attackOwnerStyle;
 
@@ -53,7 +53,7 @@ public class Attack : MonoBehaviour {
         string exampleAnimString { set { exampleAnimHash = Animator.StringToHash(value); } }
         */
 
-        public atkData( //constructor
+        public AtkData( //constructor
             AtkStyle _attackOwnerStyle = null,
             Animator _HitboxAnimator = null,
             Collider _atkHitBox = null,
@@ -97,9 +97,9 @@ public class Attack : MonoBehaviour {
         }
     }
 
-    public struct hitProperties {
+    public struct HitProperties {
 
-        public List<damage> damageInstances;
+        public List<Damage> damageInstances;
 
         public float HPcost; //Some attacks, although unusual, cost a certain amount of HP, SP or MP on guard, hit, etc.
         public float SPcost;
@@ -116,11 +116,12 @@ public class Attack : MonoBehaviour {
         public int causesGuardStun; //should only be applied on guard, as you might guess from the name
 
         //Forced movement - some attacks will forcibly move someone hit by it, calling the instantBurst method on the attacked unit's motor.
-        public float onHitForwardBackward; //positive for forward, negative for backward
-        public float onHitRightLeft; //positive for right, negative for left
+        public float onHitAwayTowards; //positive for away from the attack, negative for toward the attack
+        public float onHitForwardBackward; //positive for forward, negative for backward (referring to the attacker's transform)
+        public float onHitRightLeft; //positive for right, negative for left (referring to the attacker's transform)
 
-        public hitProperties( //constructor
-            List<damage> _damageInstances = null,
+        public HitProperties( //constructor
+            List<Damage> _damageInstances = null,
             float _HPcost = 0,
             float _SPcost = 0,
             float _MPcost = 0,
@@ -133,6 +134,7 @@ public class Attack : MonoBehaviour {
             int _causesParalyze = 0,
             int _causesGrapple = 0,
             int _causesGuardStun = 0,
+            float _onHitAwayTowards = 0,
             float _onHitForwardBackward = 0,
             float _onHitRightLeft = 0) {
             damageInstances = _damageInstances;
@@ -148,6 +150,7 @@ public class Attack : MonoBehaviour {
             causesParalyze = _causesParalyze;
             causesGrapple = _causesGrapple;
             causesGuardStun = _causesGuardStun;
+            onHitAwayTowards = _onHitAwayTowards;
             onHitForwardBackward = _onHitForwardBackward;
             onHitRightLeft = _onHitRightLeft;
         }
@@ -162,17 +165,17 @@ public class Attack : MonoBehaviour {
     public AudioClip clip;
     public bool clipPlayed;
 
-    public atkData data;
-    public hitProperties onHit;
-    public hitProperties onChargeHit;
-    public hitProperties onGuard;
-    public hitProperties onChargeGuard;
-    public hitProperties onVulnerableHit;
-    public hitProperties onVulnerableChargeHit;
-    public hitProperties onFlooredHit;
-    public hitProperties onFlooredChargeHit;
-    public hitProperties onAirborneHit;
-    public hitProperties onAirborneChargeHit;
+    public AtkData data;
+    public HitProperties onHit;
+    public HitProperties onChargeHit;
+    public HitProperties onGuard;
+    public HitProperties onChargeGuard;
+    public HitProperties onVulnerableHit;
+    public HitProperties onVulnerableChargeHit;
+    public HitProperties onFlooredHit;
+    public HitProperties onFlooredChargeHit;
+    public HitProperties onAirborneHit;
+    public HitProperties onAirborneChargeHit;
 
     // Use this for initialization
     void Start () {

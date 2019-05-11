@@ -15,11 +15,11 @@ public class PlayerMovement : Movement {
     public float delayBeforeStep;
     private float stepDelayCounter;
 
-    public override void pointToTarget() { //a function that makes the player point toward the cursor
+    public override void PointToTarget() { //a function that makes the player point toward the cursor
         transform.rotation = Quaternion.Euler(new Vector3(0, playerInput.toMouseAngle, 0)); //rotation happens on the Y axis
     }
 
-    public override void pointTowardTarget(float maxTurn) {
+    public override void PointTowardTarget(float maxTurn) {
         if (playerInput.mouseDifAngle > maxTurn) { //the angle could be over the maximum, and to the player's right
             transform.rotation = Quaternion.Euler(new Vector3(0, transform.localEulerAngles.y+maxTurn, 0)); //in which case, turn it the maximum amount allowed to the right
         } else if (playerInput.mouseDifAngle < -maxTurn) { //or it could also be over the maximum to the left
@@ -41,9 +41,9 @@ public class PlayerMovement : Movement {
 	void FixedUpdate () {
         status.sneaking = false; //set sneaking to false so that it doesn't stay on when you stop sneaking
         status.sprinting = false; //same thing for sprinting
-        if (playerInput.movement && status.canMove()) {
+        if (playerInput.movement && status.CanMove()) {
             if (status.guarding == true) { //player goes slow if guarding
-                if (status.isParalyzed()) {
+                if (status.IsParalyzed()) {
                     motor.SetSpeed(creepSpeed / 2);
                     stepDelayCounter -= 2.6f * animator.GetFloat("speedPercent");
                 }
@@ -52,13 +52,13 @@ public class PlayerMovement : Movement {
                     stepDelayCounter -= 2.6f * animator.GetFloat("speedPercent");
                 }
             }
-            else if (playerInput.sprint && !status.isParalyzed()) { //player sprints to go fast
+            else if (playerInput.sprint && !status.IsParalyzed()) { //player sprints to go fast
                 motor.SetSpeed(sprintSpeed);
                 status.sprinting = true;
                 stepDelayCounter -= 0.7f * animator.GetFloat("speedPercent");
             }
             else if (playerInput.cursorDistance < Screen.width * 0.05) { //player creeps if the cursor is really close to the player
-                if (status.isParalyzed()) {
+                if (status.IsParalyzed()) {
                     motor.SetSpeed(creepSpeed / 2);
                     stepDelayCounter -= 1.8f * animator.GetFloat("speedPercent");
                 }
@@ -69,7 +69,7 @@ public class PlayerMovement : Movement {
                 status.sneaking = true; //turn sneaking on if sneaking
             }
             else if (playerInput.cursorDistance < Screen.width * 0.1) { //player walks if the cursor is fairly close to the player
-                if (status.isParalyzed()) {
+                if (status.IsParalyzed()) {
                     motor.SetSpeed(walkSpeed / 2);
                     stepDelayCounter -= 1.6f * animator.GetFloat("speedPercent");
                 }
@@ -79,7 +79,7 @@ public class PlayerMovement : Movement {
                 }
             }
             else { //player jogs at further distances
-                if (status.isParalyzed()) {
+                if (status.IsParalyzed()) {
                     motor.SetSpeed(jogSpeed / 2);
                     if (status.sheathed) {
                         stepDelayCounter -= 0.8f * animator.GetFloat("speedPercent");
@@ -96,22 +96,22 @@ public class PlayerMovement : Movement {
                     }
                 }
             }
-            pointToTarget();
-            motor.forwardGradual();
+            PointToTarget();
+            motor.ForwardGradual();
             status.moving = true;
         }
         else {
             status.moving = false;
         }
 
-        if (playerInput.evade && status.canRoll()) {
+        if (playerInput.evade && status.CanRoll()) {
             if (status.sprinting) {
-                pointToTarget();
-                evade(diveSpeed, 0f, diveTime);
+                PointToTarget();
+                Evade(diveSpeed, 0f, diveTime);
                 animator.Play("forwardDive");
             } else {
-                pointToTarget();
-                evade(rollSpeed, 0f, rollTime);
+                PointToTarget();
+                Evade(rollSpeed, 0f, rollTime);
                 animator.Play("forwardRoll");
             } //other evades can be done at other times, but they are handled under the current attack style of the player, and are treated similarly to attacks.
         }

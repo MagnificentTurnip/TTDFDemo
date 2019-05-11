@@ -20,8 +20,12 @@ public class Spell : AtkStyle {
     public bool active;
     public int ready;
 
-    public virtual void destroySpell() {
-        destroyAllAttacks();
+    public virtual bool CanCast() {
+        return true;
+    }
+
+    public virtual void DestroySpell() {
+        DestroyAllAttacks();
         Destroy(this.gameObject);
     }
 
@@ -41,7 +45,7 @@ public class Spell : AtkStyle {
 
     public virtual void FixedUpdate() {
         if (active) {
-            attackProgression();
+            AttackProgression();
         }
     }
 }

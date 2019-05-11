@@ -20,7 +20,7 @@ public class Dialogue : MonoBehaviour {
 
     // Update is called once per frame
     public virtual void Update() {
-        if (playIn.currentTarget == this.gameObject && playIn.button3 && playerStatus.sheathed && !playerStatus.casting && !playerStatus.unconscious && !playerStatus.slain && Vector3.Distance(transform.position, playerStatus.gameObject.transform.position) <= minDistance && !comms.commIn.interactInstantiated && !comms.commIn.dialogueInstantiated && !comms.commIn.inspectInstantiated) {
+        if (playIn.currentTarget == this.gameObject && playIn.button3 && playerStatus.sheathed && !playerStatus.casting && !playerStatus.unconscious && !playerStatus.slain && Vector3.Distance(transform.position, playerStatus.gameObject.transform.position) <= minDistance && !comms.commIn.interactInstantiated && !comms.commIn.dialogueInstantiated && !comms.commIn.inspectInstantiated && !comms.commIn.menuInstantiated) {
             Flowchart.BroadcastFungusMessage(flowMessage);
         }
         if (Vector3.Distance(transform.position, playerStatus.gameObject.transform.position) > minDistance) {

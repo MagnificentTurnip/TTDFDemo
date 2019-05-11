@@ -8,7 +8,7 @@ public class CCResistHittable : Hittable {
     public int flinchLimit; //the number the flinchCounter can reach before it causes flinch
     public int flinchCounter; //the current stored number of flinches
 
-    public override void ApplyHitProperties(Attack.hitProperties properties) {
+    public override void ApplyHitProperties(Attack.HitProperties properties) {
 
         if (properties.damageInstances != null) {
             for (int i = 0; i < properties.damageInstances.Count; i++) { //loop through damage instances to apply them
@@ -120,13 +120,17 @@ public class CCResistHittable : Hittable {
             flinchCounter += 1;
         }
 
-        if (flinchCounter >= flinchLimit || status.isVulnerable()) {
+        //floored with absence of airborne cleanses airborne
+        if (properties.causesFloored > 0 && properties.causesAirborne <= 0) {
+            status.airborne = 0;
+        }
+
+        if (flinchCounter >= flinchLimit || status.IsVulnerable()) {
             if (properties.causesFlinch) {
-                status.flinch();
-                transform.LookAt(currentAttack.transform.parent, Vector3.up); //face the attacker that caused flinch;
+                status.Flinch();
+                transform.LookAt(currentAttack.transform.parent, Vector3.up); //face the attack that caused flinch;
                 transform.localEulerAngles = new Vector3(0, transform.eulerAngles.y, 0); //lock rotation on x and z;
                 StartCoroutine(HitLag(currentAttack.data.attackOwnerStyle.animator, 0.2f, 0.15f));
-                //transform.LookAt(currentAttack.data.attackOwnerStatus.gameObject.transform.position, Vector3.up); //face the attacker that caused flinch;
             }
 
             if (properties.causesVulnerable + currentAttack.data.attackDuration > status.vulnerable && properties.causesVulnerable != 0) {
@@ -163,6 +167,14 @@ public class CCResistHittable : Hittable {
 
             flinchCounter = 0;
         }
+
+        //knockback
+        awayDirection = Vector3.Normalize(transform.position - currentAttack.data.attackOwnerStyle.gameObject.transform.position);
+        awayDirection.y = 0f;
+        awayDirection = awayDirection * -properties.onHitAwayTowards;
+        motor.rb.AddForce(awayDirection * -properties.onHitAwayTowards);
+        motor.rb.AddForce(currentAttack.data.attackOwnerStyle.gameObject.transform.forward * -properties.onHitForwardBackward);
+        motor.rb.AddForce(currentAttack.data.attackOwnerStyle.gameObject.transform.right * -properties.onHitRightLeft);
     }
 
     public void FixedUpdate() {

@@ -13,11 +13,11 @@ public class AIMovement : Movement {
 		
 	}
 
-    public override void pointToTarget() {
+    public override void PointToTarget() {
         transform.LookAt(target.transform);
     }
 
-    public override void pointTowardTarget(float maxTurn) {
+    public override void PointTowardTarget(float maxTurn) {
         toTargetAngle = Vector3.SignedAngle(transform.forward, target.transform.position - transform.position, Vector3.up);
         
         if (toTargetAngle > maxTurn) { //the angle could be over the maximum, and to the unit's right
@@ -27,11 +27,11 @@ public class AIMovement : Movement {
             transform.rotation = Quaternion.Euler(new Vector3(0, transform.localEulerAngles.y - maxTurn, 0)); //in which case, turn it the maximum amount to the left
         }
         else { //if neither of these, then the target is within the maximum turning angle
-            pointToTarget();
+            PointToTarget();
         }
     }
 
-    public  void pointAwayFromTarget(float maxTurn) {
+    public  void PointAwayFromTarget(float maxTurn) {
         toTargetAngle = Vector3.SignedAngle(transform.forward, target.transform.position - transform.position, Vector3.up);
 
         if (toTargetAngle >= 0 && toTargetAngle < (180 - maxTurn)) { //the target might be to the right

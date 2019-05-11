@@ -8,4 +8,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/Scenes/FieldOfEndlessGreen.unity
+    guid: 77f5d4019def9de48b7390d0adc8a83b
+  - enabled: 1
+    path: Assets/Scenes/WildwoodArena.unity
+    guid: 3c4745157106e834bb5413deb771bc71
+  - enabled: 1
+    path: Assets/Scenes/ClearingHamlet.unity
+    guid: 0964326a71b58ec48ae59864ee3325b4
   m_configObjects: {}

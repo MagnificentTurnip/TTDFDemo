@@ -34,13 +34,13 @@ public class PlayerBridge : MonoBehaviour {
 
     public void handleDefences() { //be sure to call this in Update in any PlayerBridge
         //Guarding
-        if ((playIn.guard && status.canGuard()) || status.isGuardStunned()) {
-            if (playIn.guard && status.canGuard()) {
-                Style.movement.pointToTarget();
+        if ((playIn.guard && status.CanGuard()) || status.IsGuardStunned()) {
+            if (playIn.guard && status.CanGuard()) {
+                Style.movement.PointToTarget();
             }
             status.guarding = true;
             status.guardLock = true;
-            Style.forceGuarding(3);
+            Style.ForceGuarding(3);
         }
         else {
             status.guarding = false;
@@ -54,24 +54,24 @@ public class PlayerBridge : MonoBehaviour {
                 canGuardCancel = false;
             }
         }
-        if (status.isFloored() || status.isStunned() || status.isParryStunned() || status.rollLock || status.parryLock > 0 || status.parryFrames > 0 || status.casting || status.castLock > 0 || status.channelLock > 0) {
+        if (status.IsFloored() || status.IsStunned() || status.IsParryStunned() || status.rollLock || status.parryLock > 0 || status.parryFrames > 0 || status.casting || status.castLock > 0 || status.channelLock > 0) {
             canGuardCancel = false; //basically all of canGuard but ignoring attackLock
         }
         if (canGuardCancel && playIn.guard) {
             Style.movement.motor.timeOut = true;
-            Style.destroyAllAttacks();
+            Style.DestroyAllAttacks();
             status.guarding = true;
             status.guardLock = true;
-            Style.forceGuarding(10);
+            Style.ForceGuarding(10);
         }
 
         //parrying
-        if (playIn.fParry && status.canParry() && !PauseMenu.paused) {
-            Style.fParry();
+        if (playIn.fParry && status.CanParry() && !PauseMenu.paused) {
+            Style.FParry();
         }
 
-        if (playIn.bParry && status.canParry() && !PauseMenu.paused) {
-            Style.bParry();
+        if (playIn.bParry && status.CanParry() && !PauseMenu.paused) {
+            Style.BParry();
         }       
 
     }

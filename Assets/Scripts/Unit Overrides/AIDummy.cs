@@ -224,53 +224,53 @@ public class AIDummy : EnemyAI {
         if (decider >= 0 && decider <= standardBladeworkPref) {
             switch (style.state) {
                 case AtkStyleWish.attackStates.idle:
-                    style.standardBladework1();
+                    style.StandardBladework1();
                     break;
                 case AtkStyleWish.attackStates.bladework1:
-                    style.standardBladework2();
+                    style.StandardBladework2();
                     break;
                 case AtkStyleWish.attackStates.bladework2:
-                    style.standardBladework3();
+                    style.StandardBladework3();
                     break;
                 case AtkStyleWish.attackStates.bladework3:
-                    style.standardBladework4();
+                    style.StandardBladework4();
                     break;
             }
         }
         else if (decider <= standardBladeworkPref + lightBladeworkPref) {
             switch (style.state) {
                 case AtkStyleWish.attackStates.idle:
-                    style.lightBladework1();
+                    style.LightBladework1();
                     break;
                 case AtkStyleWish.attackStates.bladework1:
-                    style.lightBladework2();
+                    style.LightBladework2();
                     break;
                 case AtkStyleWish.attackStates.bladework2:
-                    style.lightBladework3();
+                    style.LightBladework3();
                     break;
                 case AtkStyleWish.attackStates.bladework3:
-                    style.lightBladework4();
+                    style.LightBladework4();
                     break;
             }
         }
         else if (decider <= standardBladeworkPref + lightBladeworkPref + heavyBladeworkPref) {
             switch (style.state) {
                 case AtkStyleWish.attackStates.idle:
-                    style.heavyBladework1();
+                    style.HeavyBladework1();
                     break;
                 case AtkStyleWish.attackStates.bladework1:
-                    style.heavyBladework2();
+                    style.HeavyBladework2();
                     break;
                 case AtkStyleWish.attackStates.bladework2:
-                    style.heavyBladework3();
+                    style.HeavyBladework3();
                     break;
                 case AtkStyleWish.attackStates.bladework3:
-                    style.heavyBladework4();
+                    style.HeavyBladework4();
                     break;
             }
         }
         else {
-            style.advancingBladework();
+            style.AdvancingBladework();
         }
         atkStringCounter++;
     }
@@ -309,7 +309,7 @@ public class AIDummy : EnemyAI {
 
         if (pointTargetFrames > 0) {
             pointTargetFrames--;
-            movementAI.pointTowardTarget(turnSpeed);
+            movementAI.PointTowardTarget(turnSpeed);
         }
 
         if (attackFrames > 0) {
@@ -331,7 +331,7 @@ public class AIDummy : EnemyAI {
             navMesh.enabled = false;
         }
 
-        if (style.status.isFloored() && !(style.status.slain || style.status.unconscious)) {
+        if (style.status.IsFloored() && !(style.status.slain || style.status.unconscious)) {
             ChangeGoal(goalStates.evade);
             goalStarted = false;
             goalDelay = Random.Range(0, 60);
@@ -358,7 +358,7 @@ public class AIDummy : EnemyAI {
                     goalStarted = true;
                     break;
                 case goalStates.approach:
-                    if (style.status.canMove()) {
+                    if (style.status.CanMove()) {
                         navMesh.enabled = true;
                         if (navMesh.enabled) {
                             navMesh.isStopped = false;
@@ -369,7 +369,7 @@ public class AIDummy : EnemyAI {
                     }
                     break;
                 case goalStates.retreat:
-                    if (style.status.canMove()) {
+                    if (style.status.CanMove()) {
                         navMesh.enabled = true;
                         if (navMesh.enabled) {
                             navMesh.isStopped = false;
@@ -389,14 +389,14 @@ public class AIDummy : EnemyAI {
                     goalStarted = true;
                     break;
                 case goalStates.parry:
-                    if (style.status.canParry()) {
-                        movementAI.pointTowardTarget(60);
+                    if (style.status.CanParry()) {
+                        movementAI.PointTowardTarget(60);
                         decider = Random.Range(0, 2);
                         if (decider > 1) {
-                            style.fParry();
+                            style.FParry();
                         }
                         else {
-                            style.bParry();
+                            style.BParry();
                         }
                         goalStarted = true;
                     }
@@ -409,10 +409,10 @@ public class AIDummy : EnemyAI {
             switch (goal) {
                 case goalStates.attack:
                     if (attackFrames > 1) {
-                        movementAI.pointTowardTarget(12);
+                        movementAI.PointTowardTarget(12);
                     }
                     else {
-                        if (style.status.canAttack()) {
+                        if (style.status.CanAttack()) {
                             CalculateAttackPref();
                             Attack();
                         }
@@ -422,7 +422,7 @@ public class AIDummy : EnemyAI {
                     }
                     break;
                 case goalStates.approach:
-                    if (style.status.canMove()) {
+                    if (style.status.CanMove()) {
                         navMesh.enabled = true;
                         if (navMesh.enabled) {
                             navMesh.isStopped = false;
@@ -456,7 +456,7 @@ public class AIDummy : EnemyAI {
                     }
                     break;
                 case goalStates.retreat:
-                    if (style.status.canMove()) {
+                    if (style.status.CanMove()) {
                         navMesh.enabled = true;
                         if (navMesh.enabled) {
                             navMesh.isStopped = false;
@@ -493,7 +493,7 @@ public class AIDummy : EnemyAI {
                     }
                     break;
                 case goalStates.evade:
-                    if (style.status.canRoll()) {
+                    if (style.status.CanRoll()) {
                         if (Vector3.Distance(transform.position, target.transform.position) < 6) { //don't evade forwards if close
                             evadeDirection = Random.Range(2, 4);
                         }
@@ -501,16 +501,16 @@ public class AIDummy : EnemyAI {
                             evadeDirection = Random.Range(1, 4);
                         }
                         if (evadeDirection == 1) {
-                            style.evadeForward();
+                            style.EvadeForward();
                         }
                         else if (evadeDirection == 2) {
-                            style.evadeBack();
+                            style.EvadeBack();
                         }
                         else if (evadeDirection == 3) {
-                            style.evadeLeft();
+                            style.EvadeLeft();
                         }
                         else {
-                            style.evadeRight();
+                            style.EvadeRight();
                         }
                         goalDelay = 30;
                         goalComplete = true; //evade complete
@@ -522,10 +522,10 @@ public class AIDummy : EnemyAI {
                         style.status.guarding = false;
                     }
                     else {
-                        if (style.status.canGuard()) {
+                        if (style.status.CanGuard()) {
                             style.status.guarding = true;
-                            if (!style.status.isGuardStunned()) {
-                                movementAI.pointTowardTarget(3);
+                            if (!style.status.IsGuardStunned()) {
+                                movementAI.PointTowardTarget(3);
                             }
                         }
                         else {
@@ -542,11 +542,11 @@ public class AIDummy : EnemyAI {
         }
 
 
-        if (!style.status.canGuard()) {
+        if (!style.status.CanGuard()) {
             style.status.guarding = false;
         }
 
-        if ((!style.status.canMove())) {
+        if ((!style.status.CanMove())) {
             if (navMesh.enabled) {
                 navMesh.isStopped = true;
             }

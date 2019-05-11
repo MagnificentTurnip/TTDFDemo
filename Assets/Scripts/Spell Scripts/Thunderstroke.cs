@@ -42,7 +42,7 @@ public class Thunderstroke : Spell {
         currentAttack.transform.parent = transform;
 
         //set the attack data
-        currentAttack.data = new Attack.atkData(
+        currentAttack.data = new Attack.AtkData(
             _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<CapsuleCollider>(), //this attack uses a capsule collider
@@ -75,8 +75,8 @@ public class Thunderstroke : Spell {
             tempDamage.damageAmount = 50f + 2.5f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Shock;
-        currentAttack.onHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 120,
             _causesFloored: 240,
@@ -126,7 +126,7 @@ public class Thunderstroke : Spell {
         currentAttack.transform.parent = transform;
 
         //set the attack data
-        currentAttack.data = new Attack.atkData(
+        currentAttack.data = new Attack.AtkData(
             _attackOwnerStyle: this, //here's the style
             _HitboxAnimator: currentAttack.gameObject.GetComponent<Animator>(), //get the attack's animator
             _atkHitBox: currentAttack.gameObject.AddComponent<SphereCollider>(), //this attack uses a sphere collider
@@ -161,8 +161,8 @@ public class Thunderstroke : Spell {
             tempDamage.damageAmount = 10f + 0.5f * stat.Level;
         }
         tempDamage.damageType = Attack.typeOfDamage.Fire;
-        currentAttack.onHit = new Attack.hitProperties(
-            _damageInstances: new List<Attack.damage>(1) { tempDamage },
+        currentAttack.onHit = new Attack.HitProperties(
+            _damageInstances: new List<Attack.Damage>(1) { tempDamage },
             _causesFlinch: true,
             _causesStun: 3,
             _onHitForwardBackward: 0f,
@@ -172,7 +172,7 @@ public class Thunderstroke : Spell {
         currentAttack.onChargeHit = currentAttack.onHit; //this move doesn't charge so they're the same as on hit properties
 
         //set the attack's properties on guard
-        currentAttack.onGuard = new Attack.hitProperties(
+        currentAttack.onGuard = new Attack.HitProperties(
             _causesGuardStun: 10,
             _onHitForwardBackward: -300f);
 

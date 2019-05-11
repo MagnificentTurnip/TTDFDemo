@@ -71,6 +71,9 @@ public class ApparitionDeath : DeathManager {
     public override void FixedUpdate() {
         base.FixedUpdate();
         savedDeleteFrames = framesUntilDeleted;
+        if (stat.HP == 0) { //apparitions can't get KO'd
+            stat.HP = -1;
+        }
     }
 
 }

@@ -26,7 +26,7 @@ public class SizeIncreaseHittable : CCResistHittable {
 
                 actuallyHits = false;
                 if (status.invulnerable <= 0) {
-                    if (status.isAirborne()) {
+                    if (status.IsAirborne()) {
                         if (currentAttack.data.hitsAirborne) {
                             actuallyHits = true;
                         }
@@ -34,7 +34,7 @@ public class SizeIncreaseHittable : CCResistHittable {
                             actuallyHits = true;
                         }
                     }
-                    else if (status.isFloored()) {
+                    else if (status.IsFloored()) {
                         if (currentAttack.data.hitsFloored) {
                             actuallyHits = true;
                         }
@@ -59,11 +59,23 @@ public class SizeIncreaseHittable : CCResistHittable {
                         status.parryLock = 0; //undo the parryLock
                         //and the attack has no effect
 
+                        //unless it's magically guarded
+                        if (status.magicGuard) {
+                            source.PlayOneShot(onGuardSound);
+                            ApplyHitProperties(currentAttack.onGuard);
+                            if (currentAttack.data.attackOwnerStyle.hitlag) {
+                                StartCoroutine(HitLag(currentAttack.data.attackOwnerStyle.animator, 0.1f, 0.1f)); //guard hitlag
+                            }
+                        }
+                        else {
+                            source.PlayOneShot(onParrySound, Random.Range(0.4f, 0.6f));
+                        }
+
                         currentLight = Instantiate(parryLight).GetComponent<Light>();
                         currentLight.transform.position = col.ClosestPointOnBounds(transform.position);
 
                         if (currentAttack.data.contact == true && status.parryStunFrames > 0) {
-                            currentAttack.data.attackOwnerStyle.status.flinch();
+                            currentAttack.data.attackOwnerStyle.status.Flinch();
                             if (status.parryFrames + status.parryStunFrames > currentAttack.data.attackOwnerStyle.status.parryStunned) {
                                 currentAttack.data.attackOwnerStyle.status.parryStunned = status.parryFrames + status.parryStunFrames;
                             }
@@ -75,11 +87,13 @@ public class SizeIncreaseHittable : CCResistHittable {
                     }
 
 
-                    else if ((status.guarding || status.isGuardStunned()) && currentAttack.data.unblockable != 1 && currentAttack.data.unblockable != 3 && (towardAttackerAngle >= -90 && towardAttackerAngle <= 90 || Vector3.Distance(currentAttack.transform.position, transform.position) < 0.3f)) {
+                    else if ((status.guarding || status.IsGuardStunned()) && currentAttack.data.unblockable != 1 && currentAttack.data.unblockable != 3 && (towardAttackerAngle >= -90 && towardAttackerAngle <= 90 || Vector3.Distance(currentAttack.transform.position, transform.position) < 0.3f)) {
                         //guard the attack if this unit is guarding, the attack can be guarded,  this unit doesn't have its back facing the attacker, and the attack isn't basically directly on top of the unit
 
                         print("Guard"); //testing
                         ApplyHitProperties(currentAttack.onGuard);
+
+                        source.PlayOneShot(onGuardSound, Random.Range(0.3f, 0.5f));
 
                         if (currentAttack.data.attackOwnerStyle.gameObject.GetComponent<AtkStyle>()) {
                             currentAttack.data.attackOwnerStyle.gameObject.GetComponent<AtkStyle>().stat.SP -= currentAttack.onGuard.SPcost;
@@ -91,20 +105,15 @@ public class SizeIncreaseHittable : CCResistHittable {
 
                         currentLight = Instantiate(guardLight).GetComponent<Light>();
                         currentLight.transform.position = col.ClosestPointOnBounds(transform.position);
-
-                        //awayForce = -awayForce * currentAttack.onGuard.onHitForwardBackward; //testing knockback, change this to onHitAwayToward when implemented
-                        //motor.rb.AddForce(awayForce);
-
-                        motor.rb.AddForce(currentAttack.data.attackOwnerStyle.gameObject.transform.forward * -currentAttack.onGuard.onHitForwardBackward);
-                        motor.rb.AddForce(currentAttack.data.attackOwnerStyle.gameObject.transform.right * -currentAttack.onGuard.onHitRightLeft);
-
                     }
-                    else if (status.isFloored()) {
+                    else if (status.IsFloored()) {
                         //apply attack
 
                         print("FlooredHit"); //testing
 
                         ApplyHitProperties(currentAttack.onFlooredHit);
+
+                        source.PlayOneShot(onHitSound, Random.Range(0.1f, 0.2f));
 
                         if (currentAttack.data.attackOwnerStyle.hitlag) {
                             StartCoroutine(HitLag(currentAttack.data.attackOwnerStyle.animator, 0.4f, 0.15f)); //floored hitlag
@@ -112,20 +121,15 @@ public class SizeIncreaseHittable : CCResistHittable {
 
                         currentLight = Instantiate(hitLight).GetComponent<Light>();
                         currentLight.transform.position = currentAttack.transform.position;
-
-                        //testforce = -testforce * currentAttack.onFlooredHit.onHitForwardBackward; //testing knockback
-                        //motor.rb.AddForce(testforce);
-
-                        motor.rb.AddForce(currentAttack.data.attackOwnerStyle.gameObject.transform.forward * -currentAttack.onFlooredHit.onHitForwardBackward);
-                        motor.rb.AddForce(currentAttack.data.attackOwnerStyle.gameObject.transform.right * -currentAttack.onFlooredHit.onHitRightLeft);
-
                     }
-                    else if (status.isAirborne()) {
+                    else if (status.IsAirborne()) {
                         //apply attack
 
                         print("AirborneHit"); //testing
 
                         ApplyHitProperties(currentAttack.onAirborneHit);
+
+                        source.PlayOneShot(onHitSound, Random.Range(0.1f, 0.2f));
 
                         if (currentAttack.data.attackOwnerStyle.hitlag) {
                             StartCoroutine(HitLag(currentAttack.data.attackOwnerStyle.animator, 0.4f, 0.3f)); //airborne hitlag
@@ -133,15 +137,8 @@ public class SizeIncreaseHittable : CCResistHittable {
 
                         currentLight = Instantiate(hitLight).GetComponent<Light>();
                         currentLight.transform.position = col.ClosestPointOnBounds(transform.position);
-
-                        //testforce = -testforce * currentAttack.onAirborneHit.onHitForwardBackward; //testing knockback
-                        //motor.rb.AddForce(testforce);
-
-                        motor.rb.AddForce(currentAttack.data.attackOwnerStyle.gameObject.transform.forward * -currentAttack.onAirborneHit.onHitForwardBackward);
-                        motor.rb.AddForce(currentAttack.data.attackOwnerStyle.gameObject.transform.right * -currentAttack.onAirborneHit.onHitRightLeft);
-
                     }
-                    else if (status.isVulnerable()) {
+                    else if (status.IsVulnerable()) {
                         //apply attack
 
                         print("VulnerableHit"); //testing
@@ -151,6 +148,8 @@ public class SizeIncreaseHittable : CCResistHittable {
 
                         ApplyHitProperties(currentAttack.onVulnerableHit);
 
+                        source.PlayOneShot(onVulnerableHitSound, Random.Range(0.1f, 0.2f));
+
                         if (currentAttack.data.attackOwnerStyle.hitlag) {
                             StartCoroutine(HitLag(currentAttack.data.attackOwnerStyle.animator, 0.2f, 0.3f)); //Vulnerable Hitlag
                         }
@@ -159,13 +158,6 @@ public class SizeIncreaseHittable : CCResistHittable {
                         currentLight.transform.position = col.ClosestPointOnBounds(transform.position);
                         currentLight.range = 1.5f;
                         currentLight.intensity = 6;
-
-                        //testforce = -testforce * currentAttack.onVulnerableHit.onHitForwardBackward; //testing knockback
-                        //motor.rb.AddForce(testforce);
-
-                        motor.rb.AddForce(currentAttack.data.attackOwnerStyle.gameObject.transform.forward * -currentAttack.onVulnerableHit.onHitForwardBackward);
-                        motor.rb.AddForce(currentAttack.data.attackOwnerStyle.gameObject.transform.right * -currentAttack.onVulnerableHit.onHitRightLeft);
-
                     }
                     else {
                         //apply attack
@@ -173,19 +165,14 @@ public class SizeIncreaseHittable : CCResistHittable {
 
                         ApplyHitProperties(currentAttack.onHit);
 
+                        source.PlayOneShot(onHitSound, Random.Range(0.1f, 0.2f));
+
                         if (currentAttack.data.attackOwnerStyle.hitlag) {
                             StartCoroutine(HitLag(currentAttack.data.attackOwnerStyle.animator, 0.2f, 0.15f)); //normal hitlag
                         }
 
                         currentLight = Instantiate(hitLight).GetComponent<Light>();
                         currentLight.transform.position = col.ClosestPointOnBounds(transform.position);
-
-                        //testforce = -testforce * currentAttack.onHit.onHitForwardBackward; //testing knockback
-                        //motor.rb.AddForce(testforce);
-
-                        motor.rb.AddForce(currentAttack.data.attackOwnerStyle.gameObject.transform.forward * -currentAttack.onHit.onHitForwardBackward);
-                        motor.rb.AddForce(currentAttack.data.attackOwnerStyle.gameObject.transform.right * -currentAttack.onHit.onHitRightLeft);
-
                     }
                 } //else do nothing
             }

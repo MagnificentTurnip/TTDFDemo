@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class StatusManager : MonoBehaviour {
 
@@ -114,7 +115,7 @@ public class StatusManager : MonoBehaviour {
     }
 
     //Flinch (breaks the entity out of all current actions)
-    public void flinch() {
+    public void Flinch() {
         //print("flinch");
         rollLock = false;
         guardLock = false;
@@ -129,9 +130,13 @@ public class StatusManager : MonoBehaviour {
         parryStunFrames = 0;
         unconscious = false;
 
-        atkStyle.forceIdle();
-        atkStyle.destroyAllAttacks();
+        atkStyle.ForceIdle();
+        atkStyle.DestroyAllAttacks();
         atkStyle.movement.motor.rb.velocity *= 0.2f; //reduce velocity because wahey you're being hit
+
+        if (GetComponent<NavMeshAgent>()) {
+            GetComponent<NavMeshAgent>().velocity *= 0.2f; //reduce velocity for navmeshes also
+        }
 
         if (GetComponent<Motor>()) { //if the flinching entity has a motor, ensure that motor.timedBurst won't cause unexpected movement
             GetComponent<Motor>().timeOut = true;
@@ -155,64 +160,64 @@ public class StatusManager : MonoBehaviour {
 
     //STATE CHECKS
 
-    public bool isAirborne() { //GUARD STUNNED
+    public bool IsAirborne() { //GUARD STUNNED
         if (airborne > 0) {
             return true;
         }
         return false;
     }
 
-    public bool isFloored() { //FLOORED
-        if ((floored > 0 || unconscious || slain) && !isAirborne()) { //you do not count as floored while airborne, though the condition will persist after airborne finishes
+    public bool IsFloored() { //FLOORED
+        if ((floored > 0 || unconscious || slain) && !IsAirborne()) { //you do not count as floored while airborne, though the condition will persist after airborne finishes
             return true;
         }
         return false;
     }
 
-    public bool isStunned() { //STUNNED
+    public bool IsStunned() { //STUNNED
         if (stunned > 0 || unconscious || slain) {
             return true;
         }
         return false;
     }
 
-    public bool isGrappled() { //GRAPPLED
+    public bool IsGrappled() { //GRAPPLED
         if (grappled > 0) {
             return true;
         }
         return false;
     }
 
-    public bool isGuardStunned() { //GUARD STUNNED
+    public bool IsGuardStunned() { //GUARD STUNNED
         if (guardStunned > 0) {
             return true;
         }
         return false;
     }
 
-    public bool isParryStunned() { //PARRY STUNNED
+    public bool IsParryStunned() { //PARRY STUNNED
         if (parryStunned > 0) {
             return true;
         }
         return false;
     }
 
-    public bool isVulnerable() { //VULNERABLE
-        if (vulnerable > 0 || sprinting || casting || castLock > 0 || isParryStunned() || parryLock > 0) {
+    public bool IsVulnerable() { //VULNERABLE
+        if (vulnerable > 0 || sprinting || casting || castLock > 0 || IsParryStunned() || parryLock > 0) {
             return true;
         }
         return false;
     }
 
-    public bool isParalyzed() {
+    public bool IsParalyzed() {
         if (paralyzed > 0 || channelLock > 0) {
             return true;
         }
         return false;
     }
 
-    public bool canMove() { //CAN MOVE
-        if (isFloored() || isStunned() || isGrappled() || isGuardStunned() || isParryStunned() || parryLock > 0 || parryFrames > 0 || rolling || attackLock || casting || castLock > 0 || toIdleLock) {
+    public bool CanMove() { //CAN MOVE
+        if (IsFloored() || IsStunned() || IsGrappled() || IsGuardStunned() || IsParryStunned() || parryLock > 0 || parryFrames > 0 || rolling || attackLock || casting || castLock > 0 || toIdleLock) {
             return false;
         }
         else {
@@ -220,8 +225,8 @@ public class StatusManager : MonoBehaviour {
         }
     }
 
-    public bool canRoll() { //CAN EVADE
-        if (isStunned() || isGuardStunned() || isParryStunned() || parryLock > 0 || parryFrames > 0 || rollLock || attackLock || casting || castLock > 0) {
+    public bool CanRoll() { //CAN EVADE
+        if (IsStunned() || IsGuardStunned() || IsParryStunned() || parryLock > 0 || parryFrames > 0 || rollLock || attackLock || casting || castLock > 0) {
             return false;
         }
         else {
@@ -229,8 +234,8 @@ public class StatusManager : MonoBehaviour {
         }
     }
 
-    public bool canAttack() { //CAN ATTACK
-        if (isFloored() || isStunned() || isGuardStunned() || isParryStunned() || guarding || parryLock > 0 || parryFrames > 0 || rolling || attackLock || casting || castLock > 0 || channelLock > 0) {
+    public bool CanAttack() { //CAN ATTACK
+        if (IsFloored() || IsStunned() || IsGuardStunned() || IsParryStunned() || guarding || parryLock > 0 || parryFrames > 0 || rolling || attackLock || casting || castLock > 0 || channelLock > 0) {
             return false;
         }
         else {
@@ -238,8 +243,8 @@ public class StatusManager : MonoBehaviour {
         }
     }
 
-    public bool canGuard() {
-        if (isFloored() || isStunned() || isParryStunned() || rollLock || attackLock || parryLock > 0 || casting || castLock > 0 || channelLock > 0) {
+    public bool CanGuard() {
+        if (IsFloored() || IsStunned() || IsParryStunned() || rollLock || attackLock || parryLock > 0 || casting || castLock > 0 || channelLock > 0) {
             return false;
         }
         else {
@@ -247,8 +252,8 @@ public class StatusManager : MonoBehaviour {
         }
     }
 
-    public bool canParry() {
-        if (isFloored() || isStunned() || isGuardStunned() || rollLock || attackLock || parryLock > 0 || parryFrames > 0 || casting || castLock > 0 || channelLock > 0 || !delayParryLock) {
+    public bool CanParry() {
+        if (IsFloored() || IsStunned() || IsGuardStunned() || rollLock || attackLock || parryLock > 0 || parryFrames > 0 || casting || castLock > 0 || channelLock > 0 || !delayParryLock) {
             return false;
         }
         else {
@@ -256,8 +261,8 @@ public class StatusManager : MonoBehaviour {
         }
     }
 
-    public bool canCast() {
-        if (isFloored() || isStunned() || guarding || isGuardStunned() || isParryStunned() || silenced > 0 || rollLock || attackLock || parryLock > 0 || parryFrames > 0) {
+    public bool CanCast() {
+        if (IsFloored() || IsStunned() || guarding || IsGuardStunned() || IsParryStunned() || silenced > 0 || rollLock || attackLock || parryLock > 0 || parryFrames > 0) {
             return false;
         }
         else {
@@ -377,10 +382,10 @@ public class StatusManager : MonoBehaviour {
     // Update is called once per frame
     void Update () {
         //THINGS FOR THE ANIMATOR
-        animator.SetBool("stunned", isStunned());
-        animator.SetBool("guardStunned", isGuardStunned());
-        animator.SetBool("floored", isFloored());
-        animator.SetBool("airborne", isAirborne());
+        animator.SetBool("stunned", IsStunned());
+        animator.SetBool("guardStunned", IsGuardStunned());
+        animator.SetBool("floored", IsFloored());
+        animator.SetBool("airborne", IsAirborne());
         animator.SetBool("casting", casting);
         animator.SetBool("paralyzed", paralyzed > 0);
         animator.SetBool("guarding", guarding);
@@ -389,7 +394,7 @@ public class StatusManager : MonoBehaviour {
         //animator.SetFloat("paralyzeFloat", 0.8f);
 
         //animating defensive bubble properties
-        if ((guarding || isGuardStunned()) && guardBubble != null) {
+        if ((guarding || IsGuardStunned()) && guardBubble != null) {
             guardBubble.material.color = new Color(guardBubble.material.color.r, guardBubble.material.color.g, guardBubble.material.color.b, 0.4f + (0.01f * guardStunned));
         } else {
             guardBubble.material.color = new Color(guardBubble.material.color.r, guardBubble.material.color.g, guardBubble.material.color.b, 0f);
