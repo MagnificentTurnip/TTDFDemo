@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Thunderstroke : Spell {
-
+    
     public Camera cam;
     Ray playInRay;
     RaycastHit playInHit;
@@ -48,10 +48,12 @@ public class Thunderstroke : Spell {
             _atkHitBox: currentAttack.gameObject.AddComponent<CapsuleCollider>(), //this attack uses a capsule collider
             _GFXAnimation: "thunderstroke",
             _HitboxAnimation: "defaultCapsule",
+            _xScale: 1.5f,
             _yScale: 20f,
+            _zScale: 1.5f,
             _attackDelay: 140, //attack takes a while to strike
             _attackDuration: 8, //8 frames within which the attack is active
-            _attackEnd: 0, //when the attack ends it's done.
+            _attackEnd: 40, //when the attack ends it sticks around for a bit to continue playing sound.
             _hitsAirborne: true, //hits all targets.
             _hitsStanding: true,
             _hitsFloored: true,
@@ -132,9 +134,9 @@ public class Thunderstroke : Spell {
             _atkHitBox: currentAttack.gameObject.AddComponent<SphereCollider>(), //this attack uses a sphere collider
             _GFXAnimation: "thunderstroke", //same animation; no need for a second one
             _HitboxAnimation: "defaultSphere", //not sure if this is needed rn
-            _xScale: 5f,
+            _xScale: 8f,
             _yScale: 2f,
-            _zScale: 5f,
+            _zScale: 8f,
             _attackDelay: 140, //attack takes a while to strike
             _attackDuration: 15, //15 frames within which the attack is active
             _attackEnd: 0, //when the attack ends it's done.

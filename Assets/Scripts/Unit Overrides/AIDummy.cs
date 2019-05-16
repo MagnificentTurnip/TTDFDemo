@@ -16,10 +16,10 @@ public class AIDummy : EnemyAI {
     }
     public Animator animator;
 
-    public enum goalStates { attack, approach, retreat, evade, guard, parry, nothing }; //states for the enemy's current goal
-    public enum behaviourStates { defensive, offensive, mixed }; //states for the enemy's current behaviour
-    public goalStates goal;
-    public behaviourStates behaviour;
+    public enum GoalStates { attack, approach, retreat, evade, guard, parry, nothing }; //states for the enemy's current goal
+    public enum BehaviourStates { defensive, offensive, mixed }; //states for the enemy's current behaviour
+    public GoalStates goal;
+    public BehaviourStates behaviour;
 
     public float attackPref; //preference values for goals
     public float approachPref;
@@ -50,42 +50,42 @@ public class AIDummy : EnemyAI {
 
         //generally wants to go after a different goal than last time
         switch (goal) {
-            case goalStates.attack:
+            case GoalStates.attack:
                 attackPref -= 20;
                 break;
-            case goalStates.approach:
+            case GoalStates.approach:
                 approachPref -= 40;
                 retreatPref -= 30; //moving back and forth constantly looks kind of weird so don't do that too much
                 break;
-            case goalStates.retreat:
+            case GoalStates.retreat:
                 retreatPref -= 40;
                 approachPref -= 30;
                 evadePref -= 30; //evading is also kind of retreating
                 break;
-            case goalStates.evade:
+            case GoalStates.evade:
                 evadePref -= 40;
                 break;
-            case goalStates.guard:
+            case GoalStates.guard:
                 guardPref -= 60;
                 break;
-            case goalStates.parry:
+            case GoalStates.parry:
                 parryPref = 0;
                 break;
         }
 
         //behavioural adjustment
-        if (behaviour == behaviourStates.defensive) {
+        if (behaviour == BehaviourStates.defensive) {
             attackPref -= 30;
             approachPref -= 50;
         }
-        if (behaviour == behaviourStates.offensive) {
+        if (behaviour == BehaviourStates.offensive) {
             guardPref -= 50;
             retreatPref -= 50;
             evadePref -= 30;
         }
 
         //attacking is good after approaching
-        if (goal == goalStates.approach) {
+        if (goal == GoalStates.approach) {
             attackPref += 30;
         }
 
@@ -144,13 +144,13 @@ public class AIDummy : EnemyAI {
         advancingBladeworkPref = standardBladeworkPref = lightBladeworkPref = heavyBladeworkPref = 100; //set preferences to the default
 
         switch (behaviour) { //certain attacks fit offense better than defense and vice-versa
-            case behaviourStates.defensive:
+            case BehaviourStates.defensive:
                 standardBladeworkPref += 20;
                 lightBladeworkPref += 20;
                 heavyBladeworkPref -= 20;
                 advancingBladeworkPref -= 20;
                 break;
-            case behaviourStates.offensive:
+            case BehaviourStates.offensive:
                 heavyBladeworkPref += 30;
                 advancingBladeworkPref += 30;
                 break;
@@ -186,85 +186,85 @@ public class AIDummy : EnemyAI {
         }
     }
 
-    public void ChangeGoal(goalStates inGoal) {
+    public void ChangeGoal(GoalStates inGoal) {
         goal = inGoal;
     }
 
     public override void ChangeGoal() {
         decider = Random.Range(0, attackPref + approachPref + retreatPref + evadePref + guardPref + parryPref);
         if (decider >= 0 && decider <= attackPref) {
-            goal = goalStates.attack;
+            goal = GoalStates.attack;
         }
         else if (decider <= attackPref + approachPref) {
-            goal = goalStates.approach;
+            goal = GoalStates.approach;
         }
         else if (decider <= attackPref + approachPref + retreatPref) {
-            goal = goalStates.retreat;
+            goal = GoalStates.retreat;
         }
         else if (decider <= attackPref + approachPref + retreatPref + evadePref) {
-            goal = goalStates.evade;
+            goal = GoalStates.evade;
         }
         else if (decider <= attackPref + approachPref + retreatPref + evadePref + guardPref) {
-            goal = goalStates.guard;
+            goal = GoalStates.guard;
         }
         else {
-            goal = goalStates.parry;
+            goal = GoalStates.parry;
         }
     }
 
-    public void ChangeBehaviour(behaviourStates inBehaviour) {
+    public void ChangeBehaviour(BehaviourStates inBehaviour) {
         behaviour = inBehaviour;
     }
 
     public void Attack() {
-        if (style.state != AtkStyleWish.attackStates.idle) {
+        if (style.state != AtkStyleWish.AttackStates.idle) {
             advancingBladeworkPref = 0;
         }
         decider = Random.Range(0, standardBladeworkPref + lightBladeworkPref + heavyBladeworkPref + advancingBladeworkPref);
         if (decider >= 0 && decider <= standardBladeworkPref) {
             switch (style.state) {
-                case AtkStyleWish.attackStates.idle:
+                case AtkStyleWish.AttackStates.idle:
                     style.StandardBladework1();
                     break;
-                case AtkStyleWish.attackStates.bladework1:
+                case AtkStyleWish.AttackStates.bladework1:
                     style.StandardBladework2();
                     break;
-                case AtkStyleWish.attackStates.bladework2:
+                case AtkStyleWish.AttackStates.bladework2:
                     style.StandardBladework3();
                     break;
-                case AtkStyleWish.attackStates.bladework3:
+                case AtkStyleWish.AttackStates.bladework3:
                     style.StandardBladework4();
                     break;
             }
         }
         else if (decider <= standardBladeworkPref + lightBladeworkPref) {
             switch (style.state) {
-                case AtkStyleWish.attackStates.idle:
+                case AtkStyleWish.AttackStates.idle:
                     style.LightBladework1();
                     break;
-                case AtkStyleWish.attackStates.bladework1:
+                case AtkStyleWish.AttackStates.bladework1:
                     style.LightBladework2();
                     break;
-                case AtkStyleWish.attackStates.bladework2:
+                case AtkStyleWish.AttackStates.bladework2:
                     style.LightBladework3();
                     break;
-                case AtkStyleWish.attackStates.bladework3:
+                case AtkStyleWish.AttackStates.bladework3:
                     style.LightBladework4();
                     break;
             }
         }
         else if (decider <= standardBladeworkPref + lightBladeworkPref + heavyBladeworkPref) {
             switch (style.state) {
-                case AtkStyleWish.attackStates.idle:
+                case AtkStyleWish.AttackStates.idle:
                     style.HeavyBladework1();
                     break;
-                case AtkStyleWish.attackStates.bladework1:
+                case AtkStyleWish.AttackStates.bladework1:
                     style.HeavyBladework2();
                     break;
-                case AtkStyleWish.attackStates.bladework2:
+                case AtkStyleWish.AttackStates.bladework2:
                     style.HeavyBladework3();
                     break;
-                case AtkStyleWish.attackStates.bladework3:
+                case AtkStyleWish.AttackStates.bladework3:
                     style.HeavyBladework4();
                     break;
             }
@@ -279,7 +279,7 @@ public class AIDummy : EnemyAI {
     // Use this for initialization
     void Start () {
         SelectTarget(target);
-        behaviour = (behaviourStates)Random.Range(0, 2);
+        behaviour = (BehaviourStates)Random.Range(0, 2);
 	}
 
     public override void FixedUpdate() {
@@ -292,7 +292,7 @@ public class AIDummy : EnemyAI {
                 navMesh.isStopped = true;
             }
             navMesh.enabled = false;
-            goal = goalStates.nothing;
+            goal = GoalStates.nothing;
         }
 
         if (navMesh.velocity.magnitude >= navMesh.speed - 5) { //sprinting
@@ -332,7 +332,7 @@ public class AIDummy : EnemyAI {
         }
 
         if (style.status.IsFloored() && !(style.status.slain || style.status.unconscious)) {
-            ChangeGoal(goalStates.evade);
+            ChangeGoal(GoalStates.evade);
             goalStarted = false;
             goalDelay = Random.Range(0, 60);
         }
@@ -351,13 +351,13 @@ public class AIDummy : EnemyAI {
 
         if ((!goalStarted) && goalDelay <= 0) {
             switch (goal) {
-                case goalStates.attack:
+                case GoalStates.attack:
                     atkStringCounter = 0;
                     atkStringLength = Random.Range(1, 4);
                     attackFrames = 30;
                     goalStarted = true;
                     break;
-                case goalStates.approach:
+                case GoalStates.approach:
                     if (style.status.CanMove()) {
                         navMesh.enabled = true;
                         if (navMesh.enabled) {
@@ -368,7 +368,7 @@ public class AIDummy : EnemyAI {
                         goalStarted = true;
                     }
                     break;
-                case goalStates.retreat:
+                case GoalStates.retreat:
                     if (style.status.CanMove()) {
                         navMesh.enabled = true;
                         if (navMesh.enabled) {
@@ -380,15 +380,15 @@ public class AIDummy : EnemyAI {
                         goalStarted = true;
                     }
                     break;
-                case goalStates.evade:
+                case GoalStates.evade:
                     pointTargetFrames = 1;
                     goalStarted = true;
                     break;
-                case goalStates.guard:
+                case GoalStates.guard:
                     guardFrames = Random.Range(20, 60); //guard for between .33 and 1 second
                     goalStarted = true;
                     break;
-                case goalStates.parry:
+                case GoalStates.parry:
                     if (style.status.CanParry()) {
                         movementAI.PointTowardTarget(60);
                         decider = Random.Range(0, 2);
@@ -407,7 +407,7 @@ public class AIDummy : EnemyAI {
 
         if (goalStarted && !goalComplete) {
             switch (goal) {
-                case goalStates.attack:
+                case GoalStates.attack:
                     if (attackFrames > 1) {
                         movementAI.PointTowardTarget(12);
                     }
@@ -421,7 +421,7 @@ public class AIDummy : EnemyAI {
                         }
                     }
                     break;
-                case goalStates.approach:
+                case GoalStates.approach:
                     if (style.status.CanMove()) {
                         navMesh.enabled = true;
                         if (navMesh.enabled) {
@@ -455,7 +455,7 @@ public class AIDummy : EnemyAI {
                         goalCounter = 600;
                     }
                     break;
-                case goalStates.retreat:
+                case GoalStates.retreat:
                     if (style.status.CanMove()) {
                         navMesh.enabled = true;
                         if (navMesh.enabled) {
@@ -492,7 +492,7 @@ public class AIDummy : EnemyAI {
                         goalStarted = false;
                     }
                     break;
-                case goalStates.evade:
+                case GoalStates.evade:
                     if (style.status.CanRoll()) {
                         if (Vector3.Distance(transform.position, target.transform.position) < 6) { //don't evade forwards if close
                             evadeDirection = Random.Range(2, 4);
@@ -516,7 +516,7 @@ public class AIDummy : EnemyAI {
                         goalComplete = true; //evade complete
                     }
                     break;
-                case goalStates.guard:
+                case GoalStates.guard:
                     if (guardFrames <= 0) {
                         goalComplete = true;
                         style.status.guarding = false;
@@ -533,7 +533,7 @@ public class AIDummy : EnemyAI {
                         }
                     }
                     break;
-                case goalStates.parry:
+                case GoalStates.parry:
                     goalComplete = true; //parry happens instantaneously so it autocompletes
                     break;
             }

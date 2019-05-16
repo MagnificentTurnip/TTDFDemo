@@ -226,7 +226,7 @@ public class StatusManager : MonoBehaviour {
     }
 
     public bool CanRoll() { //CAN EVADE
-        if (IsStunned() || IsGuardStunned() || IsParryStunned() || parryLock > 0 || parryFrames > 0 || rollLock || attackLock || casting || castLock > 0) {
+        if (IsStunned() || IsGuardStunned() || IsParryStunned() || parryLock > 0 || parryFrames > 0 || rollLock || attackLock || casting || guarding || castLock > 0) {
             return false;
         }
         else {
@@ -384,6 +384,7 @@ public class StatusManager : MonoBehaviour {
         //THINGS FOR THE ANIMATOR
         animator.SetBool("stunned", IsStunned());
         animator.SetBool("guardStunned", IsGuardStunned());
+        animator.SetBool("parryStunned", IsParryStunned());
         animator.SetBool("floored", IsFloored());
         animator.SetBool("airborne", IsAirborne());
         animator.SetBool("casting", casting);

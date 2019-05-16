@@ -81,3 +81,4 @@ MonoBehaviour:
   active: 0
   ready: 0
   arcaneBarrageNo: 5
+  boltClip: {fileID: 8300000, guid: 9a289f839eda0b14bb862c244047c9d0, type: 3}

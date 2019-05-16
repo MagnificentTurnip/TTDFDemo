@@ -323,11 +323,13 @@ namespace Fungus
                 textComponent.text = text;
             }
 
+            /*
+             * currently commented out in order to prevent potential game crashes
             if (button.gameObject.GetComponent<FungusBtnExtend>()) {
                 button.gameObject.GetComponent<FungusBtnExtend>().onButtonPressed.AddListener(action);
-            } else {
+            } else { */
                 button.onClick.AddListener(action);
-            }
+            //}
             
             return true;
         }

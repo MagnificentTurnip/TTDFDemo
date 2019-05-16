@@ -9,6 +9,7 @@ public class PauseMenu : MonoBehaviour {
     public static bool paused = false;
     public GameObject pauseMenu;
     public GameObject miniPauseMenu;
+    public GameObject areYouSureMenu;
 
     public void MenuResumeGame()
     {
@@ -48,22 +49,23 @@ public class PauseMenu : MonoBehaviour {
 
     public void SettingsMenu()
     {
-        Debug.Log("This is where I'd put the settings menu. IF I HAD ONE.");
+        Debug.Log("Settings Menu Not Yet Implemented");
     }
 
     public void QuitAreYouSure()
     {
-        Debug.Log("Are you sure? Well you can't answer, you donut.");
+        areYouSureMenu.SetActive(true);
+        Debug.Log("Cannot quit while in the Unity Editor");
     }
 
     public void QuitGame()
     {
-
+        Application.Quit();
     }
 
     public void NoQuit()
     {
-
+        areYouSureMenu.SetActive(false);
     }
 
 	

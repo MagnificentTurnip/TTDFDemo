@@ -2569,21 +2569,19 @@ MonoBehaviour:
   damageNumber: {fileID: 1163370531694862, guid: d21669f8d6573944199392021bebb5ad,
     type: 2}
   currentDamageNumber: {fileID: 0}
+  cam: {fileID: 0}
+  damageNumberCanvas: {fileID: 0}
   currentLight: {fileID: 0}
   hitLight: {fileID: 1675199803654886, guid: cecbb5a9692142442bbd3101c63aa563, type: 2}
   guardLight: {fileID: 1055385463639536, guid: bf10e74d614ff1345bbf8e33ea22a6a4, type: 2}
   parryLight: {fileID: 1287726203079228, guid: c337f7d4d773094489b323e031953843, type: 2}
-  cam: {fileID: 0}
-  damageNumberCanvas: {fileID: 0}
   actuallyHits: 0
   currentAttack: {fileID: 0}
   motor: {fileID: 114489637206042268}
   status: {fileID: 114717808084239654}
   stat: {fileID: 114182258450056694}
-  hitlag: {fileID: 0}
-  hitLagStatus: {fileID: 0}
-  hitLagTime: 0
   towardAttackerAngle: 0
+  awayDirection: {x: 0, y: 0, z: 0}
   source: {fileID: 82680511969983468}
   onHitSound: {fileID: 8300000, guid: 7643929cdf87f1244b30ae9cd0105032, type: 3}
   onVulnerableHitSound: {fileID: 8300000, guid: 409828da1b2977649989ee27c27ce80e,
@@ -2725,6 +2723,9 @@ MonoBehaviour:
   stat: {fileID: 114182258450056694}
   motor: {fileID: 114489637206042268}
   animator: {fileID: 95586839121541098}
+  source: {fileID: 82680511969983468}
+  footStep: {fileID: 8300000, guid: 7270ca9a2b485cd4a80cb03fb6831ba3, type: 3}
+  roll: {fileID: 8300000, guid: 52ca15cce32808746828d8abab209d52, type: 3}
   jogSpeed: 3000
   sprintSpeed: 5000
   walkSpeed: 1500
@@ -2733,6 +2734,7 @@ MonoBehaviour:
   rollTime: 0.5
   diveSpeed: 4600
   diveTime: 0.8
+  speedPercent: 0
   target: {fileID: 0}
   toTargetAngle: 0
   targetDifAngle: 0

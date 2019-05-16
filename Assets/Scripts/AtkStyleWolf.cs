@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class AtkStyleWolf : AtkStyle {
 
-    public enum attackStates { idle, fEvade, bEvade, rEvade, lEvade, guarding, spellcast, fParry, bParry, attack};
-    public attackStates state;
+    public enum AttackStates { idle, fEvade, bEvade, rEvade, lEvade, guarding, spellcast, fParry, bParry, attack};
+    public AttackStates state;
 
     public GameObject rgtPawBone; //4 relevant bones to follow to make simple animations easier
     public GameObject lftPawBone;
@@ -19,28 +19,28 @@ public class AtkStyleWolf : AtkStyle {
 
     // Use this for initialization
     void Start() {
-        state = attackStates.idle;
+        state = AttackStates.idle;
         instantiatedAttacks = new List<Attack>();
     }
 
     public override void ForceIdle() {
-        state = attackStates.idle;
+        state = AttackStates.idle;
     }
 
     public override void ForceGuarding(int counterIdle) {
-        state = attackStates.guarding;
+        state = AttackStates.guarding;
         idleCounter = counterIdle;
     }
 
     public override void ForceSpellcast(int counterIdle) {
-        state = attackStates.spellcast;
+        state = AttackStates.spellcast;
         idleCounter = counterIdle;
     }
 
     public override void ReturnToIdle() {
         //manage returning to idle
-        if (state != attackStates.idle) {
-            if (state != attackStates.guarding) {
+        if (state != AttackStates.idle) {
+            if (state != AttackStates.guarding) {
                 status.toIdleLock = true;
             }
             idleCounter--;
@@ -48,7 +48,7 @@ public class AtkStyleWolf : AtkStyle {
 
         if (idleCounter <= 0) {
             idleCounter = 0;
-            state = attackStates.idle;
+            state = AttackStates.idle;
             status.toIdleLock = false;
         }
     }
@@ -56,7 +56,7 @@ public class AtkStyleWolf : AtkStyle {
     public override void BParry() {
         animator.Play("bParry", 0, 0f);
         if (status.sheathed == false) {
-            state = attackStates.bParry; //set the attack state;
+            state = AttackStates.bParry; //set the attack state;
             idleCounter = 60; //always remember to reset the idle counter
         }
         stat.MP -= 20;
@@ -67,7 +67,7 @@ public class AtkStyleWolf : AtkStyle {
     public override void FParry() {
         animator.Play("fParry", 0, 0f);
         if (status.sheathed == false) {
-            state = attackStates.fParry; //set the attack state;
+            state = AttackStates.fParry; //set the attack state;
             idleCounter = 60; //always remember to reset the idle counter
         }
         stat.MP -= 20;
@@ -104,7 +104,7 @@ public class AtkStyleWolf : AtkStyle {
 
         currentAttack.data.HitboxAnimator.runtimeAnimatorController = hitboxAnimatorController; //set the attack hitbox animator's animator controller to be the one for this attack style
         currentAttack.data.atkHitBox.isTrigger = true; //make the hitbox a trigger so that it doesn't have physics
-        state = attackStates.attack; //set the attack state;
+        state = AttackStates.attack; //set the attack state;
 
         //set the attack's properties on hit (all unset properties are defaults)
         if (charStat != null) {
@@ -213,7 +213,7 @@ public class AtkStyleWolf : AtkStyle {
 
         currentAttack.data.HitboxAnimator.runtimeAnimatorController = hitboxAnimatorController; //set the attack hitbox animator's animator controller to be the one for this attack style
         currentAttack.data.atkHitBox.isTrigger = true; //make the hitbox a trigger so that it doesn't have physics
-        state = attackStates.attack; //set the attack state;
+        state = AttackStates.attack; //set the attack state;
 
         //set the attack's properties on hit (all unset properties are defaults)
         if (charStat != null) {
@@ -322,7 +322,7 @@ public class AtkStyleWolf : AtkStyle {
 
         currentAttack.data.HitboxAnimator.runtimeAnimatorController = hitboxAnimatorController; //set the attack hitbox animator's animator controller to be the one for this attack style
         currentAttack.data.atkHitBox.isTrigger = true; //make the hitbox a trigger so that it doesn't have physics
-        state = attackStates.attack; //set the attack state;
+        state = AttackStates.attack; //set the attack state;
 
         //set the attack's properties on hit (all unset properties are defaults)
         if (charStat != null) {
@@ -433,7 +433,7 @@ public class AtkStyleWolf : AtkStyle {
 
         currentAttack.data.HitboxAnimator.runtimeAnimatorController = hitboxAnimatorController; //set the attack hitbox animator's animator controller to be the one for this attack style
         currentAttack.data.atkHitBox.isTrigger = true; //make the hitbox a trigger so that it doesn't have physics
-        state = attackStates.attack; //set the attack state;
+        state = AttackStates.attack; //set the attack state;
 
         //set the attack's properties on hit (all unset properties are defaults)
         if (charStat != null) {
@@ -546,7 +546,7 @@ public class AtkStyleWolf : AtkStyle {
 
         currentAttack.data.HitboxAnimator.runtimeAnimatorController = hitboxAnimatorController; //set the attack hitbox animator's animator controller to be the one for this attack style
         currentAttack.data.atkHitBox.isTrigger = true; //make the hitbox a trigger so that it doesn't have physics
-        state = attackStates.attack; //set the attack state;
+        state = AttackStates.attack; //set the attack state;
 
         //set the attack's properties on hit (all unset properties are defaults)
         if (charStat != null) {

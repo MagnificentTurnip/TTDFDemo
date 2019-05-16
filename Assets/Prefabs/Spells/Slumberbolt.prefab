@@ -113,6 +113,7 @@ MonoBehaviour:
   ready: 0
   hit: {fileID: 0}
   gfx: {fileID: 1788742758103386}
+  boltClip: {fileID: 8300000, guid: 8299a219e9ca38d48891409b9dd7ccff, type: 3}
 --- !u!198 &198092893226775744
 ParticleSystem:
   m_ObjectHideFlags: 1

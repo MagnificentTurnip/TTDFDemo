@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//uses in-script changing to fade-able graphics code found at the link below
 //https://forum.unity.com/threads/access-rendering-mode-var-on-standard-shader-via-scripting.287002/
 
 public class ApparitionDeath : DeathManager {
@@ -10,7 +11,7 @@ public class ApparitionDeath : DeathManager {
     public List<MeshRenderer> meshRends; //a list of all relevant meshrenderers to be faded out
     public List<SkinnedMeshRenderer> meshRendsSkinned; //basically same but in case of skinned ones;
     public float maxDeleteFrames; //the original number of frames until the unit is deleted
-    public float savedDeleteFrames; //the true delete frames, but as a float
+    public float savedDeleteFrames; //the true delete frames, but as a float so that it can be divided properly
 
     public override void StartDie() {
         animator.Play("death", -1, 0f); //play the death animation;
@@ -71,7 +72,7 @@ public class ApparitionDeath : DeathManager {
     public override void FixedUpdate() {
         base.FixedUpdate();
         savedDeleteFrames = framesUntilDeleted;
-        if (stat.HP == 0) { //apparitions can't get KO'd
+        if (stat.status.unconscious) { //apparitions can't get KO'd
             stat.HP = -1;
         }
     }

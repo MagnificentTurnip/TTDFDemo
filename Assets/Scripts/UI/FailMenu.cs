@@ -5,6 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class FailMenu : MonoBehaviour {
 
+    public GameObject areYouSureMenu;
+
     public void RetryBoss() {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
@@ -13,8 +15,9 @@ public class FailMenu : MonoBehaviour {
         SceneManager.LoadScene("ClearingHamlet");
     }
 
-    public void quitAreYouSure() {
-        Debug.Log("Are you sure? Well you can't answer, you donut.");
+    public void QuitAreYouSure() {
+        areYouSureMenu.SetActive(true);
+        Debug.Log("Cannot quit while in the Unity Editor");
     }
 
     // Use this for initialization

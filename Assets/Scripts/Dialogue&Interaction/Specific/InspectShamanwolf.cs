@@ -14,22 +14,22 @@ public class InspectShamanwolf : Inspect {
 	// Update is called once per frame
 	public override void Update () {
         switch (ai.behaviour) {
-            case AIWolfShaman.behaviourStates.preBattle:
+            case AIWolfShaman.BehaviourStates.preBattle:
                 flowMessage = "InsWolfPre";
                 break;
-            case AIWolfShaman.behaviourStates.mixed:
+            case AIWolfShaman.BehaviourStates.mixed:
                 flowMessage = "InsWolfMix";
                 break;
-            case AIWolfShaman.behaviourStates.offensive:
+            case AIWolfShaman.BehaviourStates.offensive:
                 flowMessage = "InsWolfOff";
                 break;
-            case AIWolfShaman.behaviourStates.defensive:
+            case AIWolfShaman.BehaviourStates.defensive:
                 flowMessage = "InsWolfDef";
                 break;
-            case AIWolfShaman.behaviourStates.defeated:
+            case AIWolfShaman.BehaviourStates.defeated:
                 flowMessage = "InsWolfAft";
                 break;
-            case AIWolfShaman.behaviourStates.pacified:
+            case AIWolfShaman.BehaviourStates.pacified:
                 flowMessage = "InsWolfPac";
                 break;
         }

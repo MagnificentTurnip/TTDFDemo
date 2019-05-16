@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class SeismicTorrent : Spell {
 
+    public AudioClip torrentClip;
+
 	// Use this for initialization
 	public override void Start () {
         base.Start();
@@ -45,6 +47,8 @@ public class SeismicTorrent : Spell {
             _unblockable: 3); //can't be blocked or parried.
 
         currentAttack.transform.localScale = new Vector3(currentAttack.data.xScale, currentAttack.data.yScale, currentAttack.data.zScale);
+
+        currentAttack.clip = torrentClip;
 
         if (debug == true) {
             currentAttack.gameObject.GetComponent<MeshFilter>().mesh = cube; //for testing the hitbox

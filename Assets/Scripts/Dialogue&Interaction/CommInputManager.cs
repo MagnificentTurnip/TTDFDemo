@@ -120,7 +120,7 @@ public class CommInputManager : MonoBehaviour {
         menuInstantiated = flow.GetBooleanVariable("menuInstantiated");
 
 
-        if (b3New && b3release) {
+        if ((b3New && b3release) || Input.GetMouseButtonDown(0)) {
             if (playStatus.sheathed && MouseIntersects(dlgBtnContinueRect)) {
                 flow.SetBooleanVariable("dlgContinue", true);
             }
@@ -146,7 +146,7 @@ public class CommInputManager : MonoBehaviour {
             b3release = false;
         }
 
-        if (b4New && b4release) {
+        if ((b4New && b4release) || Input.GetMouseButtonDown(0)) {
             if (playStatus.sheathed && MouseIntersects(intBtnContinueRect)) {
                 flow.SetBooleanVariable("intContinue", true);
             }

@@ -32,7 +32,7 @@ public class MenuDetection : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (bossAI.behaviour == AIWolfShaman.behaviourStates.pacified && !bossStatus.slain && !bossStatus.unconscious) {
+        if (bossAI.behaviour == AIWolfShaman.BehaviourStates.pacified && !bossStatus.slain && !bossStatus.unconscious) {
             flow.SetBooleanVariable("TrueWinPossible", true);
         } else {
             flow.SetBooleanVariable("TrueWinPossible", false);

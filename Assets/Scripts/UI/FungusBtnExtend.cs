@@ -34,6 +34,7 @@ public class FungusBtnExtend : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        /* commented out helper text because activating menu options with buttons is disabled to prevent bugs
         rect = new Rect(new Vector2(buttonRect.position.x - ((buttonRect.rect.width / 8) * 3), buttonRect.position.y - (buttonRect.rect.height / 4)), new Vector2(buttonRect.rect.width * 0.75f, buttonRect.rect.height * 0.75f));
 
         if (dlgTRUEintFALSE) {
@@ -51,6 +52,7 @@ public class FungusBtnExtend : MonoBehaviour {
                 }
             }
         }
+        */
 	}
     
 

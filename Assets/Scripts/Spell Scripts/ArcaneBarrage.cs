@@ -6,6 +6,8 @@ public class ArcaneBarrage : Spell {
 
     public int arcaneBarrageNo;
 
+    public AudioClip boltClip;
+
 	// Use this for initialization
 	public override void Start () {
         base.Start();
@@ -59,6 +61,8 @@ public class ArcaneBarrage : Spell {
             _hitsFloored: true,
             _contact: false, //doesn't make contact.
             _unblockable: 1); //can't be blocked
+
+        currentAttack.clip = boltClip;
 
         currentAttack.transform.localScale = new Vector3(currentAttack.data.xScale, currentAttack.data.yScale, currentAttack.data.zScale);
 

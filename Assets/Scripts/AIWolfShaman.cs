@@ -5,10 +5,10 @@ using UnityEngine.AI;
 
 public class AIWolfShaman : MonoBehaviour {
 
-    public enum goalStates {attack, cast, big, approach, retreat, evade, guard, parry, nothing}; //states for the wolf's current goal
-    public enum behaviourStates {preBattle, defensive, offensive, mixed, defeated, pacified}; //states for the wolf's current behaviour
-    public goalStates goal; 
-    public behaviourStates behaviour;
+    public enum GoalStates {attack, cast, big, approach, retreat, evade, guard, parry, nothing}; //states for the wolf's current goal
+    public enum BehaviourStates {preBattle, defensive, offensive, mixed, defeated, pacified}; //states for the wolf's current behaviour
+    public GoalStates goal; 
+    public BehaviourStates behaviour;
     public float decider; //a variable that holds a random value that decides which option to choose
 
     public float maxSpeed;
@@ -187,39 +187,39 @@ public class AIWolfShaman : MonoBehaviour {
 
         //generally wants to go after a different goal than last time
         switch (goal) {
-            case goalStates.attack:
+            case GoalStates.attack:
                 attackPref -= 20;
                 break;
-            case goalStates.cast:
+            case GoalStates.cast:
                 castPref -= 50;
                 break; //bigPref not included because if it was the last thing then you're already big so you can't go big again because you already are
-            case goalStates.approach:
+            case GoalStates.approach:
                 approachPref -= 40;
                 retreatPref -= 30; //moving back and forth constantly looks kind of weird so don't do that too much
                 break;
-            case goalStates.retreat:
+            case GoalStates.retreat:
                 retreatPref -= 40;
                 approachPref -= 30;
                 evadePref -= 40; //evading is also kind of retreating
                 break;
-            case goalStates.evade:
+            case GoalStates.evade:
                 evadePref -= 40;
                 break;
-            case goalStates.guard:
+            case GoalStates.guard:
                 guardPref -= 40;
                 break;
-            case goalStates.parry:
+            case GoalStates.parry:
                 parryPref = 0;
                 break;
         }
 
         //behavioural adjustment
-        if (behaviour == behaviourStates.defensive) {
+        if (behaviour == BehaviourStates.defensive) {
             attackPref -= 30;
             castPref -= 50;
             approachPref -= 50;
         }
-        if (behaviour == behaviourStates.offensive) {
+        if (behaviour == BehaviourStates.offensive) {
             guardPref -= 50;
             retreatPref -= 50;
             evadePref -= 50;
@@ -234,14 +234,14 @@ public class AIWolfShaman : MonoBehaviour {
         }
 
         //if retreat was last, then it might be a good idea to cast. Otherwise it probably isn't.
-        if (goal == goalStates.retreat) {
+        if (goal == GoalStates.retreat) {
             castPref += 30;
         } else {
             castPref -= 30;
         }
 
         //similar stuff for approaching - attacking is good after approaching, casting isn't.
-        if (goal == goalStates.approach) {
+        if (goal == GoalStates.approach) {
             attackPref += 30;
             castPref -= 30;
         }
@@ -339,13 +339,13 @@ public class AIWolfShaman : MonoBehaviour {
         }
 
         switch (behaviour) { //generally wants to switch behaviour if this is called, but won't necessarily always do so
-            case behaviourStates.defensive:
+            case BehaviourStates.defensive:
                 defensivePref -= 50;
                 break;
-            case behaviourStates.offensive:
+            case BehaviourStates.offensive:
                 offensivePref -= 50;
                 break;
-            case behaviourStates.mixed:
+            case BehaviourStates.mixed:
                 mixedPref -= 50;
                 break;
         }
@@ -356,12 +356,12 @@ public class AIWolfShaman : MonoBehaviour {
         quickBitePref = forwardBitePref = lSwipePref = rSwipePref = pouncePref = 100; //set preferences to the default
 
         switch (behaviour) { //certain attacks fit offense better than defense and vice-versa
-            case behaviourStates.defensive:
+            case BehaviourStates.defensive:
                 quickBitePref += 40;
                 lSwipePref += 20;
                 rSwipePref += 20;
                 break;
-            case behaviourStates.offensive:
+            case BehaviourStates.offensive:
                 forwardBitePref += 20;
                 pouncePref += 20;
                 break;
@@ -420,51 +420,51 @@ public class AIWolfShaman : MonoBehaviour {
     }
 
 
-    public void ChangeGoal(goalStates inGoal) {
+    public void ChangeGoal(GoalStates inGoal) {
         goal = inGoal;
     }
 
     public void ChangeGoal() {
         decider = Random.Range(0, attackPref+castPref+bigPref+approachPref+retreatPref+evadePref+guardPref+parryPref);
         if (decider >= 0 && decider <= attackPref) {
-            goal = goalStates.attack;
+            goal = GoalStates.attack;
         }
         else if (decider <= attackPref + castPref) {
-            goal = goalStates.cast;
+            goal = GoalStates.cast;
         }
         else if (decider <= attackPref + castPref + bigPref) {
-            goal = goalStates.big;
+            goal = GoalStates.big;
             goalDelay = 30;
         }
         else if (decider <= attackPref + castPref + bigPref + approachPref) {
-            goal = goalStates.approach;
+            goal = GoalStates.approach;
         }
         else if (decider <= attackPref + castPref + bigPref + approachPref + retreatPref) {
-            goal = goalStates.retreat;
+            goal = GoalStates.retreat;
         }
         else if (decider <= attackPref + castPref + bigPref + approachPref + retreatPref + evadePref) {
-            goal = goalStates.evade;
+            goal = GoalStates.evade;
         }
         else if (decider <= attackPref + castPref + bigPref + approachPref + retreatPref + evadePref + guardPref) {
-            goal = goalStates.guard;
+            goal = GoalStates.guard;
         }
         else {
-            goal = goalStates.parry;
+            goal = GoalStates.parry;
         }
     }
 
-    public void ChangeBehaviour(behaviourStates inBehaviour) {
+    public void ChangeBehaviour(BehaviourStates inBehaviour) {
         behaviour = inBehaviour;
     }
 
     public void ChangeBehaviour() {
         decider = Random.Range(0, defensivePref + offensivePref + mixedPref);
         if (decider >= 0 && decider <= defensivePref) {
-            behaviour = behaviourStates.defensive;
+            behaviour = BehaviourStates.defensive;
         } else if (decider <= defensivePref + offensivePref) {
-            behaviour = behaviourStates.offensive;
+            behaviour = BehaviourStates.offensive;
         } else {
-            behaviour = behaviourStates.mixed;
+            behaviour = BehaviourStates.mixed;
         }
     }
 
@@ -514,8 +514,8 @@ public class AIWolfShaman : MonoBehaviour {
         targetStatus = target.GetComponent<StatusManager>();
         targetStat = target.GetComponent<StatSheet>();
 
-        goal = goalStates.nothing;
-        behaviour = behaviourStates.preBattle;
+        goal = GoalStates.nothing;
+        behaviour = BehaviourStates.preBattle;
         goalComplete = false;
         goalStarted = false;
         if (navMesh.enabled) {
@@ -548,7 +548,7 @@ public class AIWolfShaman : MonoBehaviour {
                 navMesh.isStopped = true;
             }
             navMesh.enabled = false;
-            goal = goalStates.nothing;
+            goal = GoalStates.nothing;
         }
 
         if (big && style.stat.MP < 10) {
@@ -599,20 +599,20 @@ public class AIWolfShaman : MonoBehaviour {
         }
         smallAnimator.SetBool("curious", false);
         
-        if (behaviour == behaviourStates.defeated && !(style.status.slain || style.status.unconscious)) {
+        if (behaviour == BehaviourStates.defeated && !(style.status.slain || style.status.unconscious)) {
             if (big) {
                 BecomeSmall();
             }
             style.status.guarding = false;
             navMesh.speed = maxSpeed * 0.2f;
-            ChangeGoal(goalStates.retreat);
+            ChangeGoal(GoalStates.retreat);
             navMesh.enabled = true;
             navMesh.isStopped = false;
             goalComplete = false;
             goalStarted = false;
             if (Vector3.Distance(transform.position, target.transform.position) > 20 && targetStatus.sheathed && !targetStatus.casting) {
                 pacifiedCounter--;
-                ChangeGoal(goalStates.nothing);
+                ChangeGoal(GoalStates.nothing);
                 if (big) {
                     bigAnimator.SetBool("curious", true);
                 }
@@ -627,11 +627,11 @@ public class AIWolfShaman : MonoBehaviour {
                 pacifiedCounter++;
             }
             if (pacifiedCounter <= 0) {
-                ChangeBehaviour(behaviourStates.pacified);
+                ChangeBehaviour(BehaviourStates.pacified);
             }
         }
 
-        if (behaviour == behaviourStates.pacified && !(style.status.slain || style.status.unconscious)) {
+        if (behaviour == BehaviourStates.pacified && !(style.status.slain || style.status.unconscious)) {
             if (big) {
                 BecomeSmall();
             }
@@ -666,7 +666,7 @@ public class AIWolfShaman : MonoBehaviour {
                 if (Vector3.Distance(transform.position, target.transform.position) > 6) {
                     navMesh.enabled = true;
                     navMesh.isStopped = false;
-                    goal = goalStates.approach;
+                    goal = GoalStates.approach;
                     goalComplete = false;
                     goalStarted = false;
                 }
@@ -675,7 +675,7 @@ public class AIWolfShaman : MonoBehaviour {
                         navMesh.isStopped = true;
                     }
                     navMesh.enabled = false;
-                    goal = goalStates.nothing;
+                    goal = GoalStates.nothing;
                     if (big) {
                         bigAnimator.SetBool("pacified", true);
                     }
@@ -688,7 +688,7 @@ public class AIWolfShaman : MonoBehaviour {
         }
 
         if (style.status.IsFloored() && !(style.status.slain || style.status.unconscious)) {
-            ChangeGoal(goalStates.evade);
+            ChangeGoal(GoalStates.evade);
             goalStarted = false;
             //goalDelay = Random.Range(0, 120);
         }
@@ -701,20 +701,20 @@ public class AIWolfShaman : MonoBehaviour {
             }
         }
 
-        if (style.stat.HP < 80 && behaviour != behaviourStates.pacified) {
-            ChangeBehaviour(behaviourStates.defeated);
+        if (style.stat.HP < 80 && behaviour != BehaviourStates.pacified) {
+            ChangeBehaviour(BehaviourStates.defeated);
         }
         
-        if (behaviour == behaviourStates.preBattle && (Vector3.Distance(transform.position, target.transform.position) < 32 || style.stat.HP < style.stat.MaxHP)) {
+        if (behaviour == BehaviourStates.preBattle && (Vector3.Distance(transform.position, target.transform.position) < 32 || style.stat.HP < style.stat.MaxHP)) {
             ChangeBehaviour();
             ChangeGoal();
         }
         
         if (targetStatus.unconscious || targetStatus.slain) {
-            ChangeBehaviour(behaviourStates.pacified);
+            ChangeBehaviour(BehaviourStates.pacified);
         }
 
-        if (behaviour != behaviourStates.defeated && behaviour != behaviourStates.pacified && behaviour != behaviourStates.preBattle && !(style.status.slain || style.status.unconscious)) {
+        if (behaviour != BehaviourStates.defeated && behaviour != BehaviourStates.pacified && behaviour != BehaviourStates.preBattle && !(style.status.slain || style.status.unconscious)) {
             if (behaviourCounter <= 0) { //behaviour changes every 30 seconds
                 CalculateBehaviourPref();
                 ChangeBehaviour();
@@ -736,7 +736,7 @@ public class AIWolfShaman : MonoBehaviour {
 
         if ((!goalStarted) && goalDelay <= 0) {
             switch (goal) {
-                case goalStates.attack:
+                case GoalStates.attack:
                     if (style.status.CanMove()) {
                         if (big) {
                             bigAnimator.Play("turn", 0, 0f);
@@ -746,14 +746,14 @@ public class AIWolfShaman : MonoBehaviour {
                     attackFrames = 40;
                     goalStarted = true;
                     break;
-                case goalStates.cast:
+                case GoalStates.cast:
                     if (style.status.CanCast()) {
                         source.PlayOneShot(howlClipShort, Random.Range(0.4f, 0.6f));
                         goalStarted = true;
                         goalDelay = 40;
                     }
                     break;
-                case goalStates.big:
+                case GoalStates.big:
                     if (style.status.CanCast()) {
                         source.PlayOneShot(howlClipShort, Random.Range(0.4f, 0.6f));
                         goalStarted = true;
@@ -762,7 +762,7 @@ public class AIWolfShaman : MonoBehaviour {
                         goalDelay = 120;
                     }
                     break;
-                case goalStates.approach:
+                case GoalStates.approach:
                     if (style.status.CanMove()) {
                         navMesh.enabled = true;
                         navMesh.isStopped = false;
@@ -771,7 +771,7 @@ public class AIWolfShaman : MonoBehaviour {
                         goalStarted = true;
                     }
                     break;
-                case goalStates.retreat:
+                case GoalStates.retreat:
                     if (style.status.CanMove()) {
                         navMesh.enabled = true;
                         navMesh.isStopped = false;
@@ -781,7 +781,7 @@ public class AIWolfShaman : MonoBehaviour {
                         goalStarted = true;
                     }
                     break;
-                case goalStates.evade:
+                case GoalStates.evade:
                     if (style.status.CanMove()) {
                         if (big) {
                             bigAnimator.Play("turn", 0, 0f);
@@ -791,11 +791,11 @@ public class AIWolfShaman : MonoBehaviour {
                     evadeFrames = 15;
                     goalStarted = true;
                     break;
-                case goalStates.guard:
+                case GoalStates.guard:
                     guardFrames = Random.Range(60, 180); //guard for between 1 and 2.5 seconds
                     goalStarted = true;
                     break;
-                case goalStates.parry:
+                case GoalStates.parry:
                     if (style.status.CanParry()) {
                         movementAI.PointTowardTarget(60);
                         decider = Random.Range(0, 2);
@@ -813,7 +813,7 @@ public class AIWolfShaman : MonoBehaviour {
 
         if (goalStarted && !goalComplete) {
             switch (goal) {
-                case goalStates.attack:
+                case GoalStates.attack:
                     if (attackFrames > 1) {
                         movementAI.PointTowardTarget(12);
                     }
@@ -829,7 +829,7 @@ public class AIWolfShaman : MonoBehaviour {
                         }
                     }
                     break;
-                case goalStates.cast:
+                case GoalStates.cast:
                     chosenSpellNumber = Random.Range(0, spellsKnown.Count - 1);
                     if (style.status.CanCast() && style.status.castLock <= 0 && !style.status.casting) {
                         style.status.casting = true;
@@ -868,12 +868,12 @@ public class AIWolfShaman : MonoBehaviour {
                         style.status.casting = false;
                     }
                     break;
-                case goalStates.big:
+                case GoalStates.big:
                     if (big) { 
                         goalComplete = true; //becoming big happens instantaneously so the goal is completed
                     }
                     break;
-                case goalStates.approach: 
+                case GoalStates.approach: 
                     if (style.status.CanMove()) {
                         navMesh.enabled = true;
                         navMesh.isStopped = false;
@@ -903,7 +903,7 @@ public class AIWolfShaman : MonoBehaviour {
                         goalCounter = 600;
                     }
                     break;
-                case goalStates.retreat:
+                case GoalStates.retreat:
                     if (style.status.CanMove()) {
                         navMesh.enabled = true;
                         navMesh.isStopped = false;
@@ -941,7 +941,7 @@ public class AIWolfShaman : MonoBehaviour {
                         goalStarted = false;
                     }
                     break;
-                case goalStates.evade:
+                case GoalStates.evade:
                     if (evadeFrames > 0 && style.status.CanMove()) {
                         movementAI.PointAwayFromTarget(Random.Range(3, 5));
                     } else {
@@ -956,7 +956,7 @@ public class AIWolfShaman : MonoBehaviour {
                         }
                     }
                     break;
-                case goalStates.guard:
+                case GoalStates.guard:
                     if (guardFrames <= 0) { 
                         goalComplete = true;
                         style.status.guarding = false;
@@ -971,7 +971,7 @@ public class AIWolfShaman : MonoBehaviour {
                         }
                     }
                     break;
-                case goalStates.parry:
+                case GoalStates.parry:
                     goalComplete = true; //parry happens instantaneously so it autocompletes
                     break;
             }
@@ -984,7 +984,7 @@ public class AIWolfShaman : MonoBehaviour {
                 source.Play();
             }
             source.loop = true;
-            if (behaviour == behaviourStates.defeated) {
+            if (behaviour == BehaviourStates.defeated) {
                 source.clip = whimperClip;
             } else {
                 source.clip = moveClip;

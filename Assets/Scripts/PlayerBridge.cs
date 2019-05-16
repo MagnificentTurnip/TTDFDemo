@@ -13,26 +13,26 @@ public class PlayerBridge : MonoBehaviour {
 
     public bool canGuardCancel;
 
-    public enum buffer {
+    public enum Buffer {
         nothing, spellcast, fparry, bparry, evade, sheathe,
         fwdA, fwdS, fwdD, fwdAS, fwdAD, fwdSD, fwdASD,
         bakA, bakS, bakD, bakAS, bakAD, bakSD, bakASD,
         rgtA, rgtS, rgtD, rgtAS, rgtAD, rgtSD, rgtASD,
         lftA, lftS, lftD, lftAS, lftAD, lftSD, lftASD } 
 
-    public buffer cmdIn;
-    public buffer cmdOut;
+    public Buffer cmdIn;
+    public Buffer cmdOut;
     public int cmdTime;
     public int cmdCounter;
     public bool cmdRunning;
 
-    public buffer lck;
+    public Buffer lck;
     public int lckTime;
     public int lckCounter;
     
     public int drawCount;
 
-    public void handleDefences() { //be sure to call this in Update in any PlayerBridge
+    public void HandleDefences() { //be sure to call this in Update in any PlayerBridge
         //Guarding
         if ((playIn.guard && status.CanGuard()) || status.IsGuardStunned()) {
             if (playIn.guard && status.CanGuard()) {
@@ -76,133 +76,133 @@ public class PlayerBridge : MonoBehaviour {
 
     }
 
-    public void cmdBuffer() { //a buffer for attack-based moves so that multi-button inputs aren't overridden by single-button inputs. Call in FIXED UPDATE, and set cmdCounter equal to cmdTime in Start() or the inspector.
+    public void CmdBuffer() { //a buffer for attack-based moves so that multi-button inputs aren't overridden by single-button inputs. Call in FIXED UPDATE, and set cmdCounter equal to cmdTime in Start() or the inspector.
 
-        cmdOut = buffer.nothing; //setting cmdOut to nothing at the beginning of the function ensures that cmdOut is only set to an active action for one frame
+        cmdOut = Buffer.nothing; //setting cmdOut to nothing at the beginning of the function ensures that cmdOut is only set to an active action for one frame
         //(this prevents the same input being repeated over and over again)
 
         //each potential input sets cmdIn's state. Inputs with more buttons come first in a series of else-ifs to ensure they take priority over the single-button inputs they contain.
         if (playIn.fwdASD.Check()) {
-            cmdIn = buffer.fwdASD;
+            cmdIn = Buffer.fwdASD;
             cmdRunning = true;
         }
         else if (playIn.bakASD.Check()) {
-            cmdIn = buffer.bakASD;
+            cmdIn = Buffer.bakASD;
             cmdRunning = true;
         }
         else if (playIn.rgtASD.Check()) {
-            cmdIn = buffer.rgtASD;
+            cmdIn = Buffer.rgtASD;
             cmdRunning = true;
         }
         else if (playIn.lftASD.Check()) {
-            cmdIn = buffer.lftASD;
+            cmdIn = Buffer.lftASD;
             cmdRunning = true;
         }
 
-        if (cmdIn != buffer.fwdASD && cmdIn != buffer.bakASD && cmdIn != buffer.rgtASD && cmdIn != buffer.lftASD) { //button commands with fewer inputs don't override button commands with more inputs
+        if (cmdIn != Buffer.fwdASD && cmdIn != Buffer.bakASD && cmdIn != Buffer.rgtASD && cmdIn != Buffer.lftASD) { //button commands with fewer inputs don't override button commands with more inputs
             if (playIn.fwdAS.Check()) {
-                cmdIn = buffer.fwdAS;
+                cmdIn = Buffer.fwdAS;
                 cmdRunning = true;
             }
             else if (playIn.bakAS.Check()) {
-                cmdIn = buffer.bakAS;
+                cmdIn = Buffer.bakAS;
                 cmdRunning = true;
             }
             else if (playIn.rgtAS.Check()) {
-                cmdIn = buffer.rgtAS;
+                cmdIn = Buffer.rgtAS;
                 cmdRunning = true;
             }
             else if (playIn.lftAS.Check()) {
-                cmdIn = buffer.lftAS;
+                cmdIn = Buffer.lftAS;
                 cmdRunning = true;
             }
 
             else if (playIn.fwdAD.Check()) {
-                cmdIn = buffer.fwdAD;
+                cmdIn = Buffer.fwdAD;
                 cmdRunning = true;
             }
             else if (playIn.bakAD.Check()) {
-                cmdIn = buffer.bakAD;
+                cmdIn = Buffer.bakAD;
                 cmdRunning = true;
             }
             else if (playIn.rgtAD.Check()) {
-                cmdIn = buffer.rgtAD;
+                cmdIn = Buffer.rgtAD;
                 cmdRunning = true;
             }
             else if (playIn.lftAD.Check()) {
-                cmdIn = buffer.lftAD;
+                cmdIn = Buffer.lftAD;
                 cmdRunning = true;
             }
 
             else if (playIn.fwdSD.Check()) {
-                cmdIn = buffer.fwdSD;
+                cmdIn = Buffer.fwdSD;
                 cmdRunning = true;
             }
             else if (playIn.bakSD.Check()) {
-                cmdIn = buffer.bakSD;
+                cmdIn = Buffer.bakSD;
                 cmdRunning = true;
             }
             else if (playIn.rgtSD.Check()) {
-                cmdIn = buffer.rgtSD;
+                cmdIn = Buffer.rgtSD;
                 cmdRunning = true;
             }
             else if (playIn.lftSD.Check()) {
-                cmdIn = buffer.lftSD;
+                cmdIn = Buffer.lftSD;
                 cmdRunning = true;
             }
 
 
-            if (cmdIn != buffer.fwdAS && cmdIn != buffer.bakAS && cmdIn != buffer.rgtAS && cmdIn != buffer.lftAS 
-                && cmdIn != buffer.fwdAD && cmdIn != buffer.bakAD && cmdIn != buffer.rgtAD && cmdIn != buffer.lftAD 
-                && cmdIn != buffer.fwdSD && cmdIn != buffer.bakSD && cmdIn != buffer.rgtSD && cmdIn != buffer.lftSD) { //button commands with fewer inputs don't override button commands with more inputs
+            if (cmdIn != Buffer.fwdAS && cmdIn != Buffer.bakAS && cmdIn != Buffer.rgtAS && cmdIn != Buffer.lftAS 
+                && cmdIn != Buffer.fwdAD && cmdIn != Buffer.bakAD && cmdIn != Buffer.rgtAD && cmdIn != Buffer.lftAD 
+                && cmdIn != Buffer.fwdSD && cmdIn != Buffer.bakSD && cmdIn != Buffer.rgtSD && cmdIn != Buffer.lftSD) { //button commands with fewer inputs don't override button commands with more inputs
                 if (playIn.fwdA.Check()) {
-                    cmdIn = buffer.fwdA;
+                    cmdIn = Buffer.fwdA;
                     cmdRunning = true;
                 }
                 else if (playIn.bakA.Check()) {
-                    cmdIn = buffer.bakA;
+                    cmdIn = Buffer.bakA;
                     cmdRunning = true;
                 }
                 else if (playIn.rgtA.Check()) {
-                    cmdIn = buffer.rgtA;
+                    cmdIn = Buffer.rgtA;
                     cmdRunning = true;
                 }
                 else if (playIn.lftA.Check()) {
-                    cmdIn = buffer.lftA;
+                    cmdIn = Buffer.lftA;
                     cmdRunning = true;
                 }
 
                 else if (playIn.fwdS.Check()) {
-                    cmdIn = buffer.fwdS;
+                    cmdIn = Buffer.fwdS;
                     cmdRunning = true;
                 }
                 else if (playIn.bakS.Check()) {
-                    cmdIn = buffer.bakS;
+                    cmdIn = Buffer.bakS;
                     cmdRunning = true;
                 }
                 else if (playIn.rgtS.Check()) {
-                    cmdIn = buffer.rgtS;
+                    cmdIn = Buffer.rgtS;
                     cmdRunning = true;
                 }
                 else if (playIn.lftS.Check()) {
-                    cmdIn = buffer.lftS;
+                    cmdIn = Buffer.lftS;
                     cmdRunning = true;
                 }
 
                 else if (playIn.fwdD.Check()) {
-                    cmdIn = buffer.fwdD;
+                    cmdIn = Buffer.fwdD;
                     cmdRunning = true;
                 }
                 else if (playIn.bakD.Check()) {
-                    cmdIn = buffer.bakD;
+                    cmdIn = Buffer.bakD;
                     cmdRunning = true;
                 }
                 else if (playIn.rgtD.Check()) {
-                    cmdIn = buffer.rgtD;
+                    cmdIn = Buffer.rgtD;
                     cmdRunning = true;
                 }
                 else if (playIn.lftD.Check()) {
-                    cmdIn = buffer.lftD;
+                    cmdIn = Buffer.lftD;
                     cmdRunning = true;
                 }
             }
@@ -217,32 +217,32 @@ public class PlayerBridge : MonoBehaviour {
             cmdRunning = false;
             cmdCounter = cmdTime;
             cmdOut = cmdIn;
-            cmdIn = buffer.nothing;
+            cmdIn = Buffer.nothing;
         }
 
     }
 
-    public void lckBuffer() { //a buffer that saves inputted commands for later if they can't currently be performed. Call in FIXED UPDATE.
+    public void LckBuffer() { //a buffer that saves inputted commands for later if they can't currently be performed. Call in FIXED UPDATE.
         if (lckCounter <= 0) {
-            lck = buffer.nothing; //after a certain amount of time, buffered inputs are purged
+            lck = Buffer.nothing; //after a certain amount of time, buffered inputs are purged
         } else {
             lckCounter -= 1; //counter ticks down by 1 every frame
         }
 
         if (status.sheathed == false || drawCount > 0) { //only buffer attack commands if unsheathed so that just regular drawing without attacking is possible
-            if (cmdOut != buffer.nothing) {
+            if (cmdOut != Buffer.nothing) {
                 lck = cmdOut;
                 lckCounter = lckTime;
             }
         }
 
         if (playIn.evade) {
-            lck = buffer.evade;
+            lck = Buffer.evade;
             lckCounter = lckTime;
         }
 
         if (playIn.guard || playIn.movement) { //purge the buffer if a different command that doesn't need to be buffered is registered
-            lck = buffer.nothing;
+            lck = Buffer.nothing;
         }
     }
 

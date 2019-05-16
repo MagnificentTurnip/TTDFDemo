@@ -24,7 +24,7 @@ public class LevelManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetAxis("LCtrl") > 0 && Input.GetKey("s") && Input.GetKey("l")) { //commands for manually loading scenes, Ctrl+s+l+sceneNo
+		if (Input.GetKey("o") && Input.GetKey("p")) { //commands for manually loading scenes, o+p+sceneNo
             if (Input.GetKey("1")) {
                 LoadClearingHamlet();
             }
